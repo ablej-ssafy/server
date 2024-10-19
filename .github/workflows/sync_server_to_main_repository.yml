@@ -1,0 +1,33 @@
+name: sync server to main repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Github main repository
+        uses: actions/checkout@v3
+        with:
+          repository: ablej-ssafy/ai-headhunting
+          token: ${{ secrets.GIT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "sunsuking"
+          git config --global user.email "sunsuking@gmail.com"
+
+      - name: Add server as subtree
+        run: |
+          git remote add server https://github.com/ablej-ssafy/server.git
+          git fetch server main
+          git subtree pull --prefix=server server main --message "Sync server to main repository"
+
+      - name: Push changes to Github
+        run: |
+          git push origin main
