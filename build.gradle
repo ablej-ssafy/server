@@ -36,12 +36,12 @@ ext {
 
 openapi3 {
     servers = [
-            { url = "https://www.mommy-son.kro.kr" }
+            { url = "http://localhost:8080" }
     ]
-    title = '마미손 API 문서'
-    description = '마미손 프로젝트 자녀/부모 앱 통합 API 문서입니다.'
+    title = '에이블제이 AI 헤드헌팅 API 문서'
+    description = '에이블제이 AI 헤드헌팅 플랫폼 API 문서입니다.'
     version = '0.0.1'
-    outputFileNamePrefix = 'mommy-son-api-docs'
+    outputFileNamePrefix = 'openapi3'
     format = 'yaml'
     outputDirectory = 'build/resources/test/docs'
 }
