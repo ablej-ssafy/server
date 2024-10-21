@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class CompanyInfoRequest {
     @JsonProperty("company_name")
-    String companyName;
+    private String companyName;
 }

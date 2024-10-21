@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CompanyInfoResponse {
-    boolean success;
-    String companyReport;
+    private boolean success;
+    private String companyReport;
 }
