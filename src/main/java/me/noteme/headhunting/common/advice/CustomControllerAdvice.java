@@ -23,8 +23,8 @@ public class CustomControllerAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception exception) {
-        log.error("Exception : {}", exception.getMessage());
-        return ErrorResponse.of(exception);
+        log.error("Exception : ", exception);
+        return ErrorResponse.of(new CustomException(ErrorCode.SERVER_ERROR));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
