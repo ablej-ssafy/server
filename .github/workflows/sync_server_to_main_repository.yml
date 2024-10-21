@@ -3,7 +3,7 @@ name: sync server to main repository
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   sync:
@@ -25,9 +25,9 @@ jobs:
       - name: Add server as subtree
         run: |
           git remote add server https://github.com/ablej-ssafy/server.git
-          git fetch server main
-          git subtree pull --prefix=server server main --message "Sync server to main repository"
+          git fetch server develop
+          git subtree pull --prefix=server server develop --message "Sync server to main repository"
 
       - name: Push changes to Github
         run: |
-          git push origin main
+          git push origin develop
