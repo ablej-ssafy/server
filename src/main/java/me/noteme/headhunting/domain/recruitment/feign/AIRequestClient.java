@@ -1,9 +1,12 @@
 package me.noteme.headhunting.domain.recruitment.feign;
 
 import me.noteme.headhunting.domain.recruitment.feign.request.CompanyInfoRequest;
+import me.noteme.headhunting.domain.recruitment.feign.request.JobRecommendRequest;
 import me.noteme.headhunting.domain.recruitment.feign.request.PersonalKeywordsRequest;
 import me.noteme.headhunting.domain.recruitment.feign.response.CompanyInfoResponse;
+import me.noteme.headhunting.domain.recruitment.feign.response.JobRecommendResponse;
 import me.noteme.headhunting.domain.recruitment.feign.response.PersonalKeywordsResponse;
+import me.noteme.headhunting.domain.recruitment.feign.response.ResumeRecommendResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,4 +19,13 @@ public interface AIRequestClient {
 
     @PostMapping("/company_reports")
     CompanyInfoResponse getCompanyInfo(@RequestBody CompanyInfoRequest request);
+
+    /**
+     * 합격 가능성 높은 채용공고 추천 API
+     * 요청 Type 2가지 분류
+     */
+    @PostMapping("/job-postings/recommend")
+    JobRecommendResponse getJobRecommend(@RequestBody JobRecommendRequest request);
+//    ResumeRecommendResponse getResumeRecommend(@RequestBody JobRecommendRequest request);
+
 }
