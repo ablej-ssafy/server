@@ -3,8 +3,11 @@ package me.noteme.headhunting.domain.member.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
+import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.entity.ProviderType;
+import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
+import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -21,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
 
     @Transactional
     @Override
@@ -31,26 +35,29 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(registrationId.toUpperCase());
         OAuth2Response response = CustomOAuth2UserFactory.parseOAuth2Response(providerType, oauth2User.getAttributes());
 
-        String username = response.getName() + "_" + response.getProviderId();
+        String username = providerType + "_" + response.getProviderId();
 
         AtomicBoolean isNewUser = new AtomicBoolean(false);
-//        User user = loadUserPort.loadUser(username).orElseGet(() -> {
-//            log.info("신규 유저 생성 응답: {}", response);
-//
-//            isNewUser.set(true);
-//            String encodedPassword = passwordEncoder.encode(response.getProviderId());
-//            UserEntity entity = saveUserPort.save(
-//                    username,
-//                    encodedPassword,
-//                    response.getEmail(),
-//                    response.getProviderId(),
-//                    response.getProfileImage(),
-//                    githubToken.getTokenValue()
-//            );
-//            return UserEntityMapper.toUser(entity);
-//        });
+        Member member = memberRepository.findByUsername(username).orElseGet(() -> {
+            log.info("신규 유저 생성 응답: {}", response);
 
+            isNewUser.set(true);
+            String encodedPassword = passwordEncoder.encode(response.getProviderId());
+            return memberRepository.save(
+                    Member.builder()
+                            .username(username)
+                            .password(encodedPassword)
+                            .providerType(providerType)
+                            .profileImage(response.getProfileImage())
+                            .nickname(response.getName())
+                            .build()
+            );
+        });
 
-        return new CustomOAuth2User(null);
+        if (isNewUser.get()) {
+            // TODO: Send email to user
+        }
+
+        return new CustomOAuth2User(member);
     }
 }
