@@ -21,8 +21,22 @@ public class RecruitmentController {
 
     @PostMapping("/resume/keywords")
     public SuccessResponse<List<String>> getResumeKeywords(@RequestBody ResumeKeywordsRequest request) {
-        List<String> resumeKeywords = recruitmentService.getResumeKeywords(request.getJobId(), request.getJobSubId(), request.getResume());
-        return SuccessResponse.of(resumeKeywords);
+        return SuccessResponse.of(
+                recruitmentService
+                        .getResumeKeywords(
+                                request.getJobId(),
+                                request.getJobSubId(),
+                                request.getResume()
+                        )
+        );
+    }
+
+    @PostMapping("/company/analyze")
+    public SuccessResponse<String> getCompanyAnalyze(@RequestBody String companyName) {
+        return SuccessResponse.of(
+                recruitmentService
+                        .getCompanyAnalyze(companyName)
+        );
     }
 
 }
