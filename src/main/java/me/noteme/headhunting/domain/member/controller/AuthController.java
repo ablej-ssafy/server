@@ -1,9 +1,9 @@
-package me.noteme.headhunting.member.controller;
+package me.noteme.headhunting.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.member.controller.request.SignUpRequest;
-import me.noteme.headhunting.member.domain.JwtToken;
-import me.noteme.headhunting.member.service.AuthService;
+import me.noteme.headhunting.domain.member.controller.request.SignUpRequest;
+import me.noteme.headhunting.domain.member.dto.JwtToken;
+import me.noteme.headhunting.domain.member.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;

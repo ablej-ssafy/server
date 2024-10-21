@@ -1,6 +1,6 @@
-package me.noteme.headhunting.member.domain;
+package me.noteme.headhunting.domain.member.dto;
 
-import me.noteme.headhunting.member.entity.Member;
+import me.noteme.headhunting.domain.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;

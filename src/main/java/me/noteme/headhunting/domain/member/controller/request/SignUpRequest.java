@@ -1,4 +1,4 @@
-package me.noteme.headhunting.member.controller.request;
+package me.noteme.headhunting.domain.member.controller.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

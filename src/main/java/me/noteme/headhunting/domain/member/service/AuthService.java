@@ -1,10 +1,10 @@
-package me.noteme.headhunting.member.service;
+package me.noteme.headhunting.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.member.domain.JwtToken;
-import me.noteme.headhunting.member.entity.Member;
-import me.noteme.headhunting.member.repository.MemberRepository;
-import me.noteme.headhunting.member.security.JwtTokenProvider;
+import me.noteme.headhunting.domain.member.repository.MemberRepository;
+import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
+import me.noteme.headhunting.domain.member.dto.JwtToken;
+import me.noteme.headhunting.domain.member.entity.Member;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

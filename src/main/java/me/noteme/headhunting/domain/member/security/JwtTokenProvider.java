@@ -1,16 +1,15 @@
-package me.noteme.headhunting.member.security;
+package me.noteme.headhunting.domain.member.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.annotation.PostConstruct;
-import me.noteme.headhunting.member.domain.JwtToken;
+import me.noteme.headhunting.domain.member.dto.JwtToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;

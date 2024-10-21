@@ -1,4 +1,4 @@
-package me.noteme.headhunting.member.entity;
+package me.noteme.headhunting.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

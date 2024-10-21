@@ -1,6 +1,6 @@
-package me.noteme.headhunting.member.security.response;
+package me.noteme.headhunting.domain.member.security.response;
 
-import me.noteme.headhunting.member.entity.ProviderType;
+import me.noteme.headhunting.domain.member.entity.ProviderType;
 
 public interface OAuth2Response {
     ProviderType getProvider();

@@ -1,4 +1,4 @@
-package me.noteme.headhunting.member.security;
+package me.noteme.headhunting.domain.member.security;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -6,8 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.utils.CookieUtils;
-import me.noteme.headhunting.member.domain.CustomOAuth2User;
-import me.noteme.headhunting.member.domain.JwtToken;
+import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
+import me.noteme.headhunting.domain.member.dto.JwtToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -17,8 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.util.Optional;
 
-import static me.noteme.headhunting.member.security.CustomAuthorizationRepository.REDIRECT_URI_PARAM_COOKIE;
-import static me.noteme.headhunting.member.security.JwtTokenProvider.REFRESH_TOKEN_COOKIE;
+import static me.noteme.headhunting.domain.member.security.CustomAuthorizationRepository.REDIRECT_URI_PARAM_COOKIE;
+import static me.noteme.headhunting.domain.member.security.JwtTokenProvider.REFRESH_TOKEN_COOKIE;
 
 @Slf4j
 @Component

@@ -1,17 +1,17 @@
-package me.noteme.headhunting.member.security.response;
+package me.noteme.headhunting.domain.member.security.response;
 
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.member.entity.ProviderType;
+import me.noteme.headhunting.domain.member.entity.ProviderType;
 
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class KakaoResponse implements OAuth2Response {
+public class GoogleResponse implements OAuth2Response {
     private final Map<String, Object> attribute;
 
     @Override
     public ProviderType getProvider() {
-        return ProviderType.KAKAO;
+        return ProviderType.GOOGLE;
     }
 
     @Override

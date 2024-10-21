@@ -1,4 +1,4 @@
-package me.noteme.headhunting.member.domain;
+package me.noteme.headhunting.domain.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

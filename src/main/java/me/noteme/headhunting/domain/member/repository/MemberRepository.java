@@ -1,6 +1,6 @@
-package me.noteme.headhunting.member.repository;
+package me.noteme.headhunting.domain.member.repository;
 
-import me.noteme.headhunting.member.entity.Member;
+import me.noteme.headhunting.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

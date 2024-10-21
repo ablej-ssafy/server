@@ -1,9 +1,9 @@
 package me.noteme.headhunting.common.config;
 
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.member.security.CustomAuthorizationRepository;
-import me.noteme.headhunting.member.security.CustomOAuth2UserService;
-import me.noteme.headhunting.member.security.CustomSuccessHandler;
+import me.noteme.headhunting.domain.member.security.CustomAuthorizationRepository;
+import me.noteme.headhunting.domain.member.security.CustomOAuth2UserService;
+import me.noteme.headhunting.domain.member.security.CustomSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,9 +28,9 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth.anyRequest().permitAll())
                 .oauth2Login((oauth2) -> oauth2.authorizationEndpoint(authorization ->
-                                        authorization.baseUri("/*/auth/authorization")
+                                        authorization.baseUri("/oauth2/authorization")
                                                 .authorizationRequestRepository(authorizationRepository)
-                                ).redirectionEndpoint(redirect -> redirect.baseUri("/v1/auth/oauth2/code/*"))
+                                ).redirectionEndpoint(redirect -> redirect.baseUri("/oauth2/code/*"))
                                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                                 .successHandler(successHandler)
                 )

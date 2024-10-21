@@ -2,9 +2,10 @@ package me.noteme.headhunting.member.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.member.controller.request.SignUpRequest;
-import me.noteme.headhunting.member.domain.JwtToken;
-import me.noteme.headhunting.member.service.AuthService;
+import me.noteme.headhunting.domain.member.controller.AuthController;
+import me.noteme.headhunting.domain.member.controller.request.SignUpRequest;
+import me.noteme.headhunting.domain.member.dto.JwtToken;
+import me.noteme.headhunting.domain.member.service.AuthService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;

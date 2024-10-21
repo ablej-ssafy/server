@@ -1,10 +1,10 @@
-package me.noteme.headhunting.member.security;
+package me.noteme.headhunting.domain.member.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.noteme.headhunting.member.domain.CustomOAuth2User;
-import me.noteme.headhunting.member.entity.ProviderType;
-import me.noteme.headhunting.member.security.response.OAuth2Response;
+import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
+import me.noteme.headhunting.domain.member.entity.ProviderType;
+import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,7 +26,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oauth2User = super.loadUser(userRequest);
-        OAuth2AccessToken githubToken = userRequest.getAccessToken();
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         ProviderType providerType = ProviderType.valueOf(registrationId.toUpperCase());

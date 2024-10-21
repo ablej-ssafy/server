@@ -12,17 +12,17 @@ spring:
           google:
             client-name: google
             authorization-grant-type: authorization_code
-            redirect-uri: ${app.server-base-url}/login/oauth2/code/google
+            redirect-uri: ${app.server-base-url}/oauth2/code/google
             scope:
               - email
               - profile
           kakao:
             client-name: kakao
-            redirect-uri: ${app.server-base-url}/login/oauth2/code/kakao
+            redirect-uri: ${app.server-base-url}/oauth2/code/kakao
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             scope:
-              - account_email
+              - profile_image
               - profile_nickname
         provider:
           kakao:

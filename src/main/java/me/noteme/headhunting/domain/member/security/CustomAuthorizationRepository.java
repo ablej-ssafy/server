@@ -1,4 +1,4 @@
-package me.noteme.headhunting.member.security;
+package me.noteme.headhunting.domain.member.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
