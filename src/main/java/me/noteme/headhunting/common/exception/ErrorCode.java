@@ -14,7 +14,7 @@ public enum ErrorCode {
     FAIL_TO_CREATE_FILE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
     FAIL_TO_DELETE_FILE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드에 실패했습니다."),
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
-
+    FAIL_TO_CONVERTER_PDF(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 파일 변환에 실패했습니다.")
     ;
 
     private final HttpStatus status;
