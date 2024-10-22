@@ -35,6 +35,30 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: kakao_account
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ssafyahey@gmail.com
+    password: ylxc kzil chfd bclu
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 50000
+          starttls:
+            enable: true
+
+  thymeleaf:
+    check-template-location: true
+    suffix: .html
+    mode: HTML5
+    cache: false
+    template-resolver-order: 0
+
 sentry:
   dsn: ${sentry_dsn}
   traces-sample-rate: 1.0
@@ -42,6 +66,7 @@ sentry:
   environment: development # 개발시
 #  environment: production # 배포시
 
-  servlet:
-    multipart:
-      max-file-size: 10MB
+logging:
+  level:
+    me.noteme: DEBUG
+
