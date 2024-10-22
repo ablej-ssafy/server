@@ -35,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(registrationId.toUpperCase());
         OAuth2Response response = CustomOAuth2UserFactory.parseOAuth2Response(providerType, oauth2User.getAttributes());
 
-        String username = providerType + "_" + response.getProviderId();
+        String username = response.getEmail();
 
         AtomicBoolean isNewUser = new AtomicBoolean(false);
         Member member = memberRepository.findByUsername(username).orElseGet(() -> {
@@ -50,6 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                             .providerType(providerType)
                             .profileImage(response.getProfileImage())
                             .nickname(response.getName())
+                            .emailVerified(true)
                             .build()
             );
         });
