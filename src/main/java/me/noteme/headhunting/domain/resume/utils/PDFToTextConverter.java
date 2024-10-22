@@ -16,8 +16,10 @@ public class PDFToTextConverter {
     public String convertPdfToText(MultipartFile file) {
         try (PDDocument document = Loader.loadPDF(file.getInputStream().readAllBytes())) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
+            pdfStripper.setAddMoreFormatting(true); // 텍스트 형식 보존
+            pdfStripper.setSortByPosition(true); // 페이지 순서 정렬
             return pdfStripper.getText(document);
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new CustomException(ErrorCode.FAIL_TO_CONVERTER_PDF);
         }
     }
