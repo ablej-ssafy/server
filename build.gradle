@@ -9,6 +9,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+    id "io.sentry.jvm.gradle" version "4.12.0"
 }
 
 group = 'me.noteme'
@@ -44,6 +45,17 @@ openapi3 {
     outputFileNamePrefix = 'openapi3'
     format = 'yaml'
     outputDirectory = 'build/resources/test/docs'
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "ahey"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
 dependencies {
