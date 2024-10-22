@@ -1,5 +1,6 @@
 package me.noteme.headhunting.common.advice;
 
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
@@ -24,13 +25,14 @@ public class CustomControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception exception) {
         log.error("Exception : ", exception);
+        Sentry.captureException(exception);
         return ErrorResponse.of(new CustomException(ErrorCode.SERVER_ERROR));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse NoResourceFoundException(NoResourceFoundException exception){
-        log.error("잘못된 endPoint : ", exception);
+        log.error("Resource Exception : ", exception);
         return ErrorResponse.of(new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
@@ -44,6 +46,7 @@ public class CustomControllerAdvice {
     @ExceptionHandler(CustomException.class)
     public ErrorResponse handleCustomException(CustomException exception) {
         log.error("CustomException: {}", exception.getMessage());
+        Sentry.captureException(exception);
         return ErrorResponse.of(exception);
     }
 }

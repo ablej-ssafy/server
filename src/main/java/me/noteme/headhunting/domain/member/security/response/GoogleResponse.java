@@ -16,21 +16,21 @@ public class GoogleResponse implements OAuth2Response {
 
     @Override
     public String getProviderId() {
-        return "";
+        return attribute.get("sub").toString();
     }
 
     @Override
     public String getEmail() {
-        return "";
+        return attribute.get("email").toString();
     }
 
     @Override
     public String getName() {
-        return "";
+        return attribute.get("name").toString();
     }
 
     @Override
     public String getProfileImage() {
-        return "";
+        return attribute.get("picture").toString();
     }
 }

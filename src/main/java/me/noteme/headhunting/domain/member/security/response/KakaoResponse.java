@@ -26,9 +26,8 @@ public class KakaoResponse implements OAuth2Response {
 
     @Override
     public String getEmail() {
-        if (attribute.containsKey("kakao_account")) {
-            Map<String, Object> kakaoAccount = (Map<String, Object>) attribute.get("kakao_account");
-            return kakaoAccount.get("email").toString();
+        if (properties.get("email") != null) {
+            return properties.get("email").toString();
         }
         return getProviderId() + "@kakao.com";
     }
