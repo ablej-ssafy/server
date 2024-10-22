@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.service.EmailService;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,6 +24,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
+    private final EmailService emailService;
 
     @Transactional
     public void signUp(String email, String password, String name) {
@@ -38,6 +41,13 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
+
+        String confirmKey = getConfirmKey();
+        emailService.sendConfirmationEmail(email, name, confirmKey);
+    }
+
+    private static String getConfirmKey() {
+        return UUID.randomUUID().toString().substring(0, 15);
     }
 
     public JwtToken signIn(String email, String password) {
