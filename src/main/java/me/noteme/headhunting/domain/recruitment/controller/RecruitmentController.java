@@ -3,9 +3,12 @@ package me.noteme.headhunting.domain.recruitment.controller;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.response.BaseResponse;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
 import me.noteme.headhunting.domain.recruitment.service.RecruitmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,14 @@ public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
     @PostMapping("/resume/keywords")
-    public SuccessResponse<List<String>> getResumeKeywords(@RequestBody ResumeKeywordsRequest request) {
+    public SuccessResponse<List<String>> getResumeKeywords(
+            @Validated
+            @RequestBody ResumeKeywordsRequest request,
+            Errors errors
+            ) {
+        if (errors.hasErrors()) {
+            // TODO: 에러 처리
+        }
         return SuccessResponse.of(
                 recruitmentService
                         .getResumeKeywords(
@@ -32,10 +42,17 @@ public class RecruitmentController {
     }
 
     @PostMapping("/company/analyze")
-    public SuccessResponse<String> getCompanyAnalyze(@RequestBody String companyName) {
+    public SuccessResponse<String> getCompanyAnalyze(
+            @Validated
+            @RequestBody CompanyAnalyzeRequest request,
+            Errors errors
+            ) {
+        if (errors.hasErrors()) {
+            // TODO: 에러 처리
+        }
         return SuccessResponse.of(
                 recruitmentService
-                        .getCompanyAnalyze(companyName)
+                        .getCompanyAnalyze(request.getCompanyName())
         );
     }
 

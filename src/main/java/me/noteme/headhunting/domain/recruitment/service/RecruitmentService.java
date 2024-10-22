@@ -1,6 +1,8 @@
 package me.noteme.headhunting.domain.recruitment.service;
 
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.exception.CustomException;
+import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.recruitment.feign.AIRequestClient;
 import me.noteme.headhunting.domain.recruitment.feign.request.CompanyInfoRequest;
 import me.noteme.headhunting.domain.recruitment.feign.request.PersonalKeywordsRequest;
@@ -30,7 +32,7 @@ public class RecruitmentService {
         request.setCompanyName(companyName);
         CompanyInfoResponse companyInfo = aiRequestClient.getCompanyInfo(request);
         if (companyInfo == null || !companyInfo.isSuccess()) {
-            throw new RuntimeException("Failed to load companyInfo");
+            throw new CustomException(ErrorCode.AI_SERVER_ERROR);
         }
         return companyInfo.getCompanyReport();
     }

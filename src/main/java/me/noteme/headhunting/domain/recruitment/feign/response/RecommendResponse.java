@@ -1,9 +1,9 @@
-package me.noteme.headhunting.domain.recruitment.feign.dto;
+package me.noteme.headhunting.domain.recruitment.feign.response;
 
 import lombok.Data;
 
 @Data
-public class RecommendDTO {
+public class RecommendResponse {
     private int jobPostingId;
     private String jobPostingTitle;
     private String jobPostingContents;
