@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class CompanyAnalyzeRequest {
 
-    @NotEmpty(message = "빈 문자열입니다.")
+    @NotEmpty(message = "유효하지 않은 입력값입니다.")
     private String companyName;
 }

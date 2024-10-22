@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/recruitment")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/recruitment")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
@@ -26,17 +27,13 @@ public class RecruitmentController {
     public SuccessResponse<List<String>> getResumeKeywords(
             @Validated @RequestBody ResumeKeywordsRequest request,
             Errors errors
-            ) {
+    ) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
+
         return SuccessResponse.of(
-                recruitmentService
-                        .getResumeKeywords(
-                                request.getJobId(),
-                                request.getJobSubId(),
-                                request.getResume()
-                        )
+                recruitmentService.getResumeKeywords(request.getJobId(), request.getJobSubId(), request.getResume())
         );
     }
 
@@ -44,14 +41,13 @@ public class RecruitmentController {
     public SuccessResponse<String> getCompanyAnalyze(
             @Validated @RequestBody CompanyAnalyzeRequest request,
             Errors errors
-            ) {
+    ) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
-        return SuccessResponse.of(
-                recruitmentService
-                        .getCompanyAnalyze(request.getCompanyName())
-        );
+
+        return SuccessResponse.of(recruitmentService.getCompanyAnalyze(request.getCompanyName()));
     }
 
 }
+
