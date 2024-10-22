@@ -24,6 +24,10 @@ spring:
             scope:
               - profile_image
               - profile_nickname
+              - account_email
+              - gender
+              - age_range
+              - birthday
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -37,3 +41,7 @@ sentry:
   exception-resolver-order: -2147483647
   environment: development # 개발시
 #  environment: production # 배포시
+
+  servlet:
+    multipart:
+      max-file-size: 10MB

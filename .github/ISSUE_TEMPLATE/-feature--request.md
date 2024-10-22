@@ -3,7 +3,7 @@ name: "[Feature] Request"
 about: 작업 한 줄 소개
 title: "[Feature]"
 labels: feature
-assignees: Kimbumsoo99
+assignees: ""
 
 ---
 
