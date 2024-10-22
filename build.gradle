@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'me.noteme'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
     toolchain {
@@ -113,7 +113,6 @@ tasks.register('openapi3-security-schemes') {
         swaggerUIFile.append securitySchemesContent
     }
 }
-
 
 tasks.named('test') {
     outputs.dir snippetsDir
