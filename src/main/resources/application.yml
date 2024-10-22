@@ -34,14 +34,10 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: kakao_account
-
-sentry:
-  dsn: ${sentry_dsn}
-  traces-sample-rate: 1.0
-  exception-resolver-order: -2147483647
-  environment: development # 개발시
-#  environment: production # 배포시
-
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
       max-file-size: 10MB

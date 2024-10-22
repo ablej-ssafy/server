@@ -7,3 +7,14 @@ app:
   client-base-url: http://localhost:3000
   server-base-url: http://localhost:8080
 
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ablej
+    username: ablej
+    password: ablej
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
