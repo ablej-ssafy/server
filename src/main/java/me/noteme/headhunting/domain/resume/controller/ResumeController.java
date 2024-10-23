@@ -22,11 +22,9 @@ public class ResumeController {
         );
     }
 
-    @PostMapping("/upload/pdf")
-    public SuccessResponse<String> uploadPDF(MultipartFile pdfFile) {
-        return SuccessResponse.of(
-                storageService.uploadFile(pdfFile)
-        );
+    @PostMapping("/pdf")
+    public SuccessResponse<Void> uploadPDF(MultipartFile pdfFile) {
+        return SuccessResponse.empty();
     }
 
     @GetMapping("/pdf/{fileName}")

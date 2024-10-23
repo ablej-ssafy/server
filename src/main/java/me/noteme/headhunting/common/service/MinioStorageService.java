@@ -24,13 +24,15 @@ public class MinioStorageService implements StorageService {
 
     @Value("${minio.endpoint}")
     private String minioEndpoint;
+
     @Value("${minio.bucket.images}")
     private String imagesBucketName;
+
     @Value("${minio.bucket.resume}")
     private String resumeBucketName;
 
     @Override
-    public String uploadFile(MultipartFile file) {
+    public boolean uploadFile(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         try {
             minioClient.putObject(
@@ -47,7 +49,7 @@ public class MinioStorageService implements StorageService {
             throw new CustomException(ErrorCode.FILE_IO_ERROR);
         }
 
-        return "File uploaded successfully: " + fileName;
+        return true;
     }
 
     @Override
