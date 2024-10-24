@@ -10,6 +10,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +26,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity security) throws Exception {
         return security
+                .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -35,5 +40,16 @@ public class WebSecurityConfig {
                                 .successHandler(successHandler)
                 )
                 .build();
+    }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowCredentials(true);
+            cors.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080", "https://noteme.kro.kr"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        };
     }
 }
