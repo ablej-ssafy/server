@@ -71,14 +71,11 @@ public class AuthService {
         }
 
         Member member = getMember(email);
-        log.debug("{}", member);
-
         if (member.isEmailVerified()) {
             throw new CustomException(ErrorCode.EXPIRED_URL, "이미 처리된 사용자입니다.");
         }
 
         member.verify();
-        memberRepository.save(member);
     }
 
     public JwtToken signIn(String email, String password) {
@@ -95,7 +92,7 @@ public class AuthService {
         return tokenProvider.generate(member.getId(), authorities);
     }
 
-    public Member getMember(String email) {
+    private Member getMember(String email) {
         return memberRepository.findByUsername(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
