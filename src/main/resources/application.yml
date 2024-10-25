@@ -70,3 +70,10 @@ logging:
   level:
     me.noteme: DEBUG
 
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 10MB
