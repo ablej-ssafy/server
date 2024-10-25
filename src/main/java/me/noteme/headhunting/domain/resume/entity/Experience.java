@@ -6,18 +6,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Experience {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "activate_id")
+    @Column(name = "experience_id")
     private Long id;
 
     @ManyToOne
@@ -30,20 +29,15 @@ public class Experience {
 
     private String title;
 
-    private String Affiliation;
+    private String affiliation;
 
-    @Column(name = "start_at")
-    private LocalDateTime startAt;
-
-    @Column(name = "end_at")
-    private LocalDateTime endAt;
-
-    private String Description;
+    private String description;
 
     private String referenceUrl;
 
-}
+    @Column(name = "start_at")
+    private LocalDate startAt;
 
-enum ExperienceType {
-    COMPANY,PROJECT,ACTIVITY
+    @Column(name = "end_at")
+    private LocalDate endAt;
 }

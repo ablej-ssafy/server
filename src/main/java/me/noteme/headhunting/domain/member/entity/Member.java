@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.noteme.headhunting.common.entity.BaseEntity;
+import me.noteme.headhunting.domain.resume.entity.Resume;
 
 @Entity
 @Table(
@@ -35,17 +36,24 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image")
     private String profileImage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "provider_type", nullable = false)
+    private int career;
+
+    @Column(name = "email_verified", nullable = false)
     @Builder.Default
-    private ProviderType providerType = ProviderType.LOCAL;
+    private boolean emailVerified = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type", nullable = false)
     @Builder.Default
     private RoleType roleType = RoleType.USER;
 
-    @Column(name = "email_verified", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type", nullable = false)
     @Builder.Default
-    private boolean emailVerified = false;
+    private ProviderType providerType = ProviderType.LOCAL;
+
+    //////////////////////////////
+
+    @OneToOne(mappedBy = "member",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Resume resume;
 }

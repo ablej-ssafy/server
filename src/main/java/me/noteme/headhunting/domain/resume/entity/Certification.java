@@ -29,17 +29,12 @@ public class Certification {
 
     private String credential;
 
+    private String grade;
+
     @Column(name = "acquisition_at")
     private LocalDateTime acquisitionAt;
-
-    private String grade;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "certification_type")
     private CertificationType certificationType;
-
-}
-
-enum CertificationType {
-    QUALIFICATION, LANGUAGE,
 }

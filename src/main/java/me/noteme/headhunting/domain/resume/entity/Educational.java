@@ -20,32 +20,31 @@ public class Educational {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "resume_id")
+    @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String major;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    @Column(nullable = false)
+    private EducationalType category;
 
     private String grade;
 
-    @Column(name = "grade_type")
-    private String gradeType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "grade_type", nullable = false)
+    private GradeType gradeType;
 
-    @Column(name = "start_at")
+    private String description;
+
+    @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 
     @Column(name = "end_at")
     private LocalDateTime endAt;
-
-    private String Description;
-
-}
-
-enum Category {
-    ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR
 }
 
