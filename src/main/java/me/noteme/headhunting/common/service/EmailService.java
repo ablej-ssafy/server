@@ -1,8 +1,6 @@
 package me.noteme.headhunting.common.service;
 
-import jakarta.mail.Address;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +24,18 @@ public class EmailService {
     @Value("${app.client-base-url}")
     private String frontedUrl;
 
-    public void sendConfirmationEmail(String to, String name, String key) {
+    private final String CONFIRM_TITLE = "[AHEY] 회원가입 이메일 인증 안내";
+    private final String CONFIRM_VIEW_NAME = "confirm_member_account_mail";
+
+    public void sendConfirmationEmail(String to, String nickName, String key) {
         Context context = new Context();
-        context.setVariable("nickname", name);
-        String url = createURI("/confirm/email", key);
-        context.setVariable("confirmURI", url);
+        context.setVariable("nickname", nickName);
+        context.setVariable("confirmURI", createURI("/confirm/email", key));
 
-        log.debug("url {}", url);
-        sendEmail(to, "[AHEY] 회원가입 이메일 인증 안내", "index", context);
+        sendEmail(to, CONFIRM_TITLE, CONFIRM_VIEW_NAME, context);
     }
 
-    private String createURI(String type, String key) {
-        return UriComponentsBuilder.fromUriString(frontedUrl + type + "/" + key).toUriString();
-    }
-
+    // TODO: 추후 비동기 처리
     private void sendEmail(String to, String subject, String viewName, Context context) {
         MimeMessage message = mailSender.createMimeMessage();
 
@@ -55,5 +51,10 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new CustomException(ErrorCode.SERVER_ERROR);
         }
+    }
+
+
+    private String createURI(String type, String key) {
+        return UriComponentsBuilder.fromUriString(frontedUrl + type + "/" + key).toUriString();
     }
 }
