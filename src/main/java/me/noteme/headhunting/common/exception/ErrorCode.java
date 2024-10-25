@@ -20,9 +20,7 @@ public enum ErrorCode {
     AI_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI 서버 에러입니다. 관리자이게 문의해주세요."),
 
     // FILE
-    FAIL_TO_CONVERTER_PDF(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 파일 변환에 실패했습니다."),
-    FAIL_TO_CREATE_FILE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
-    FAIL_TO_DELETE_FILE(HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드에 실패했습니다."),
+    FAIL_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 업로드 중 오류가 발생했습니다."),
 
     ;
 
