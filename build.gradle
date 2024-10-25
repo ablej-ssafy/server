@@ -51,6 +51,7 @@ dependencies {
     // * For Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     // * For Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -87,6 +88,10 @@ dependencies {
     // * For Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // * For Email
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 }
 
 tasks.register('openapi3-security-schemes') {
