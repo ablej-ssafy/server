@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,20 +13,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TechStack {
+public class TechSkill {
+
     @Id
-    @Column(name = "tech_stack_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tech_skill_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_id")
-    private Resume resume;
+    @Column(name = "icon_url")
+    private String iconUrl;
 
-    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY)
-    private List<ReferenceUrl> referenceUrls;
+    private String name;
 
-    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "techSkill", fetch = FetchType.LAZY)
     private List<TechStackSkill> techStackSkills;
 
 }

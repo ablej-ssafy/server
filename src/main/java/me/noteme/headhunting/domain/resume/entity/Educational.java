@@ -19,7 +19,7 @@ public class Educational {
     @Column(name = "educational_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 

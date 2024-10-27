@@ -19,7 +19,7 @@ public class Certification {
     @Column(name = "certification_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
@@ -29,10 +29,10 @@ public class Certification {
 
     private String credential;
 
-    private String grade;
-
     @Column(name = "acquisition_at")
     private LocalDateTime acquisitionAt;
+
+    private String grade;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "certification_type")

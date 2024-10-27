@@ -68,13 +68,36 @@ public class Resume extends BaseEntity {
      */
     private String introduce;
 
+    /**
+     * 포트폴리오 URL
+     */
     @Column(name = "portfolio_url")
     private String portfolioUrl;
 
     ///////////////////////////
 
+    /**
+     * 자격증 테이블(자격증, 어학)
+     */
     @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
     private List<Certification> certifications;
 
+    /**
+     * 학력 테이블
+     */
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    private List<Educational> educationals;
+
+    /**
+     * 경험 (직무, 프로젝트, 대내외 활동)
+     */
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    private List<Experience> experiences;
+
+    /**
+     * 기술 스택
+     */
+    @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY)
+    private TechStack techStack;
 
 }

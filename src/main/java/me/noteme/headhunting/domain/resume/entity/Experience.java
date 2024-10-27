@@ -19,7 +19,7 @@ public class Experience {
     @Column(name = "experience_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
@@ -31,13 +31,14 @@ public class Experience {
 
     private String affiliation;
 
-    private String description;
-
-    private String referenceUrl;
-
     @Column(name = "start_at")
     private LocalDate startAt;
 
     @Column(name = "end_at")
     private LocalDate endAt;
+
+    private String description;
+
+    private String referenceUrl;
+
 }

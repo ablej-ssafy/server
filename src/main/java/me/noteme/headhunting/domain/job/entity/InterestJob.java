@@ -5,25 +5,26 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import me.noteme.headhunting.domain.member.entity.Member;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Job {
+public class InterestJob {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "job_id")
+    @Column(name = "interset_job_id")
     private Long id;
 
-    @Column(name = "job_title")
-    String jobTitle;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id")
+    private Job job;
 
-    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY)
-    private List<InterestJob> interestJobs;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
 }
