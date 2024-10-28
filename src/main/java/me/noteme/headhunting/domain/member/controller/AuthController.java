@@ -54,7 +54,6 @@ public class AuthController {
 
     @GetMapping("/confirm/email/{key}")
     public SuccessResponse<Void> confirmEmail(@PathVariable("key") String key) {
-        // TODO: 인증 처리 -> Redis 조회
         authService.verify(key);
         return SuccessResponse.empty();
     }

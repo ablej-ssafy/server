@@ -53,7 +53,6 @@ public class EmailService {
         }
     }
 
-
     private String createURI(String type, String key) {
         return UriComponentsBuilder.fromUriString(frontedUrl + type + "/" + key).toUriString();
     }
