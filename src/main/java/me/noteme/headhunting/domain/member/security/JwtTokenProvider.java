@@ -7,8 +7,11 @@ import io.jsonwebtoken.MalformedJwtException;
 import jakarta.annotation.PostConstruct;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -123,5 +126,17 @@ public class JwtTokenProvider {
             exception = e;
         }
         throw new IllegalArgumentException(message, exception);
+    }
+
+    public Authentication parseAuthentication(String accessToken) throws Exception {
+        Claims claims = parseClaims(accessToken);
+
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get("authorities").toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+
+        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 }
