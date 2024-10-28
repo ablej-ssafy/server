@@ -14,7 +14,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SignUpEventListener {
+public class EmailEventListener {
     private final EmailService emailService;
     private final MemberCacheRepository memberCacheRepository;
 
