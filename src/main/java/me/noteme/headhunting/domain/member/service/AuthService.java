@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.listener.event.SignUpEvent;
 import me.noteme.headhunting.common.service.EmailService;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher publisher;
 
     /**
      * 회원 가입 로직
@@ -49,10 +51,7 @@ public class AuthService {
 
         memberRepository.save(member);
 
-        // TODO: 추후 분리 예정 - Spring EventListener
-        // TODO: Key - Redis 저장 Email : Key
-        String confirmKey = getConfirmKey();
-        emailService.sendConfirmationEmail(email, name, confirmKey);
+        publisher.publishEvent(SignUpEvent.of(email, name));
     }
 
     /**
@@ -95,10 +94,5 @@ public class AuthService {
     private Member getMember(String email) {
         return memberRepository.findByUsername(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
-    }
-
-    // TODO: 추후 분리 예정 - Spring EventListener
-    private String getConfirmKey() {
-        return UUID.randomUUID().toString().substring(0, 15);
     }
 }
