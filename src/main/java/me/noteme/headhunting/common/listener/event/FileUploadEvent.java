@@ -5,5 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class FileUploadEvent {
+    private String uuid;
     private MultipartFile file;
 }

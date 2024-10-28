@@ -16,7 +16,7 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
     AI_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI 서버 에러입니다. 관리자이게 문의해주세요."),
     FAIL_TO_CONVERTER_PDF(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 파일 변환에 실패했습니다."),
-    FILE_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 처리하는 도중 오류가 발생했습니다. 관리자에게 문의해 주세요.")
+    FILE_IO_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 처리하는 도중 오류가 발생했습니다. 관리자에게 문의해 주세요."),
     ;
 
     private final HttpStatus status;

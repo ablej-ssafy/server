@@ -13,6 +13,6 @@ public class FileEventListener {
 
     @EventListener
     public void handleFileUploadEvent(FileUploadEvent event) {
-        storageService.uploadFile(event.getFile());
+        storageService.uploadFile(event.getUuid(), event.getFile());
     }
 }

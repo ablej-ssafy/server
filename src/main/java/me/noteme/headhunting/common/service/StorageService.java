@@ -4,7 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface StorageService {
 
-    boolean uploadFile(MultipartFile file);
+    void uploadFile(String fileName, MultipartFile file);
 
     String getFileUrl(String fileName);
 
