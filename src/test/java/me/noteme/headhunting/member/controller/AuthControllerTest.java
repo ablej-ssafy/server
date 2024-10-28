@@ -1,7 +1,6 @@
 package me.noteme.headhunting.member.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
-import me.noteme.headhunting.common.service.EmailService;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.AuthController;
 import me.noteme.headhunting.domain.member.controller.request.SignInRequest;
@@ -23,7 +22,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
