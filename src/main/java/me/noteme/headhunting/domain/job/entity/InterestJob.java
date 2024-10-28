@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import me.noteme.headhunting.domain.member.entity.Member;
 
 @Entity
+@Table(name = "interest_job")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

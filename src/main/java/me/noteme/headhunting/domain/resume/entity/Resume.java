@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(name = "resume")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -79,25 +80,25 @@ public class Resume extends BaseEntity {
     /**
      * 자격증 테이블(자격증, 어학)
      */
-    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Certification> certifications;
 
     /**
      * 학력 테이블
      */
-    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Educational> educationals;
 
     /**
      * 경험 (직무, 프로젝트, 대내외 활동)
      */
-    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Experience> experiences;
 
     /**
      * 기술 스택
      */
-    @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private TechStack techStack;
 
 }

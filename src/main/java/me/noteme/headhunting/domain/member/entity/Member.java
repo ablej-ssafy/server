@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.noteme.headhunting.common.entity.BaseEntity;
+import me.noteme.headhunting.domain.job.entity.InterestJob;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 
 @Entity
@@ -54,6 +55,10 @@ public class Member extends BaseEntity {
 
     //////////////////////////////
 
-    @OneToOne(mappedBy = "member",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Resume resume;
+
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private InterestJob interestJob;
+
 }

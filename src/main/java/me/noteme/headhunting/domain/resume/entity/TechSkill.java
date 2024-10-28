@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
+@Table(name = "tech_skill")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class TechSkill {
 
     private String name;
 
-    @OneToMany(mappedBy = "techSkill", fetch = FetchType.LAZY)
-    private List<TechStackSkill> techStackSkills;
+    @OneToMany(mappedBy = "techSkill", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StackSkill> stackSkills;
 
 }

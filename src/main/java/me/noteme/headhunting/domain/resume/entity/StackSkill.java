@@ -7,14 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "tech_stack_skill")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TechStackSkill {
-
+public class StackSkill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tech_stack_skill_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

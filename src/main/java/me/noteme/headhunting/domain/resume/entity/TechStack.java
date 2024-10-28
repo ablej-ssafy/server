@@ -6,10 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "tech_stack")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,10 +24,10 @@ public class TechStack {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
-    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReferenceUrl> referenceUrls;
 
-    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY)
-    private List<TechStackSkill> techStackSkills;
+    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StackSkill> stackSkills;
 
 }

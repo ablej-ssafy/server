@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
+@Table(name = "job")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,7 +24,7 @@ public class Job {
     @Column(name = "job_title")
     String jobTitle;
 
-    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InterestJob> interestJobs;
 
 }
