@@ -60,8 +60,6 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private InterestJob interestJob;
 
-    private boolean emailVerified = false;
-
     public void verify() {
         emailVerified = true;
     }

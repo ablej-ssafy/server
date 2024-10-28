@@ -47,7 +47,7 @@ public class GoogleStorageService implements StorageService {
 
             storage.create(blob, file.getInputStream().readAllBytes());
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FAIL_TO_CREATE_FILE);
+            throw new CustomException(ErrorCode.FAIL_UPLOAD);
         }
     }
 

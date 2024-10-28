@@ -1,8 +1,10 @@
 package me.noteme.headhunting.member.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.common.service.EmailService;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.AuthController;
+import me.noteme.headhunting.domain.member.controller.request.SignInRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignUpRequest;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.service.AuthService;
@@ -75,7 +77,7 @@ class AuthControllerTest extends RestDocsSupport {
     @DisplayName("로그인_정상_테스트")
     void 로그인_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        SignUpRequest request = new SignUpRequest();
+        SignInRequest request = new SignInRequest();
         request.setEmail("testuser@gmail.com");
         request.setPassword("testpassword");
 
@@ -98,10 +100,10 @@ class AuthControllerTest extends RestDocsSupport {
                                 .requestFields(
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호")
-                                ).responseFields(
-                                        fieldWithPath("accessToken").type(JsonFieldType.STRING).description("액세스 토큰"),
-                                        fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰")
-                                )
+                                ).responseFields(response(
+                                        fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("액세스 토큰"),
+                                        fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰")
+                                ))
                                 .build()
                 )));
     }
