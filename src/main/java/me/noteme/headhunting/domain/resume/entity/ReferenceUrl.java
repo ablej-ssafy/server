@@ -1,19 +1,15 @@
 package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "reference_url")
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class ReferenceUrl {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reference_url_id")
@@ -24,5 +20,4 @@ public class ReferenceUrl {
     private TechStack techStack;
 
     private String url;
-
 }

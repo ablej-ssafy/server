@@ -1,10 +1,7 @@
 package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
 import me.noteme.headhunting.domain.job.entity.Job;
 import me.noteme.headhunting.domain.member.entity.Member;
@@ -15,8 +12,8 @@ import java.util.List;
 @Entity
 @Table(name = "resume")
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Resume extends BaseEntity {
     @Id
@@ -100,5 +97,4 @@ public class Resume extends BaseEntity {
      */
     @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private TechStack techStack;
-
 }

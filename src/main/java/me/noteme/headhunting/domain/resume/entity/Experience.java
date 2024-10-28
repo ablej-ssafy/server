@@ -1,19 +1,16 @@
 package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "experience")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,5 +38,4 @@ public class Experience {
     private String description;
 
     private String referenceUrl;
-
 }

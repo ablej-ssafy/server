@@ -1,10 +1,7 @@
 package me.noteme.headhunting.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
 import me.noteme.headhunting.domain.job.entity.InterestJob;
 import me.noteme.headhunting.domain.resume.entity.Resume;
@@ -17,8 +14,8 @@ import me.noteme.headhunting.domain.resume.entity.Resume;
         }
 )
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Member extends BaseEntity {
     @Id
@@ -60,5 +57,4 @@ public class Member extends BaseEntity {
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private InterestJob interestJob;
-
 }
