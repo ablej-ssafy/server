@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +19,8 @@ import java.security.GeneralSecurityException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-@Service
+@Profile("dev")
+@Component
 @RequiredArgsConstructor
 public class MinioStorageService implements StorageService {
     private final MinioClient minioClient;
@@ -32,14 +35,11 @@ public class MinioStorageService implements StorageService {
     private String resumeBucketName;
 
     @Override
-    public boolean uploadFile(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
+    public void uploadFile(Long userId, String fileName, MultipartFile file) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket(Objects.requireNonNull(fileName)
-                                    .toLowerCase()
-                                    .endsWith(".pdf") ? resumeBucketName : imagesBucketName)
+                            .bucket(Objects.requireNonNull(fileName).toLowerCase().endsWith(".pdf") ? resumeBucketName : imagesBucketName)
                             .object(fileName)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .contentType(file.getContentType())
@@ -48,12 +48,10 @@ public class MinioStorageService implements StorageService {
         } catch (IOException | MinioException | GeneralSecurityException e) {
             throw new CustomException(ErrorCode.FAIL_UPLOAD);
         }
-
-        return true;
     }
 
     @Override
-    public String getFileUrl(String fileName) {
+    public String getFileUrl(Long userId, String fileName) {
         try {
             if (Objects.requireNonNull(fileName).toLowerCase().endsWith(".pdf")) {
                 return minioClient.getPresignedObjectUrl(
