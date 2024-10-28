@@ -1,10 +1,7 @@
 package me.noteme.headhunting.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
 
 @Entity
@@ -14,10 +11,12 @@ import me.noteme.headhunting.common.entity.BaseEntity;
                 @UniqueConstraint(name = "username_unique", columnNames = "username")
         }
 )
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +47,8 @@ public class Member extends BaseEntity {
     @Column(name = "email_verified", nullable = false)
     @Builder.Default
     private boolean emailVerified = false;
+
+    public void verify() {
+        emailVerified = true;
+    }
 }

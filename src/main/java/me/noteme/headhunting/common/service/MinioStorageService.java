@@ -46,7 +46,7 @@ public class MinioStorageService implements StorageService {
                             .build()
             );
         } catch (IOException | MinioException | GeneralSecurityException e) {
-            throw new CustomException(ErrorCode.FILE_IO_ERROR);
+            throw new CustomException(ErrorCode.FAIL_TO_CREATE_FILE);
         }
     }
 
