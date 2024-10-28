@@ -37,7 +37,7 @@ ext {
 
 openapi3 {
     servers = [
-            { url = "http://localhost:8080" }
+            { url = "https://noteme.kro.kr" }
     ]
     title = '에이블제이 AI 헤드헌팅 API 문서'
     description = '에이블제이 AI 헤드헌팅 플랫폼 API 문서입니다.'
@@ -78,8 +78,10 @@ dependencies {
     // * For PDF To Text
     implementation 'org.apache.pdfbox:pdfbox:3.0.3'
 
-    // * For MinIO
+    // * For Storage
     implementation 'io.minio:minio:8.5.12'
+    implementation 'org.springframework.cloud:spring-cloud-gcp-starter:1.2.8.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.8.RELEASE'
 
     // * For Documentation
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

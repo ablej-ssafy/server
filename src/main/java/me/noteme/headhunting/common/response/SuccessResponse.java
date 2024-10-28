@@ -1,6 +1,12 @@
 package me.noteme.headhunting.common.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
+
 public class SuccessResponse<T> extends BaseResponse<T> {
+    @JsonIgnore
+    protected List<CustomError> errors;
 
     private final static SuccessResponse<Void> EMPTY = new SuccessResponse<>();
 

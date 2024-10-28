@@ -60,7 +60,7 @@ public abstract class RestDocsSupport {
     protected FieldDescriptor[] response(FieldDescriptor... descriptor) {
         return Stream.concat(Arrays.stream(new FieldDescriptor[]{
                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                fieldWithPath("status").type(JsonFieldType.NUMBER).description("응답 코드"),
+                fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
         }), Stream.of(descriptor)).toArray(FieldDescriptor[]::new);
     }
@@ -68,7 +68,7 @@ public abstract class RestDocsSupport {
     protected FieldDescriptor[] response(FieldDescriptor descriptor) {
         return new FieldDescriptor[]{
                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                fieldWithPath("status").type(JsonFieldType.NUMBER).description("응답 코드"),
+                fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                 fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
                 descriptor
         };
@@ -81,7 +81,7 @@ public abstract class RestDocsSupport {
     protected FieldDescriptor[] errors(FieldDescriptor... descriptor) {
         return Stream.concat(Arrays.stream(new FieldDescriptor[]{
                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                fieldWithPath("status").type(JsonFieldType.NUMBER).description("상태 코드"),
+                fieldWithPath("code").type(JsonFieldType.NUMBER).description("상태 코드"),
                 fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
                 fieldWithPath("errors").type(JsonFieldType.ARRAY).description("에러 목록"),
         }), Stream.of(descriptor)).toArray(FieldDescriptor[]::new);
