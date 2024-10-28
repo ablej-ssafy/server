@@ -35,7 +35,7 @@ public class MinioStorageService implements StorageService {
     private String resumeBucketName;
 
     @Override
-    public void uploadFile(String fileName, MultipartFile file) {
+    public void uploadFile(Long userId, String fileName, MultipartFile file) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -51,7 +51,7 @@ public class MinioStorageService implements StorageService {
     }
 
     @Override
-    public String getFileUrl(String fileName) {
+    public String getFileUrl(Long userId, String fileName) {
         try {
             if (Objects.requireNonNull(fileName).toLowerCase().endsWith(".pdf")) {
                 return minioClient.getPresignedObjectUrl(

@@ -28,10 +28,12 @@ public class GoogleStorageService implements StorageService {
     private String bucketName;
 
     @Override
-    public void uploadFile(String fileName, MultipartFile file) {
-        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+    public void uploadFile(Long userId, String fileName, MultipartFile file) {
+        if (file.isEmpty()) {
+            return;
+        }
 
-            if (file.isEmpty()) return;
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
             String contentType = file.getContentType();
 
             Storage storage = StorageOptions.newBuilder()
@@ -39,7 +41,7 @@ public class GoogleStorageService implements StorageService {
                     .build()
                     .getService();
 
-            BlobInfo blob = BlobInfo.newBuilder(bucketName, fileName)
+            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(userId, fileName))
                     .setContentType(contentType)
                     .build();
 
@@ -50,7 +52,11 @@ public class GoogleStorageService implements StorageService {
     }
 
     @Override
-    public String getFileUrl(String fileName) {
-        return GoogleStorageConst.BASE_URL + bucketName + "/" + fileName;
+    public String getFileUrl(Long userId, String fileName) {
+        return GoogleStorageConst.BASE_URL + bucketName + "/" + path(userId, fileName);
+    }
+
+    private String path(Long userId, String fileName) {
+        return userId + "/" + fileName;
     }
 }
