@@ -3,6 +3,8 @@ package me.noteme.headhunting.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
+import me.noteme.headhunting.domain.job.entity.InterestJob;
+import me.noteme.headhunting.domain.resume.entity.Resume;
 
 @Entity
 @Table(
@@ -13,8 +15,8 @@ import me.noteme.headhunting.common.entity.BaseEntity;
 )
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @ToString
 public class Member extends BaseEntity {
@@ -34,18 +36,30 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image")
     private String profileImage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "provider_type", nullable = false)
+    private int career;
+
+    @Column(name = "email_verified", nullable = false)
     @Builder.Default
-    private ProviderType providerType = ProviderType.LOCAL;
+    private boolean emailVerified = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_type", nullable = false)
     @Builder.Default
     private RoleType roleType = RoleType.USER;
 
-    @Column(name = "email_verified", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type", nullable = false)
     @Builder.Default
+    private ProviderType providerType = ProviderType.LOCAL;
+
+    //////////////////////////////
+
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Resume resume;
+
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private InterestJob interestJob;
+
     private boolean emailVerified = false;
 
     public void verify() {
