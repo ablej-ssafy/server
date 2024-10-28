@@ -23,7 +23,8 @@ public class Experience {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "experience_type")
-    private ExperienceType experienceType;
+    @Builder.Default
+    private ExperienceType experienceType = ExperienceType.PROJECT;
 
     private String title;
 

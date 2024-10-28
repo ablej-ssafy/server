@@ -34,5 +34,6 @@ public class Certification {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "certification_type")
-    private CertificationType certificationType;
+    @Builder.Default
+    private CertificationType certificationType = CertificationType.QUALIFICATION;
 }

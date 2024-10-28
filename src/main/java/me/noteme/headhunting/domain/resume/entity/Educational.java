@@ -29,13 +29,15 @@ public class Educational {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EducationalType category;
+    @Builder.Default
+    private EducationalType category = EducationalType.BACHELOR;
 
     private String grade;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "grade_type", nullable = false)
-    private GradeType gradeType;
+    @Builder.Default
+    private GradeType gradeType = GradeType.FOUR_POINT_FIVE;
 
     private String description;
 
