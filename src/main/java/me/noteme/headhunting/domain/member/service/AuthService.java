@@ -1,11 +1,14 @@
 package me.noteme.headhunting.domain.member.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
+import me.noteme.headhunting.common.service.EmailService;
+import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
@@ -26,6 +29,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationEventPublisher publisher;
     private final MemberCacheRepository memberCacheRepository;
 
@@ -97,5 +101,21 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
 
+    public void signOut(Long userId, String refreshToken) {
+        validateToken(userId, refreshToken);
+        memberCacheRepository.saveAuthenticationKey(userId, refreshToken);
+    }
 
+    public JwtToken refresh(Long userId, String refreshToken) {
+        validateToken(userId, refreshToken);
+        return jwtTokenProvider.refreshToken(refreshToken);
+    }
+
+    private void validateToken(Long userId, String refreshToken) {
+        memberCacheRepository.findAuthenticationKey(userId).ifPresent(key -> {
+            if (key.equals(refreshToken)) {
+                throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "이미 로그아웃된 사용자 입니다.");
+            }
+        });
+    }
 }
