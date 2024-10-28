@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-
     // Common
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러입니다. 관리자에게 문의해주세요."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 요청 입니다. 다시 한번 확인해주세요."),
@@ -15,6 +14,8 @@ public enum ErrorCode {
 
     // Auth,
     EXPIRED_URL(HttpStatus.UNAUTHORIZED, "만료된 링크입니다."),
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다."),
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 
     // AI
     AI_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI 서버 에러입니다. 관리자이게 문의해주세요."),
@@ -22,9 +23,7 @@ public enum ErrorCode {
     // FILE
     FAIL_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 업로드 중 오류가 발생했습니다."),
 
-    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다."),
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다.");
-
+    ;
     private final HttpStatus status;
     private final String message;
 }

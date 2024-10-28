@@ -29,14 +29,8 @@ public class JWTFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
 
-        // * API 요청이 아닌 경우 필터를 건너뛴다.
-        if (!requestURI.startsWith("/api/v1")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // * 인증 관련된 API 요청인 경우 필터를 건너뛴다.
-        if (requestURI.startsWith("/api/v1/auth")) {
+        // * API 요청이 아닌 경우 혹은 인증 관련된 API 요청인 경우 필터를 건너뛴다.
+        if (!requestURI.startsWith("/api/v1") || requestURI.startsWith("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;
         }

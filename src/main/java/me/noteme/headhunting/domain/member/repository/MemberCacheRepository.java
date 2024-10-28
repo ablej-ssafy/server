@@ -42,6 +42,8 @@ public class MemberCacheRepository {
     }
 
     public void deleteAuthenticationKey(Long userId) {
-        valueOps.getOperations().delete(CacheKey.authenticationKey(userId.toString()));
+        valueOps.getOperations().delete(
+                CacheKey.authenticationKey(userId.toString())
+        );
     }
 }

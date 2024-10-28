@@ -20,8 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
-    private final StorageService storageService;
-    private final ApplicationEventPublisher publisher;
 
     /**
      * PDF 파일을 텍스트로 변환합니다.

@@ -74,10 +74,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-
-        String refreshToken = CookieUtils.getCookie(
-                request, REFRESH_TOKEN_COOKIE_NAME
-        ).map(Cookie::getValue).orElse(refreshRequest.getRefreshToken());
+        String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
 
         authService.signOut(userId, refreshToken);
 
@@ -96,10 +93,7 @@ public class AuthController {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
-
-        String refreshToken = CookieUtils.getCookie(
-                request, REFRESH_TOKEN_COOKIE_NAME
-        ).map(Cookie::getValue).orElse(refreshRequest.getRefreshToken());
+        String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
 
         JwtToken token = authService.refresh(userId, refreshToken);
 
@@ -127,5 +121,11 @@ public class AuthController {
 
         authService.resendEmail(request.getEmail());
         return SuccessResponse.empty();
+    }
+
+    private String parseRefreshToken(HttpServletRequest request, String refreshToken) {
+        return CookieUtils.getCookie(
+                request, REFRESH_TOKEN_COOKIE_NAME
+        ).map(Cookie::getValue).orElse(refreshToken);
     }
 }
