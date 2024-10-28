@@ -1,5 +1,6 @@
 package me.noteme.headhunting.common.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import me.noteme.headhunting.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
@@ -9,6 +10,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ErrorResponse extends BaseResponse<Void> {
+    @JsonIgnore
+    protected Object data;
 
     public ErrorResponse(boolean isSuccess, int status, String message, Errors errors) {
         super(isSuccess, status, message);

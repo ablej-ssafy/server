@@ -13,10 +13,12 @@ import me.noteme.headhunting.domain.resume.entity.Resume;
                 @UniqueConstraint(name = "username_unique", columnNames = "username")
         }
 )
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@ToString
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,4 +59,10 @@ public class Member extends BaseEntity {
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private InterestJob interestJob;
+
+    private boolean emailVerified = false;
+
+    public void verify() {
+        emailVerified = true;
+    }
 }
