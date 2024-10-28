@@ -46,7 +46,7 @@ public class MinioStorageService implements StorageService {
                             .build()
             );
         } catch (IOException | MinioException | GeneralSecurityException e) {
-            throw new CustomException(ErrorCode.FAIL_TO_CREATE_FILE);
+            throw new CustomException(ErrorCode.FAIL_UPLOAD);
         }
     }
 
@@ -66,7 +66,7 @@ public class MinioStorageService implements StorageService {
                 return String.format("%s/%s/%s", minioEndpoint, imagesBucketName, fileName);
             }
         }  catch (IOException | MinioException | GeneralSecurityException e) {
-            throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND);
+            throw new CustomException(ErrorCode.FAIL_UPLOAD);
         }
     }
 }

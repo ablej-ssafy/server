@@ -20,7 +20,7 @@ public class PDFToTextConverter {
             pdfStripper.setSortByPosition(true); // 페이지 순서 정렬
             return pdfStripper.getText(document);
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FAIL_TO_CONVERTER_PDF);
+            throw new CustomException(ErrorCode.BAD_REQUEST, "PDF 파일이 아닙니다.");
         }
     }
 }

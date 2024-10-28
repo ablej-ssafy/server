@@ -17,7 +17,7 @@ public class ResumeService {
     public String getText(MultipartFile pdfFile) {
         String pdfFileName = pdfFile.getOriginalFilename();
         if(pdfFileName == null || !pdfFileName.toLowerCase().endsWith(".pdf") || !"application/pdf".equals(pdfFile.getContentType())) {
-            throw new CustomException(ErrorCode.FAIL_TO_CONVERTER_PDF);
+            throw new CustomException(ErrorCode.BAD_REQUEST, "PDF 파일이 아닙니다.");
         }
         return pdfConverter.convertPdfToText(pdfFile);
     }
