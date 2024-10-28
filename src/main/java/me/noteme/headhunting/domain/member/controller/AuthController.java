@@ -8,6 +8,7 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.BaseResponse;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.EmailService;
+import me.noteme.headhunting.domain.member.controller.request.EmailRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignInRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignUpRequest;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
@@ -55,6 +56,19 @@ public class AuthController {
     @GetMapping("/confirm/email/{key}")
     public SuccessResponse<Void> confirmEmail(@PathVariable("key") String key) {
         authService.verify(key);
+        return SuccessResponse.empty();
+    }
+
+    @PostMapping("/resend")
+    public SuccessResponse<Void> resendEmail(
+            @Validated @RequestBody EmailRequest request,
+            Errors errors
+    ){
+        if (errors.hasErrors()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
+        authService.resendEmail(request.getEmail());
         return SuccessResponse.empty();
     }
 }
