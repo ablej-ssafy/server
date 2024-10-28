@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.common.listener.event.SignUpEvent;
+import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
@@ -51,7 +51,7 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
-        publisher.publishEvent(SignUpEvent.of(email, name));
+        publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 
     /**
@@ -62,18 +62,20 @@ public class AuthService {
     @Transactional
     public void verify(String key) {
         String email = memberCacheRepository.findEmailByConfirmKey(key);
-
-        // TODO: 해당 키가 존재하지않는다면 이메일 만료
         if (Objects.isNull(email)) {
             throw new CustomException(ErrorCode.EXPIRED_URL, "이미 만료된 링크입니다.");
         }
 
-        Member member = getMember(email);
-        if (member.isEmailVerified()) {
+        if (memberRepository.findNicknameByUsername(email).isEmpty()) {
             throw new CustomException(ErrorCode.EXPIRED_URL, "이미 처리된 사용자입니다.");
         }
+        memberRepository.verify(email);
+    }
 
-        member.verify();
+    public void resendEmail(String email) {
+        String nickname = memberRepository.findNicknameByUsername(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이미 처리된 사용자입니다."));
+        publisher.publishEvent(ConfirmEmailEvent.of(email, nickname));
     }
 
     public JwtToken signIn(String email, String password) {
@@ -94,4 +96,6 @@ public class AuthService {
         return memberRepository.findByUsername(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
+
+
 }

@@ -2,7 +2,7 @@ package me.noteme.headhunting.common.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.noteme.headhunting.common.listener.event.SignUpEvent;
+import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
 import me.noteme.headhunting.common.service.EmailService;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class SignUpEventListener {
     private final MemberCacheRepository memberCacheRepository;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void sendEmail(SignUpEvent event) {
+    public void sendEmail(ConfirmEmailEvent event) {
         String confirmKey = createConfirmKey();
         emailService.sendConfirmationEmail(event.getEmail(), event.getNickname(), confirmKey);
 

@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SignUpEvent {
+public class ConfirmEmailEvent {
     private String email;
     private String nickname;
 
-    public static SignUpEvent of(String email, String nickname) {
-        return new SignUpEvent(email, nickname);
+    public static ConfirmEmailEvent of(String email, String nickname) {
+        return new ConfirmEmailEvent(email, nickname);
     }
 }
