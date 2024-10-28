@@ -16,8 +16,12 @@ public class MemberCacheRepository {
     @Resource(name = "redisTemplate")
     private ValueOperations<String, String> valueOps;
 
-    public void saveConfirmKey(String confirmKey, String email){
+    public void saveConfirmKey(String confirmKey, String email) {
         String key = CacheKey.confirmKey(confirmKey);
         valueOps.set(key, email, Duration.ofMinutes(5));
+    }
+
+    public String findEmailByConfirmKey(String confirmKey) {
+        return valueOps.get(CacheKey.confirmKey(confirmKey));
     }
 }
