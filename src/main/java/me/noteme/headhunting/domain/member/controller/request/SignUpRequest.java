@@ -24,7 +24,7 @@ public class SignUpRequest {
     private String name;
 
     @Range(min = 0, max = 30, message = "경력은 0년 이상 30년 이하로 입력해주세요.")
-    private int experience;
+    private int careerYear;
 
     private List<Long> jobIds = new ArrayList<>();
 }

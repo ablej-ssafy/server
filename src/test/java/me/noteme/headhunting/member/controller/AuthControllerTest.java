@@ -58,7 +58,7 @@ class AuthControllerTest extends RestDocsSupport {
         request.setEmail("testuser@gmail.com");
         request.setPassword("testpassword");
         request.setName("테스트 유저");
-        request.setExperience(1);
+        request.setCareerYear(1);
         request.setJobIds(jobs);
 
         // * WHEN: 이걸 실행하면
@@ -78,7 +78,7 @@ class AuthControllerTest extends RestDocsSupport {
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
-                                        fieldWithPath("experience").type(JsonFieldType.NUMBER).description("경력"),
+                                        fieldWithPath("careerYear").type(JsonFieldType.NUMBER).description("경력"),
                                         fieldWithPath("jobIds").type(JsonFieldType.ARRAY).description("관심 직무 ID 목록")
                                 ).responseFields()
                                 .build()
@@ -95,7 +95,7 @@ class AuthControllerTest extends RestDocsSupport {
         request.setEmail("testuser");
         request.setPassword("pword");
         request.setName("테스트 유저");
-        request.setExperience(35);
+        request.setCareerYear(35);
         request.setJobIds(new ArrayList<>());
 
         // * WHEN: 이걸 실행하면
@@ -115,7 +115,7 @@ class AuthControllerTest extends RestDocsSupport {
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
-                                        fieldWithPath("experience").type(JsonFieldType.NUMBER).description("경력"),
+                                        fieldWithPath("careerYear").type(JsonFieldType.NUMBER).description("경력"),
                                         fieldWithPath("jobIds").type(JsonFieldType.ARRAY).description("관심 직무 ID 목록")
                                 ).responseFields(errors(
                                         fieldWithPath("errors[].field").type(JsonFieldType.STRING).description("에러 필드"),

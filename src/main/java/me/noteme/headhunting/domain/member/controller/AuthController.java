@@ -63,7 +63,7 @@ public class AuthController {
                 request.getEmail(),
                 request.getPassword(),
                 request.getName(),
-                request.getExperience(),
+                request.getCareerYear(),
                 request.getJobIds()
         );
         return SuccessResponse.empty();

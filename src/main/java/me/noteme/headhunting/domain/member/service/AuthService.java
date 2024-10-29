@@ -44,7 +44,7 @@ public class AuthService {
      * @param name     이름
      */
     @Transactional
-    public void signUp(String email, String password, String name, int experience, List<Long> jobIds) {
+    public void signUp(String email, String password, String name, int careerYear, List<Long> jobIds) {
         if (memberRepository.findByUsername(email).isPresent()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "이미 존재하는 사용자입니다.");
         }
@@ -55,7 +55,7 @@ public class AuthService {
                 .username(email)
                 .password(encodedPassword)
                 .nickname(name)
-                .experience(experience)
+                .career(careerYear)
                 .build();
 
         memberRepository.save(member);
