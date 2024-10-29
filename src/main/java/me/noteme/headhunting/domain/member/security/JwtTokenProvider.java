@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
+    public static final String ACCESS_TOKEN_COOKIE = "accessToken";
     public static final String REFRESH_TOKEN_COOKIE = "refreshToken";
 
     private SecretKey secretKey;

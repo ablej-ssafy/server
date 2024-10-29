@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.utils.CookieUtils;
 import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static me.noteme.headhunting.domain.member.security.CustomAuthorizationRepository.REDIRECT_URI_PARAM_COOKIE;
+import static me.noteme.headhunting.domain.member.security.JwtTokenProvider.ACCESS_TOKEN_COOKIE;
 import static me.noteme.headhunting.domain.member.security.JwtTokenProvider.REFRESH_TOKEN_COOKIE;
 
 @Slf4j
@@ -26,6 +28,9 @@ import static me.noteme.headhunting.domain.member.security.JwtTokenProvider.REFR
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final CustomAuthorizationRepository authorizationRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${jwt.access-expire}")
+    private int accessExpire;
 
     @Value("${jwt.refresh-expire}")
     private int refreshExpire;
@@ -47,6 +52,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         JwtToken jwtToken = jwtTokenProvider.generate(customUserDetails.member().getId(), customUserDetails.getAuthorities());
 
         String redirectURI = determineTargetUrl(request, response, authentication);
+        CookieUtils.addCookie(response, ACCESS_TOKEN_COOKIE, jwtToken.getAccessToken(), accessExpire, true);
         CookieUtils.addCookie(response, REFRESH_TOKEN_COOKIE, jwtToken.getRefreshToken(), refreshExpire, true);
         getRedirectStrategy().sendRedirect(request, response, getRedirectUrl(redirectURI, jwtToken));
     }
