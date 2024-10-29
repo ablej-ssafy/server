@@ -3,7 +3,7 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "educational")
@@ -42,9 +42,20 @@ public class Educational {
     private String description;
 
     @Column(name = "start_at", nullable = false)
-    private LocalDateTime startAt;
+    private LocalDate startAt;
 
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
+
+    public void updateEducational(String name, String major, EducationalType category, String grade, GradeType gradeType, String description, LocalDate startAt, LocalDate endAt) {
+        this.name = name;
+        this.major = major;
+        this.category = category;
+        this.grade = grade;
+        this.gradeType = gradeType;
+        this.description = description;
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
 }
 

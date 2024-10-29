@@ -6,6 +6,8 @@ import java.util.List;
 
 @Data
 public class TechStackRequest {
-    List<String> referenceUrls;
-    List<TechStackRequest> techSkills;
+    private Long resumeId;
+    private List<String> referenceUrls;
+    private List<Long> techSkills;
+    private Long techStackId;
 }

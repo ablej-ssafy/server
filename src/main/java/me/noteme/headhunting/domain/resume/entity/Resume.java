@@ -26,54 +26,10 @@ public class Resume extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id")
-    private Job job;
-
-    /**
-     * 이력서 제목
-     */
-    private String title;
-
-    /**
-     * 이력서에 해당하는 프로필 이미지 주소
-     */
-    @Column(name = "profile_image")
-    private String profileImage;
-
-    /**
-     * 이름
-     */
-    private String name;
-
-    /**
-     * 해당 사용자의 이메일
-     */
-    private String email;
-
-    /**
-     * 생년월일
-     */
-    private LocalDate birth;
-
-    /**
-     * 핸드폰 번호
-     */
-    @Column(length = 11)
-    private String phone;
-
-    /**
-     * 한줄 소개
-     */
-    private String introduce;
-
-    /**
-     * 포트폴리오 URL
-     */
-    @Column(name = "portfolio_url")
-    private String portfolioUrl;
-
     ///////////////////////////
+
+    @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private ResumeBasic resumeBasic;
 
     /**
      * 자격증 테이블(자격증, 어학)

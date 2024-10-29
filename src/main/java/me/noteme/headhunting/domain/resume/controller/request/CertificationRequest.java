@@ -2,17 +2,16 @@ package me.noteme.headhunting.domain.resume.controller.request;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class CertificationRequest {
-    private String name;
-    private String organization;
-    private String credential;
-    private LocalDate acquisitionDate;
-    private String grade;
-    private CertificationType certificationType;
+    @Valid
+    List<CertificationForm> certifications;
 }

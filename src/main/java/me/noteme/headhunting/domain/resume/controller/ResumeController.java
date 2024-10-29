@@ -1,21 +1,17 @@
 package me.noteme.headhunting.domain.resume.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
-import me.noteme.headhunting.domain.resume.controller.request.ResumeRequest;
-import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Objects;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/resume")
@@ -28,16 +24,29 @@ public class ResumeController {
     /**
      * 이력서를 작성합니다.
      */
-    @PostMapping("/")
-    public SuccessResponse<Void> postResumeBase(@RequestPart("file") MultipartFile profile, @RequestBody ResumeRequest request) {
-        // TODO: member_id 받아서 처리
-        long memberId = 1;
-        // TODO: job_id 받아서 처리
-        long jobId = 1;
+    @PostMapping("/basic")
+    public SuccessResponse<Void> postResumeBase(
+            @RequestPart("file") MultipartFile profile,
+            @Validated @RequestBody ResumeBasicRequest request,
+            Errors errors) {
+        if (errors.hasErrors()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
+        }
 
-        resumeService.saveResume(
-                memberId, jobId, profile, request.getTitle(), request.getName(), request.getEmail(), request.getBirth(), request.getPhone(), request.getIntroduce(), request.getPortfolioUrl()
+        resumeService.saveResumeBasic(
+                request.getResumeId(),
+                request.getJobId(),
+                profile,
+                request.getTitle(),
+                request.getName(),
+                request.getEmail(),
+                request.getBirth(),
+                request.getPhone(),
+                request.getIntroduce(),
+                request.getPortfolioUrl(),
+                request.getResumeBasicId()
         );
+
         return SuccessResponse.empty();
     }
 

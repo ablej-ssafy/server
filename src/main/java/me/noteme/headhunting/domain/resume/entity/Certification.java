@@ -3,7 +3,7 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "certification")
@@ -28,7 +28,7 @@ public class Certification {
     private String credential;
 
     @Column(name = "acquisition_at")
-    private LocalDateTime acquisitionAt;
+    private LocalDate acquisitionAt;
 
     private String grade;
 
@@ -36,4 +36,13 @@ public class Certification {
     @Column(name = "certification_type")
     @Builder.Default
     private CertificationType certificationType = CertificationType.QUALIFICATION;
-}
+
+    public void updateCertification(String name, String organization, String credential, LocalDate acquisitionAt, String grade, CertificationType certificationType) {
+        this.name = name;
+        this.organization = organization;
+        this.credential = credential;
+        this.acquisitionAt = acquisitionAt;
+        this.grade = grade;
+        this.certificationType = certificationType;
+    }
+ }

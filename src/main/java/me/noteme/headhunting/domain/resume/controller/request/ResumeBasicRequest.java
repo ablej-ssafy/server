@@ -1,12 +1,13 @@
 package me.noteme.headhunting.domain.resume.controller.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
-public class ResumeRequest {
+public class ResumeBasicRequest {
+    private Long resumeId;
+    private Long jobId;
     private String title;
     private String name;
     private String email;
@@ -14,4 +15,5 @@ public class ResumeRequest {
     private String phone;
     private String introduce;
     private String portfolioUrl;
+    private Long resumeBasicId;
 }

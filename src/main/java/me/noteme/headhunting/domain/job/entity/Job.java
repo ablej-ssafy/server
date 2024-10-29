@@ -2,6 +2,7 @@ package me.noteme.headhunting.domain.job.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.noteme.headhunting.domain.resume.entity.ResumeBasic;
 
 import java.util.List;
 
@@ -22,4 +23,7 @@ public class Job {
 
     @OneToMany(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InterestJob> interestJobs;
+
+    @OneToOne(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private ResumeBasic resumeBasic;
 }

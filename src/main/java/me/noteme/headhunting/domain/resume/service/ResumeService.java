@@ -7,8 +7,9 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.job.entity.Job;
-import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.entity.ResumeBasic;
+import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final EntityManager em;
     private final StorageService storageService;
+    private final ResumeBasicRepository resumeBasicRepository;
 
     public String getText(MultipartFile pdfFile) {
         String pdfFileName = pdfFile.getOriginalFilename();
@@ -33,9 +35,9 @@ public class ResumeService {
     }
 
     @Transactional
-    public void saveResume(Long memberId, Long jobId, MultipartFile profileFile,String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl) {
-        Member member = em.getReference(Member.class, memberId);
-        Job job = em.getReference(Job.class, jobId);
+    public void saveResumeBasic(Long resumeId, Long jobId, MultipartFile profileFile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Long resumeBasicId) {
+        Job job = getJobById(jobId);
+        Resume resume = getResumeById(resumeId);
 
         // TODO: profile 이미지가 존재한다면, 저장 후 UUID 활용한 profileUrl 찾아오기,
         //                  default image url 지정 or null 저장 방식 정하기
@@ -44,8 +46,23 @@ public class ResumeService {
 //        storageService.uploadFile(memberId, profileFile.getOriginalFilename(), profileFile);
 //        String profile = storageService.getFileUrl(memberId, profileFile.getOriginalFilename());
 
-        Resume resume = Resume.builder()
-                .member(member)
+        ResumeBasic resumeBasic = generateResumeBasic(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
+
+        resumeBasicRepository.save(resumeBasic);
+    }
+
+    private Job getJobById(Long jobId) {
+        return em.getReference(Job.class, jobId);
+    }
+
+    private Resume getResumeById(Long resumeId) {
+        return em.getReference(Resume.class, resumeId);
+    }
+
+    private static ResumeBasic generateResumeBasic(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, Job job, String profile) {
+        return ResumeBasic.builder()
+                .id(id)
+                .resume(resume)
                 .job(job)
                 .title(title)
                 .profileImage(profile)
@@ -56,8 +73,6 @@ public class ResumeService {
                 .introduce(introduce)
                 .portfolioUrl(portfolioUrl)
                 .build();
-
-        resumeRepository.save(resume);
     }
 
 }

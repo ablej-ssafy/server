@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class TechSkillRequest {
-    private String iconUrl;
-    private String name;
+    String name;
+    String iconUrl;
 }

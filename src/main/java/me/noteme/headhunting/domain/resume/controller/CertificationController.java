@@ -16,9 +16,11 @@ public class CertificationController {
 
     private final CertificationService certificationService;
 
-    @PostMapping("/{resume}")
+    @PostMapping("/")
     public SuccessResponse<Void> postCertification(@RequestBody CertificationRequest request) {
-        // TODO: MemberId, 이력서 PK 요구사항 검토
+        certificationService.saveAllCertifications(
+                request.getCertifications()
+        );
 
         return SuccessResponse.empty();
     }
