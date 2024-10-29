@@ -20,10 +20,16 @@ public class EmailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void sendEmail(ConfirmEmailEvent event) {
+        log.debug("이메일 전송 로직 시작");
+        double prev = System.currentTimeMillis();
+
         String confirmKey = createConfirmKey();
         emailService.sendConfirmationEmail(event.getEmail(), event.getNickname(), confirmKey);
 
         memberCacheRepository.saveConfirmKey(confirmKey, event.getEmail());
+        log.debug("이메일 전송 로직 종료");
+        double after = System.currentTimeMillis();
+        log.debug("경과 시간 {}", ((after - prev) / 1000));
     }
 
     private String createConfirmKey() {

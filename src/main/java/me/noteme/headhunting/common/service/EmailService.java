@@ -9,6 +9,7 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.context.Context;
@@ -27,6 +28,7 @@ public class EmailService {
     private final String CONFIRM_TITLE = "[AHEY] 회원가입 이메일 인증 안내";
     private final String CONFIRM_VIEW_NAME = "confirm_member_account_mail";
 
+//    @Async("emailSendExecutor")
     public void sendConfirmationEmail(String to, String nickName, String key) {
         Context context = new Context();
         context.setVariable("nickname", nickName);
