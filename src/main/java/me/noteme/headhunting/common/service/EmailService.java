@@ -28,7 +28,7 @@ public class EmailService {
     private final String CONFIRM_TITLE = "[AHEY] 회원가입 이메일 인증 안내";
     private final String CONFIRM_VIEW_NAME = "confirm_member_account_mail";
 
-//    @Async("emailSendExecutor")
+    @Async("emailSendExecutor")
     public void sendConfirmationEmail(String to, String nickName, String key) {
         Context context = new Context();
         context.setVariable("nickname", nickName);
