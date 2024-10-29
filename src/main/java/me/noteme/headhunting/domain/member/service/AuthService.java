@@ -1,11 +1,13 @@
 package me.noteme.headhunting.domain.member.service;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
+import me.noteme.headhunting.domain.job.entity.InterestJob;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import me.noteme.headhunting.common.service.EmailService;
 import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
@@ -27,6 +29,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
+    private final EntityManager em;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final JwtTokenProvider jwtTokenProvider;
@@ -41,7 +44,7 @@ public class AuthService {
      * @param name     이름
      */
     @Transactional
-    public void signUp(String email, String password, String name) {
+    public void signUp(String email, String password, String name, int careerYear, List<Long> jobIds) {
         if (memberRepository.findByUsername(email).isPresent()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "이미 존재하는 사용자입니다.");
         }
@@ -52,9 +55,13 @@ public class AuthService {
                 .username(email)
                 .password(encodedPassword)
                 .nickname(name)
+                .career(careerYear)
                 .build();
 
         memberRepository.save(member);
+
+        jobIds.forEach(jobId -> member.addInterestJob(em.getReference(InterestJob.class, jobId)));
+
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 
