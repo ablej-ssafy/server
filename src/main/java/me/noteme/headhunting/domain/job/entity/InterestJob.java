@@ -20,7 +20,7 @@ public class InterestJob {
     @JoinColumn(name = "job_id")
     private Job job;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

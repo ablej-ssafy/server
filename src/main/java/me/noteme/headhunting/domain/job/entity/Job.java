@@ -17,9 +17,6 @@ public class Job {
     @Column(name = "job_id")
     private Long id;
 
-    @Column(name = "job_title")
-    String jobTitle;
-
-    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InterestJob> interestJobs;
+    @Column(name = "title")
+    private String title;
 }

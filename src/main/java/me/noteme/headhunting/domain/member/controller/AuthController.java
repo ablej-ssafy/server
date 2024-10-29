@@ -56,10 +56,16 @@ public class AuthController {
             Errors errors
     ) {
         if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
+            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
 
-        authService.signUp(request.getEmail(), request.getPassword(), request.getName());
+        authService.signUp(
+                request.getEmail(),
+                request.getPassword(),
+                request.getName(),
+                request.getExperience(),
+                request.getJobIds()
+        );
         return SuccessResponse.empty();
     }
 

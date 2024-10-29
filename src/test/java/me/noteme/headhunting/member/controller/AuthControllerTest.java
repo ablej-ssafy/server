@@ -24,6 +24,9 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,10 +52,14 @@ class AuthControllerTest extends RestDocsSupport {
     @DisplayName("회원가입_정상_테스트")
     void 회원가입_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
+        List<Long> jobs = List.of(1L, 2L, 3L);
+
         SignUpRequest request = new SignUpRequest();
         request.setEmail("testuser@gmail.com");
         request.setPassword("testpassword");
         request.setName("테스트 유저");
+        request.setExperience(1);
+        request.setJobIds(jobs);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/sign-up")
@@ -70,12 +77,54 @@ class AuthControllerTest extends RestDocsSupport {
                                 .requestFields(
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
-                                        fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름")
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
+                                        fieldWithPath("experience").type(JsonFieldType.NUMBER).description("경력"),
+                                        fieldWithPath("jobIds").type(JsonFieldType.ARRAY).description("관심 직무 ID 목록")
                                 ).responseFields()
                                 .build()
                 )));
 
-        verify(authService).signUp(request.getEmail(), request.getPassword(), request.getName());
+        verify(authService).signUp(request.getEmail(), request.getPassword(), request.getName(), 1, jobs);
+    }
+
+    @Test
+    @DisplayName("회원가입_입력_값_에러_테스트")
+    void 회원가입_입력_값_에러_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        SignUpRequest request = new SignUpRequest();
+        request.setEmail("testuser");
+        request.setPassword("pword");
+        request.setName("테스트 유저");
+        request.setExperience(35);
+        request.setJobIds(new ArrayList<>());
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/sign-up")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(request))
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isBadRequest())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("인증")
+                                .summary("회원가입 API")
+                                .description("입력받은 회원 정보로 회원가입을 합니다.")
+                                .requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
+                                        fieldWithPath("experience").type(JsonFieldType.NUMBER).description("경력"),
+                                        fieldWithPath("jobIds").type(JsonFieldType.ARRAY).description("관심 직무 ID 목록")
+                                ).responseFields(errors(
+                                        fieldWithPath("errors[].field").type(JsonFieldType.STRING).description("에러 필드"),
+                                        fieldWithPath("errors[].code").type(JsonFieldType.STRING).description("애러 코드"),
+                                        fieldWithPath("errors[].message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                        fieldWithPath("errors[].objectName").type(JsonFieldType.STRING).description("에러 발생한 객체명")
+                                ))
+                                .build()
+                )));
     }
 
     @Test
