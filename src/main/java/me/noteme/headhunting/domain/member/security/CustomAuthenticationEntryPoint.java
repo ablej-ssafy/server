@@ -1,8 +1,8 @@
 package me.noteme.headhunting.domain.member.security;
 
-import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.ErrorResponse;

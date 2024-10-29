@@ -1,6 +1,6 @@
 package me.noteme.headhunting.core.support;
 
-import com.nimbusds.jose.shaded.gson.Gson;
+import com.google.gson.Gson;
 import me.noteme.headhunting.core.config.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

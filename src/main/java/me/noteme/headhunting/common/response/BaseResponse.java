@@ -8,18 +8,14 @@ import java.util.List;
 
 @Getter
 @ToString
-public abstract class BaseResponse<T> {
+public abstract class BaseResponse {
     private final boolean success;
     private final int code;
     private final String message;
-    protected T data;
-    protected List<CustomError> errors;
 
     public BaseResponse(boolean isSuccess, int code, String message) {
         this.success = isSuccess;
         this.code = code;
         this.message = message;
-        this.data = null;
-        this.errors = new ArrayList<>();
     }
 }
