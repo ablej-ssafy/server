@@ -1,8 +1,9 @@
 package me.noteme.headhunting.domain.resume.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.exception.CustomException;
+import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceRequest;
 import me.noteme.headhunting.domain.resume.service.ExperienceService;
 import org.springframework.validation.Errors;
@@ -23,6 +24,10 @@ public class ExperienceController {
     public SuccessResponse<Void> postExperience(
             @Validated @RequestBody ExperienceRequest request,
             Errors errors) {
+        if (errors.hasErrors()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
+        }
+
         experienceService.saveAllExperience(
                 request.getExperiences()
         );

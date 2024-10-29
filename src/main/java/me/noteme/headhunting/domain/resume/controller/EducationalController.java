@@ -25,7 +25,7 @@ public class EducationalController {
             @Validated @RequestBody EducationalRequest request,
             Errors errors) {
         if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
+            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
 
         educationalService.saveAllEducationals(

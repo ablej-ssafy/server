@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Data
 public class EducationalForm {
-    @NotEmpty
+    @NotEmpty(message = "이력서 번호는 필수값입니다.")
     private Long resumeId;
     private String name;
     private String major;
