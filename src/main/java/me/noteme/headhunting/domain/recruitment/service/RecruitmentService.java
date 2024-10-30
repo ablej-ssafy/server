@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
-import me.noteme.headhunting.domain.job.entity.InterestJob;
+import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.job.entity.Job;
-import me.noteme.headhunting.domain.job.repository.JobRepository;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.recruitment.feign.AIRequestClient;
@@ -33,10 +32,10 @@ public class RecruitmentService {
     private final PDFToTextConverter pdfToTextConverter;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
+    private final StorageService storageService;
 
     public List<RecommendResponse> analyzeResume(Long userId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
-
         // TODO: 비동기 처리
         publisher.publishEvent(FileUploadEvent.of(userId, resumePdf, resumeText));
 
@@ -74,5 +73,9 @@ public class RecruitmentService {
             throw new CustomException(ErrorCode.AI_SERVER_ERROR);
         }
         return companyInfo.getCompanyReport();
+    }
+
+    public String test(String key) {
+        return storageService.getData(key);
     }
 }

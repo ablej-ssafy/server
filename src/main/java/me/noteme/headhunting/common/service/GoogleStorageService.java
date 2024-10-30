@@ -52,8 +52,18 @@ public class GoogleStorageService implements StorageService {
     }
 
     @Override
+    public void uploadFile(Long userId, String fileName, String data) {
+
+    }
+
+    @Override
     public String getFileUrl(Long userId, String fileName) {
         return GoogleStorageConst.BASE_URL + bucketName + "/" + path(userId, fileName);
+    }
+
+    @Override
+    public String getData(String path) {
+        return "";
     }
 
     private String path(Long userId, String fileName) {

@@ -12,25 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class ResumeController {
     private final ResumeService resumeService;
 
-    /**
-     * PDF 파일을 텍스트로 변환합니다.
-     *
-     * @param pdfFile PDF 파일
-     * @return 변환된 텍스트
-     */
+    @Deprecated
     @PostMapping("/convert")
     public SuccessResponse<String> pdfToText(@RequestPart(name = "file") MultipartFile pdfFile) {
-        return SuccessResponse.of(
-                resumeService.getText(pdfFile)
-        );
+        return SuccessResponse.of(resumeService.getText(pdfFile));
     }
 
-    /**
-     * PDF 파일을 업로드합니다.
-     *
-     * @param pdfFile PDF 파일
-     * @return 성공 응답
-     */
+    @Deprecated
     @PostMapping("/pdf")
     public SuccessResponse<Void> uploadPDF(@RequestPart(name = "file") MultipartFile pdfFile) {
         return SuccessResponse.empty();

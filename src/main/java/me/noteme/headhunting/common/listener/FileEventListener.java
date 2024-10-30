@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.common.utils.KeyUtils;
+import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +14,21 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FileEventListener {
     private final StorageService storageService;
+    private final ResumeService resumeService;
 
     @EventListener
     public void handleFileUploadEvent(FileUploadEvent event) {
-        log.debug("업로드 진행 : {}",event.getFile().getOriginalFilename());
-//        storageService.uploadFile(event.getUserId(), "test", event.getFile());
+        String[] fileName = event.getFile().getOriginalFilename().split("\\.");
+        String extension = fileName[fileName.length - 1];
+
+        String key = KeyUtils.generateKey();
+        storageService.uploadFile(event.getUserId(), createFilename(key, extension), event.getFile());
+        storageService.uploadFile(event.getUserId(), key, event.getFileText());
+
+        resumeService.savePdf(event.getUserId(), fileName[0], key);
+    }
+
+    private String createFilename(String key, String extension) {
+        return key + "." + extension;
     }
 }

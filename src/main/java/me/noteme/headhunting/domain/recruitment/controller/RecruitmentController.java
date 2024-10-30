@@ -27,9 +27,25 @@ public class RecruitmentController {
             @LoginUser Long userId,
             MultipartFile file
     ) {
-        return SuccessResponse.of(recruitmentService.analyzeResume(userId, file));
+        return SuccessResponse.of(
+                recruitmentService.analyzeResume(userId, file)
+        );
     }
 
+    @GetMapping("/test/{path}")
+    public SuccessResponse<String> test(
+            @LoginUser Long userId,
+            @PathVariable("path") String path
+    ) {
+        return SuccessResponse.of(
+                recruitmentService.test(userId + "/" + path)
+        );
+    }
+
+    @GetMapping("/download")
+    public SuccessResponse<String> download(){
+        return SuccessResponse.of(null);
+    }
 
     @Deprecated
     @PostMapping("/resume/keywords")
