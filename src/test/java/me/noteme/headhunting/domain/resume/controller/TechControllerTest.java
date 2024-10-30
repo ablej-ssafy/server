@@ -1,7 +1,9 @@
 package me.noteme.headhunting.domain.resume.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.support.RestDocsSupport;
+import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlResponse;
 import me.noteme.headhunting.domain.resume.controller.request.TechSkillRequest;
 import me.noteme.headhunting.domain.resume.controller.request.TechStackRequest;
 import me.noteme.headhunting.domain.resume.service.TechService;
@@ -29,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = TechController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
         }
 )
 public class TechControllerTest extends RestDocsSupport {
@@ -45,7 +47,10 @@ public class TechControllerTest extends RestDocsSupport {
         // * GIVEN: 테스트 요청 데이터 생성
         TechStackRequest request = new TechStackRequest();
         request.setResumeId(1L);
-        request.setReferenceUrls(List.of("https://example.com/project1", "https://example.com/project2"));
+        request.setReferenceUrls(List.of(
+                new ReferenceUrlResponse(1L, "https://example.com/project1"),
+                new ReferenceUrlResponse(2L, "https://example.com/project2")
+        ));
         request.setTechSkills(List.of(1L, 2L));
         request.setTechStackId(1L);
 
@@ -65,6 +70,8 @@ public class TechControllerTest extends RestDocsSupport {
                                 .requestFields(
                                         fieldWithPath("resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("referenceUrls").type(JsonFieldType.ARRAY).optional().description("참조 URL 목록"),
+                                        fieldWithPath("referenceUrls[].id").type(JsonFieldType.NUMBER).description("참조 URL PK"),
+                                        fieldWithPath("referenceUrls[].url").type(JsonFieldType.STRING).description("참조 URL"),
                                         fieldWithPath("techSkills").type(JsonFieldType.ARRAY).optional().description("기술 PK 목록"),
                                         fieldWithPath("techStackId").type(JsonFieldType.NUMBER).optional().description("기술 스택 PK (새로 추가 시 null)")
                                 ).responseFields(empty())
