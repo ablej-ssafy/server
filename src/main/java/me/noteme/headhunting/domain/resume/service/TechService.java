@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.resume.service;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlResponse;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.repository.TechSkillRepository;
 import me.noteme.headhunting.domain.resume.repository.TechStackRepository;
@@ -19,7 +20,7 @@ public class TechService {
 
 
     @Transactional
-    public void saveTechStack(Long resumeId, List<String> urls, List<Long> techSkills, Long techStackId) {
+    public void saveTechStack(Long resumeId, List<ReferenceUrlResponse> urls, List<Long> techSkills, Long techStackId) {
         Resume resume = em.getReference(Resume.class, resumeId);
 
         TechStack techStack = TechStack.builder()
@@ -28,11 +29,13 @@ public class TechService {
                 .build();
 
         List<ReferenceUrl> referenceUrls = urls.stream()
-                .map(url -> ReferenceUrl.builder()
+                .map(dto -> ReferenceUrl.builder()
                         .techStack(techStack)
-                        .url(url)
+                        .id(dto.getId())
+                        .url(dto.getUrl())
                         .build())
                 .toList();
+
         techStack.getReferenceUrls().addAll(referenceUrls);
 
         List<TechSkill> techSkillList = techSkillRepository.findAllById(techSkills);
