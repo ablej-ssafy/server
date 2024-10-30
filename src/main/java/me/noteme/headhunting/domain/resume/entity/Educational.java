@@ -46,5 +46,21 @@ public class Educational {
 
     @Column(name = "end_at")
     private LocalDate endAt;
+
+    public static Educational of(Long educationalId, String name, String major, EducationalType category, String grade,
+                                 GradeType gradeType, String description, LocalDate startAt, LocalDate endAt, Resume resume) {
+        Educational educational = new Educational();
+        educational.id = educationalId;
+        educational.name = name;
+        educational.major = major;
+        educational.category = category;
+        educational.grade = grade;
+        educational.gradeType = gradeType;
+        educational.description = description;
+        educational.startAt = startAt;
+        educational.endAt = endAt;
+        educational.resume = resume;
+        return educational;
+    }
 }
 

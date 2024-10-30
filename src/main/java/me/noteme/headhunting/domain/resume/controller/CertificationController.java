@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/certification")
 @RequiredArgsConstructor
 public class CertificationController {
-
     private final CertificationService certificationService;
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postCertification(
             @Validated @RequestBody CertificationRequest request,
-            Errors errors) {
+            Errors errors
+    ) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }

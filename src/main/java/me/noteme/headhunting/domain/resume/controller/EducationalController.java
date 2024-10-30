@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/educational")
 @RequiredArgsConstructor
 public class EducationalController {
-
     private final EducationalService educationalService;
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postEducational(
             @Validated @RequestBody EducationalRequest request,
-            Errors errors) {
+            Errors errors
+    ) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }

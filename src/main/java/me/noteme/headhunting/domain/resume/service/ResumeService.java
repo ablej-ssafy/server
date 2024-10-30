@@ -38,7 +38,7 @@ public class ResumeService {
         Job job = getJobById(jobId);
         Resume resume = getResumeById(resumeId);
 
-        ResumeBasic resumeBasic = generateResumeBasic(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
+        ResumeBasic resumeBasic = ResumeBasic.of(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
 
         resumeBasicRepository.save(resumeBasic);
     }
@@ -62,22 +62,4 @@ public class ResumeService {
     private Member getMemberById(Long memberId) {
         return em.getReference(Member.class, memberId);
     }
-
-    private static ResumeBasic generateResumeBasic(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, Job job, String profile) {
-        return ResumeBasic.builder()
-                .id(id)
-                .resume(resume)
-                .job(job)
-                .title(title)
-                .profileImage(profile)
-                .name(name)
-                .email(email)
-                .birth(birth)
-                .phone(phone)
-                .introduce(introduce)
-                .portfolioUrl(portfolioUrl)
-                .build();
-    }
-
-
 }

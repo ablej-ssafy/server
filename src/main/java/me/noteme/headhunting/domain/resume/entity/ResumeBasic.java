@@ -56,7 +56,7 @@ public class ResumeBasic {
     /**
      * 핸드폰 번호
      */
-    @Column(length = 11)
+    @Column(length = 13)
     private String phone;
 
     /**
@@ -69,4 +69,20 @@ public class ResumeBasic {
      */
     @Column(name = "portfolio_url")
     private String portfolioUrl;
+
+    public static ResumeBasic of(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, Job job, String profileImage) {
+        return ResumeBasic.builder()
+                .id(id)
+                .title(title)
+                .name(name)
+                .email(email)
+                .birth(birth)
+                .phone(phone)
+                .introduce(introduce)
+                .portfolioUrl(portfolioUrl)
+                .resume(resume)
+                .job(job)
+                .profileImage(profileImage)
+                .build();
+    }
 }

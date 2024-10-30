@@ -33,17 +33,7 @@ public class ExperienceService {
     @Transactional
     public void saveAllExperience(List<ExperienceForm> experienceForms) {
         List<Experience> experiences = experienceForms.stream()
-                .map(form -> generateExperience(
-                        form.getExperienceId(),
-                        form.getExperienceType(),
-                        form.getTitle(),
-                        form.getAffiliation(),
-                        form.getStartAt(),
-                        form.getEndAt(),
-                        form.getDescription(),
-                        form.getReferenceUrl(),
-                        getResumeById(form.getResumeId())
-                ))
+                .map(form -> form.toEntity(getResumeById(form.getResumeId())))
                 .toList();
 
         experienceRepository.saveAll(experiences);

@@ -36,4 +36,17 @@ public class Certification {
     @Column(name = "certification_type")
     @Builder.Default
     private CertificationType certificationType = CertificationType.QUALIFICATION;
+
+    public static Certification of(Long id, String name, String organization, String credential, LocalDate acquisitionAt, String grade, CertificationType certificationType, Resume resume) {
+        Certification certification = new Certification();
+        certification.id = id;
+        certification.name = name;
+        certification.organization = organization;
+        certification.credential = credential;
+        certification.acquisitionAt = acquisitionAt;
+        certification.grade = grade;
+        certification.certificationType = certificationType;
+        certification.resume = resume;
+        return certification;
+    }
  }

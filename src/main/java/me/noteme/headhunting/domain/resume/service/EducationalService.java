@@ -26,7 +26,7 @@ public class EducationalService {
     public void saveEducational(Long resumeId, String name, String major, EducationalType category, String grade, GradeType gradeType, String description, LocalDate startAt, LocalDate endAt, Long educationalId) {
         Resume resume = getResumeById(resumeId);
 
-        Educational educational = generateEducational(educationalId, name, major, category, grade, gradeType, description, startAt, endAt, resume);
+        Educational educational = Educational.of(educationalId, name, major, category, grade, gradeType, description, startAt, endAt, resume);
 
         educationalRepository.save(educational);
     }
@@ -34,18 +34,7 @@ public class EducationalService {
     @Transactional
     public void saveAllEducationals(List<EducationalForm> educationalForms) {
         List<Educational> educationals = educationalForms.stream()
-                .map(form -> generateEducational(
-                        form.getEducationalId(),
-                        form.getName(),
-                        form.getMajor(),
-                        form.getCategory(),
-                        form.getGrade(),
-                        form.getGradeType(),
-                        form.getDescription(),
-                        form.getStartAt(),
-                        form.getEndAt(),
-                        getResumeById(form.getResumeId())
-                ))
+                .map(form -> form.toEntity(getResumeById(form.getResumeId())))
                 .toList();
 
         educationalRepository.saveAll(educationals);
@@ -53,20 +42,5 @@ public class EducationalService {
 
     private Resume getResumeById(Long resumeId) {
         return em.getReference(Resume.class, resumeId);
-    }
-
-    private static Educational generateEducational(Long educationalId, String name, String major, EducationalType category, String grade, GradeType gradeType, String description, LocalDate startAt, LocalDate endAt, Resume resume) {
-        return Educational.builder()
-                .id(educationalId)
-                .resume(resume)
-                .name(name)
-                .major(major)
-                .category(category)
-                .grade(grade)
-                .gradeType(gradeType)
-                .description(description)
-                .startAt(startAt)
-                .endAt(endAt)
-                .build();
     }
 }

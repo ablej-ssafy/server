@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class ReferenceUrlResponse {
     private Long id;
+
     private String url;
 }

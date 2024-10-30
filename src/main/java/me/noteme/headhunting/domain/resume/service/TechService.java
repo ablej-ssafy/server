@@ -18,7 +18,6 @@ public class TechService {
     private final TechStackRepository techStackRepository;
     private final EntityManager em;
 
-
     @Transactional
     public void saveTechStack(Long resumeId, List<ReferenceUrlResponse> urls, List<Long> techSkills, Long techStackId) {
         Resume resume = em.getReference(Resume.class, resumeId);

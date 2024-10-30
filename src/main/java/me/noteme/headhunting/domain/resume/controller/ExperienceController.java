@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class ExperienceController {
     private final ExperienceService experienceService;
 
-
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postExperience(
             @Validated @RequestBody ExperienceRequest request,
-            Errors errors) {
+            Errors errors
+    ) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }

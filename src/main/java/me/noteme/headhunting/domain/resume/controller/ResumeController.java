@@ -38,7 +38,8 @@ public class ResumeController {
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResumeBase(
             @Validated @RequestBody ResumeBasicRequest request,
-            Errors errors) {
+            Errors errors
+    ) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
