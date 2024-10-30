@@ -69,15 +69,4 @@ public class ResumeBasic {
      */
     @Column(name = "portfolio_url")
     private String portfolioUrl;
-
-    public void updateResumeBasic(String title, String profileImage, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl) {
-        this.title = title;
-        this.profileImage = profileImage;
-        this.name = name;
-        this.email = email;
-        this.birth = birth;
-        this.phone = phone;
-        this.introduce = introduce;
-        this.portfolioUrl = portfolioUrl;
-    }
 }

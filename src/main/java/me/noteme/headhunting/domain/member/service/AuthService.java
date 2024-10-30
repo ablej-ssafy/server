@@ -48,11 +48,11 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
-
-        // TODO: 추후 분리 예정 - Spring EventListener
-        // TODO: Key - Redis 저장 Email : Key
-        String confirmKey = getConfirmKey();
-        emailService.sendConfirmationEmail(email, name, confirmKey);
+//
+//        // TODO: 추후 분리 예정 - Spring EventListener
+//        // TODO: Key - Redis 저장 Email : Key
+//        String confirmKey = getConfirmKey();
+//        emailService.sendConfirmationEmail(email, name, confirmKey);
     }
 
     /**

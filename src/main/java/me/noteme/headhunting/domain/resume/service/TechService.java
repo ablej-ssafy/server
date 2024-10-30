@@ -3,15 +3,12 @@ package me.noteme.headhunting.domain.resume.service;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.repository.TechSkillRepository;
 import me.noteme.headhunting.domain.resume.repository.TechStackRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +47,7 @@ public class TechService {
         techStackRepository.save(techStack);
     }
 
+    @Transactional
     public void saveTechSkill(String name, String iconUrl) {
         TechSkill techSkill = TechSkill.builder()
                 .name(name)

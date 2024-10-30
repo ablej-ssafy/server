@@ -31,6 +31,7 @@ public class EducationalService {
         educationalRepository.save(educational);
     }
 
+    @Transactional
     public void saveAllEducationals(List<EducationalForm> educationalForms) {
         List<Educational> educationals = educationalForms.stream()
                 .map(form -> generateEducational(
@@ -46,6 +47,8 @@ public class EducationalService {
                         getResumeById(form.getResumeId())
                 ))
                 .toList();
+
+        educationalRepository.saveAll(educationals);
     }
 
     private Resume getResumeById(Long resumeId) {

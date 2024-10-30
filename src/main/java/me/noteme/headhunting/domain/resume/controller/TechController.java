@@ -7,12 +7,10 @@ import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.resume.controller.request.TechSkillRequest;
 import me.noteme.headhunting.domain.resume.controller.request.TechStackRequest;
 import me.noteme.headhunting.domain.resume.service.TechService;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/tech")
@@ -21,6 +19,7 @@ public class TechController {
     private final TechService techService;
 
     @PostMapping("/stack")
+    @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postTechStack(
             @Validated @RequestBody TechStackRequest request,
             Errors errors) {
@@ -39,6 +38,7 @@ public class TechController {
     }
 
     @PostMapping("/skill")
+    @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postTechSkill(
             @Validated @RequestBody TechSkillRequest request,
             Errors errors

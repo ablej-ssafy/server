@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
@@ -20,6 +21,7 @@ public class ExperienceService {
     private final ExperienceRepository experienceRepository;
     private final EntityManager em;
 
+    @Transactional
     public void saveExperience(Long resumeId, ExperienceType experienceType, String title, String affiliation, LocalDate startAt, LocalDate endAt, String description, String referenceUrl, Long experienceId) {
         Resume resume = getResumeById(resumeId);
 
@@ -28,6 +30,7 @@ public class ExperienceService {
         experienceRepository.save(experience);
     }
 
+    @Transactional
     public void saveAllExperience(List<ExperienceForm> experienceForms) {
         List<Experience> experiences = experienceForms.stream()
                 .map(form -> generateExperience(

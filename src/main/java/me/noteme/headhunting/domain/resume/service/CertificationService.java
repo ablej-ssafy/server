@@ -28,7 +28,9 @@ public class CertificationService {
         certificationRepository.save(certification);
     }
 
+    @Transactional
     public void saveAllCertifications(List<CertificationForm> certificationForms) {
+        // TODO: 자격 정보 저장에 대한 최대 값 검증 로직
         List<Certification> certifications = certificationForms.stream()
                 .map(form -> generateCertification(
                         form.getCertificationId(),

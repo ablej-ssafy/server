@@ -1,0 +1,115 @@
+package me.noteme.headhunting.domain.resume.controller;
+
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.core.support.RestDocsSupport;
+import me.noteme.headhunting.domain.resume.controller.request.TechSkillRequest;
+import me.noteme.headhunting.domain.resume.controller.request.TechStackRequest;
+import me.noteme.headhunting.domain.resume.service.TechService;
+import org.apache.catalina.security.SecurityConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.List;
+
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@DisplayName("이력서 테크 컨트롤러 테스트")
+@WebMvcTest(value = TechController.class,
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
+//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
+        }
+)
+public class TechControllerTest extends RestDocsSupport {
+    @MockBean
+    private TechService techService;
+
+    @Autowired
+    private ResourceLoader loader;
+
+    @Test
+    @DisplayName("기술_스택_업데이트_테스트")
+    void 기술_스택_업데이트_테스트() throws Exception {
+        // * GIVEN: 테스트 요청 데이터 생성
+        TechStackRequest request = new TechStackRequest();
+        request.setResumeId(1L);
+        request.setReferenceUrls(List.of("https://example.com/project1", "https://example.com/project2"));
+        request.setTechSkills(List.of(1L, 2L));
+        request.setTechStackId(1L);
+
+        // * WHEN: API 호출
+        ResultActions actions = this.mockMvc.perform(post("/api/v1/tech/stack")
+                .contentType("application/json")
+                .content(toJson(request))
+        );
+
+        // * THEN: 기대 결과 검증
+        actions.andExpect(status().isCreated())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("기술 스택 생성")
+                                .summary("기술 스택 업데이트 API")
+                                .description("기술 스택 정보를 업데이트합니다.")
+                                .requestFields(
+                                        fieldWithPath("resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
+                                        fieldWithPath("referenceUrls").type(JsonFieldType.ARRAY).optional().description("참조 URL 목록"),
+                                        fieldWithPath("techSkills").type(JsonFieldType.ARRAY).optional().description("기술 PK 목록"),
+                                        fieldWithPath("techStackId").type(JsonFieldType.NUMBER).optional().description("기술 스택 PK (새로 추가 시 null)")
+                                ).responseFields(empty())
+                                .build()
+                )));
+
+        verify(techService).saveTechStack(
+                request.getResumeId(),
+                request.getReferenceUrls(),
+                request.getTechSkills(),
+                request.getTechStackId()
+        );
+    }
+
+    @Test
+    @DisplayName("기술_스킬_업데이트_테스트")
+    void 기술_스킬_업데이트_테스트() throws Exception {
+        // * GIVEN: 테스트 요청 데이터 생성
+        TechSkillRequest request = new TechSkillRequest();
+        request.setName("Java");
+        request.setIconUrl("https://example.com/icon/java.png");
+
+        // * WHEN: API 호출
+        ResultActions actions = this.mockMvc.perform(post("/api/v1/tech/skill")
+                .contentType("application/json")
+                .content(toJson(request))
+        );
+
+        // * THEN: 기대 결과 검증
+        actions.andExpect(status().isCreated())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("기술 스킬 생성")
+                                .summary("기술 스킬 생성 API")
+                                .description("기술 스킬 정보를 추가합니다.")
+                                .requestFields(
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("기술 스킬 이름"),
+                                        fieldWithPath("iconUrl").type(JsonFieldType.STRING).description("기술 스킬 아이콘 URL")
+                                ).responseFields(empty())
+                                .build()
+                )));
+
+        verify(techService).saveTechSkill(
+                request.getName(),
+                request.getIconUrl()
+        );
+    }
+}

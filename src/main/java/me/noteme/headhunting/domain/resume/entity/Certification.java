@@ -36,13 +36,4 @@ public class Certification {
     @Column(name = "certification_type")
     @Builder.Default
     private CertificationType certificationType = CertificationType.QUALIFICATION;
-
-    public void updateCertification(String name, String organization, String credential, LocalDate acquisitionAt, String grade, CertificationType certificationType) {
-        this.name = name;
-        this.organization = organization;
-        this.credential = credential;
-        this.acquisitionAt = acquisitionAt;
-        this.grade = grade;
-        this.certificationType = certificationType;
-    }
  }

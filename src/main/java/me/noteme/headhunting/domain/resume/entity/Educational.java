@@ -46,16 +46,5 @@ public class Educational {
 
     @Column(name = "end_at")
     private LocalDate endAt;
-
-    public void updateEducational(String name, String major, EducationalType category, String grade, GradeType gradeType, String description, LocalDate startAt, LocalDate endAt) {
-        this.name = name;
-        this.major = major;
-        this.category = category;
-        this.grade = grade;
-        this.gradeType = gradeType;
-        this.description = description;
-        this.startAt = startAt;
-        this.endAt = endAt;
-    }
 }
 

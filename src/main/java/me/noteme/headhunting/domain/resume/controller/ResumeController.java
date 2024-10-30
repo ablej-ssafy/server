@@ -8,6 +8,7 @@ import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,25 +19,36 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
-    private final StorageService storageService;
-    private final ApplicationEventPublisher publisher;
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SuccessResponse<Void> postResume() {
+        // TODO: 로그인 된 사용자 이력서 저장
+        long memberId = 1L;
+
+        resumeService.resumeInit(memberId);
+
+        return SuccessResponse.empty();
+    }
 
     /**
      * 이력서를 작성합니다.
      */
     @PostMapping("/basic")
+    @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResumeBase(
-            @RequestPart("file") MultipartFile profile,
             @Validated @RequestBody ResumeBasicRequest request,
             Errors errors) {
         if (errors.hasErrors()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
 
+        // TODO: Profile 업로드 로직 분리
+
         resumeService.saveResumeBasic(
                 request.getResumeId(),
                 request.getJobId(),
-                profile,
+                request.getProfile(),
                 request.getTitle(),
                 request.getName(),
                 request.getEmail(),

@@ -39,14 +39,4 @@ public class Experience {
     private String description;
 
     private String referenceUrl;
-
-    public void updateExperience(ExperienceType experienceType, String title, String affiliation, LocalDate startAt, LocalDate endAt, String description, String referenceUrl) {
-        this.experienceType = experienceType;
-        this.title = title;
-        this.affiliation = affiliation;
-        this.startAt = startAt;
-        this.endAt = endAt;
-        this.description = description;
-        this.referenceUrl = referenceUrl;
-    }
 }

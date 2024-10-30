@@ -6,12 +6,10 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceRequest;
 import me.noteme.headhunting.domain.resume.service.ExperienceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/experience")
@@ -20,7 +18,8 @@ public class ExperienceController {
     private final ExperienceService experienceService;
 
 
-    @PostMapping("/")
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postExperience(
             @Validated @RequestBody ExperienceRequest request,
             Errors errors) {
