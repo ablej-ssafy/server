@@ -44,9 +44,10 @@ public class CustomControllerAdvice {
     }
 
     @ExceptionHandler(CustomException.class)
-    public ErrorResponse handleCustomException(CustomException exception) {
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException exception) {
         log.error("CustomException: {}", exception.getMessage());
         Sentry.captureException(exception);
-        return ErrorResponse.of(exception);
+        return ResponseEntity.status(exception.getErrorCode().getStatus())
+                .body(ErrorResponse.of(exception));
     }
 }

@@ -1,15 +1,15 @@
 package me.noteme.headhunting.common.config;
 
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.domain.member.security.CustomAuthorizationRepository;
-import me.noteme.headhunting.domain.member.security.CustomOAuth2UserService;
-import me.noteme.headhunting.domain.member.security.CustomSuccessHandler;
+import me.noteme.headhunting.common.filter.JWTFilter;
+import me.noteme.headhunting.domain.member.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -21,7 +21,10 @@ import java.util.List;
 public class WebSecurityConfig {
     private final CustomAuthorizationRepository authorizationRepository;
     private final CustomOAuth2UserService oAuth2UserService;
+    private final JWTFilter jwtFilter;
     private final CustomSuccessHandler successHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAuthenticationDeniedHandler authenticationDeniedHandler;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity security) throws Exception {
@@ -31,14 +34,22 @@ public class WebSecurityConfig {
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((auth) -> auth.anyRequest().permitAll())
+                .exceptionHandling(configurer -> configurer
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(authenticationDeniedHandler)
+                )
                 .oauth2Login((oauth2) -> oauth2.authorizationEndpoint(authorization ->
                                         authorization.baseUri("/oauth2/authorization")
                                                 .authorizationRequestRepository(authorizationRepository)
                                 ).redirectionEndpoint(redirect -> redirect.baseUri("/oauth2/code/*"))
                                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                                 .successHandler(successHandler)
+                ).authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/**").authenticated()
+                        .anyRequest().permitAll()
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

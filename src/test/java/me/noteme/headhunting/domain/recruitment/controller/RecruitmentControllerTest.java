@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.recruitment.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = RecruitmentController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
         }
 )
 class RecruitmentControllerTest extends RestDocsSupport {

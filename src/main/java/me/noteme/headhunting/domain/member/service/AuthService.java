@@ -1,14 +1,21 @@
 package me.noteme.headhunting.domain.member.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
+import me.noteme.headhunting.domain.job.entity.InterestJob;
+import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import me.noteme.headhunting.common.service.EmailService;
+import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,9 +29,12 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AuthService {
     private final MemberRepository memberRepository;
+    private final EntityManager em;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
-    private final EmailService emailService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ApplicationEventPublisher publisher;
+    private final MemberCacheRepository memberCacheRepository;
 
     /**
      * 회원 가입 로직
@@ -34,9 +44,9 @@ public class AuthService {
      * @param name     이름
      */
     @Transactional
-    public void signUp(String email, String password, String name) {
+    public void signUp(String email, String password, String name, int careerYear, List<Long> jobIds) {
         if (memberRepository.findByUsername(email).isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+            throw new CustomException(ErrorCode.BAD_REQUEST, "이미 존재하는 사용자입니다.");
         }
 
         String encodedPassword = passwordEncoder.encode(password);
@@ -45,14 +55,14 @@ public class AuthService {
                 .username(email)
                 .password(encodedPassword)
                 .nickname(name)
+                .career(careerYear)
                 .build();
 
         memberRepository.save(member);
-//
-//        // TODO: 추후 분리 예정 - Spring EventListener
-//        // TODO: Key - Redis 저장 Email : Key
-//        String confirmKey = getConfirmKey();
-//        emailService.sendConfirmationEmail(email, name, confirmKey);
+
+        jobIds.forEach(jobId -> member.addInterestJob(em.getReference(InterestJob.class, jobId)));
+
+        publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 
     /**
@@ -62,20 +72,21 @@ public class AuthService {
      */
     @Transactional
     public void verify(String key) {
-        // TODO: 키를 통해 이메일을 가져온다.
-        String email = key;
-
-        // TODO: 해당 키가 존재하지않는다면 이메일 만료
+        String email = memberCacheRepository.findEmailByConfirmKey(key);
         if (Objects.isNull(email)) {
             throw new CustomException(ErrorCode.EXPIRED_URL, "이미 만료된 링크입니다.");
         }
 
-        Member member = getMember(email);
-        if (member.isEmailVerified()) {
+        if (memberRepository.findNicknameByUsername(email).isEmpty()) {
             throw new CustomException(ErrorCode.EXPIRED_URL, "이미 처리된 사용자입니다.");
         }
+        memberRepository.verify(email);
+    }
 
-        member.verify();
+    public void resendEmail(String email) {
+        String nickname = memberRepository.findNicknameByUsername(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이미 처리된 사용자입니다."));
+        publisher.publishEvent(ConfirmEmailEvent.of(email, nickname));
     }
 
     public JwtToken signIn(String email, String password) {
@@ -97,8 +108,21 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
 
-    // TODO: 추후 분리 예정 - Spring EventListener
-    private String getConfirmKey() {
-        return UUID.randomUUID().toString().substring(0, 15);
+    public void signOut(Long userId, String refreshToken) {
+        validateToken(userId, refreshToken);
+        memberCacheRepository.saveAuthenticationKey(userId, refreshToken);
+    }
+
+    public JwtToken refresh(Long userId, String refreshToken) {
+        validateToken(userId, refreshToken);
+        return jwtTokenProvider.refreshToken(refreshToken);
+    }
+
+    private void validateToken(Long userId, String refreshToken) {
+        memberCacheRepository.findAuthenticationKey(userId).ifPresent(key -> {
+            if (key.equals(refreshToken)) {
+                throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "이미 로그아웃된 사용자 입니다.");
+            }
+        });
     }
 }
