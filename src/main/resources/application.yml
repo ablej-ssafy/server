@@ -59,21 +59,21 @@ spring:
     cache: false
     template-resolver-order: 0
 
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 sentry:
   dsn: ${sentry_dsn}
   traces-sample-rate: 1.0
   exception-resolver-order: -2147483647
   environment: development # 개발시
-#  environment: production # 배포시
 
 logging:
   level:
     me.noteme: DEBUG
 
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
       max-file-size: 10MB
