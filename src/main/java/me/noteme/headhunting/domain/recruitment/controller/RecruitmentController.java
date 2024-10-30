@@ -32,16 +32,7 @@ public class RecruitmentController {
         );
     }
 
-    @GetMapping("/test/{path}")
-    public SuccessResponse<String> test(
-            @LoginUser Long userId,
-            @PathVariable("path") String path
-    ) {
-        return SuccessResponse.of(
-                recruitmentService.test(userId + "/" + path)
-        );
-    }
-
+    // TODO: 추후 PreSignedUrl 구현
     @GetMapping("/download")
     public SuccessResponse<String> download(){
         return SuccessResponse.of(null);

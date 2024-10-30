@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Profile("prod")
 @Component
@@ -53,7 +54,20 @@ public class GoogleStorageService implements StorageService {
 
     @Override
     public void uploadFile(Long userId, String fileName, String data) {
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
+                    .getService();
 
+            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(userId, fileName))
+                    .setContentType("text/plain")
+                    .build();
+
+            storage.create(blob, data.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+        }
     }
 
     @Override
@@ -63,7 +77,19 @@ public class GoogleStorageService implements StorageService {
 
     @Override
     public String getData(String path) {
-        return "";
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
+                    .getService();
+
+            return new String(
+                    storage.readAllBytes(bucketName, path),
+                    StandardCharsets.UTF_8
+            );
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+        }
     }
 
     private String path(Long userId, String fileName) {
