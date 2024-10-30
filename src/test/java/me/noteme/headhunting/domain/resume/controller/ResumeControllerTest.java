@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.resume.controller;
 import com.epages.restdocs.apispec.FieldDescriptors;
 import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.AuthController;
@@ -36,15 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = ResumeController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
-//                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
         }
 )
 class ResumeControllerTest extends RestDocsSupport {
     @MockBean
     private ResumeService resumeService;
-
-    @MockBean
-    private StorageService storageService;
 
     @Autowired
     private ResourceLoader loader;

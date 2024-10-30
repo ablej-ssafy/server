@@ -1,13 +1,13 @@
 package me.noteme.headhunting.common.listener;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileEventListener {
     private final StorageService storageService;
 

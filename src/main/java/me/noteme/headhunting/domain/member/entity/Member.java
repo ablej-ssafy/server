@@ -6,6 +6,9 @@ import me.noteme.headhunting.common.entity.BaseEntity;
 import me.noteme.headhunting.domain.job.entity.InterestJob;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(
         name = "member",
@@ -36,7 +39,9 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image")
     private String profileImage;
 
-    private int career;
+    @Column(nullable = false)
+    @Builder.Default
+    private int career = 0;
 
     @Column(name = "email_verified", nullable = false)
     @Builder.Default
@@ -52,15 +57,18 @@ public class Member extends BaseEntity {
     @Builder.Default
     private ProviderType providerType = ProviderType.LOCAL;
 
-    //////////////////////////////
-
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Resume resume;
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private InterestJob interestJob;
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<InterestJob> interestJobs = new ArrayList<>();
 
     public void verify() {
         emailVerified = true;
+    }
+
+    public void addInterestJob(InterestJob interestJob) {
+        interestJobs.add(interestJob);
     }
 }
