@@ -6,11 +6,11 @@ import lombok.Data;
 public class RecommendResponse {
     private int jobPostingId;
     private String jobPostingTitle;
-    private String jobPostingContents;
+    private String jobPostingContent;
     private String company;
     private String companyLocation;
     private String careerYear;
+
     private String jobTitle;
-    private boolean isClose;
-    private long successPossibility;
+    private Integer jobTitleId;
 }

@@ -3,8 +3,6 @@ package me.noteme.headhunting.domain.job.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "job")
 @Getter

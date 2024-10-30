@@ -9,13 +9,26 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    @Query("SELECT m FROM Member m WHERE m.username = :username")
+    @Query("SELECT m " +
+            "FROM Member m " +
+            "WHERE m.username = :username")
     Optional<Member> findByUsername(@Param("username") String username);
 
-    @Query("SELECT m.nickname FROM Member m WHERE m.username = :username AND m.emailVerified = FALSE")
+    @Query("SELECT m.nickname " +
+            "FROM Member m " +
+            "WHERE m.username = :username " +
+            "AND m.emailVerified = FALSE")
     Optional<String> findNicknameByUsername(String username);
 
     @Modifying
-    @Query("UPDATE Member m SET m.emailVerified = true WHERE m.username = :username")
+    @Query("UPDATE Member m " +
+            "SET m.emailVerified = true " +
+            "WHERE m.username = :username")
     void verify(@Param("username") String email);
+
+    @Query("SELECT m FROM Member m " +
+            "JOIN FETCH m.interestJobs ij " +
+            "JOIN FETCH ij.job " +
+            "WHERE m.id = :userId ")
+    Optional<Member> findFetchById(@Param("userId") long userId);
 }

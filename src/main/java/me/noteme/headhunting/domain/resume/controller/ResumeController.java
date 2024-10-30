@@ -1,19 +1,10 @@
 package me.noteme.headhunting.domain.resume.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Objects;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/resume")

@@ -8,6 +8,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @FeignClient(name = "AIRequestClient", url = "${app.ai-base-url}")
 public interface AIRequestClient {
 
@@ -22,7 +24,5 @@ public interface AIRequestClient {
      * 요청 Type 2가지 분류
      */
     @PostMapping("/job-postings/recommend")
-    AbleJResponse<RecommendResponse> getResumeRecommend(@RequestBody JobRecommendRequest request);
-//    AbleJResponse<ResumeFitnessResponse> getJobRecommend(@RequestBody JobRecommendRequest request);
-
+    AbleJResponse<List<RecommendResponse>> getResumeRecommend(@RequestBody JobRecommendRequest request);
 }
