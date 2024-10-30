@@ -1,25 +1,67 @@
 package me.noteme.headhunting.domain.resume.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Objects;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/resume")
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SuccessResponse<Void> postResume() {
+        // TODO: 로그인 된 사용자 이력서 저장
+        long memberId = 1L;
+
+        resumeService.resumeInit(memberId);
+
+        return SuccessResponse.empty();
+    }
+
+    /**
+     * 이력서를 작성합니다.
+     */
+    @PostMapping("/basic")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SuccessResponse<Void> postResumeBase(
+            @Validated @RequestBody ResumeBasicRequest request,
+            Errors errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
+        }
+
+        // TODO: Profile 업로드 로직 분리
+
+        resumeService.saveResumeBasic(
+                request.getResumeId(),
+                request.getJobId(),
+                request.getProfile(),
+                request.getTitle(),
+                request.getName(),
+                request.getEmail(),
+                request.getBirth(),
+                request.getPhone(),
+                request.getIntroduce(),
+                request.getPortfolioUrl(),
+                request.getResumeBasicId()
+        );
+
+        return SuccessResponse.empty();
+    }
 
     /**
      * PDF 파일을 텍스트로 변환합니다.

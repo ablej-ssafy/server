@@ -3,7 +3,7 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "certification")
@@ -28,11 +28,25 @@ public class Certification {
     private String credential;
 
     @Column(name = "acquisition_at")
-    private LocalDateTime acquisitionAt;
+    private LocalDate acquisitionAt;
 
     private String grade;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "certification_type")
-    private CertificationType certificationType;
-}
+    @Builder.Default
+    private CertificationType certificationType = CertificationType.QUALIFICATION;
+
+    public static Certification of(Long id, String name, String organization, String credential, LocalDate acquisitionAt, String grade, CertificationType certificationType, Resume resume) {
+        Certification certification = new Certification();
+        certification.id = id;
+        certification.name = name;
+        certification.organization = organization;
+        certification.credential = credential;
+        certification.acquisitionAt = acquisitionAt;
+        certification.grade = grade;
+        certification.certificationType = certificationType;
+        certification.resume = resume;
+        return certification;
+    }
+ }

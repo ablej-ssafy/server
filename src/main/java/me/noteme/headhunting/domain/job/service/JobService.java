@@ -16,7 +16,7 @@ public class JobService {
 
     public List<JobResponse> getJobs() {
         return jobRepository.findAll().stream()
-                .map(job -> JobResponse.of(job.getId(), job.getTitle()))
+                .map(job -> JobResponse.of(job.getId(), job.getJobTitle()))
                 .toList();
     }
 }
