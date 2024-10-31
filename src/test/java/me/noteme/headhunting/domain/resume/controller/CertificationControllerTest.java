@@ -1,10 +1,13 @@
 package me.noteme.headhunting.domain.resume.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
+import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationRequest;
+import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.service.CertificationService;
 import org.apache.catalina.security.SecurityConfig;
@@ -22,8 +25,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,8 +54,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         CertificationRequest request = new CertificationRequest();
         List<CertificationForm> certificationForms = List.of(
-                new CertificationForm(1L, "자격증 이름", "발행 기관", "인증 번호", LocalDate.of(2020, 5, 20), "A", CertificationType.QUALIFICATION, 1L),
-                new CertificationForm(1L, "어학 이름", "발행 기관", "인증 번호", LocalDate.of(2019, 8, 15), "B", CertificationType.LANGUAGE, 2L)
+                CertificationForm.of(1L, "자격증 이름", "발행 기관", "인증 번호", LocalDate.of(2020, 5, 20), "A", CertificationType.QUALIFICATION, 1L),
+                CertificationForm.of(1L, "어학 이름", "발행 기관", "인증 번호", LocalDate.of(2019, 8, 15), "B", CertificationType.LANGUAGE, 2L)
         );
         request.setCertifications(certificationForms);
 
@@ -82,5 +88,100 @@ public class CertificationControllerTest extends RestDocsSupport {
                 )));
 
         verify(certificationService).saveAllCertifications(request.getCertifications());
+    }
+
+    @Test
+    @DisplayName("전체_자격증_조회_테스트")
+    @CustomMockUser
+    void 전체_자격증_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+        CertificationForm certificationForm = CertificationForm.of(
+                1L,
+                "정보처리기사",
+                "한국산업인력공단",
+                "12345678",
+                LocalDate.of(2022, 5, 1),
+                "1급",
+                CertificationType.QUALIFICATION,
+                10L
+        );
+
+        CertificationResponse mockResponse = new CertificationResponse(List.of(certificationForm));
+        when(certificationService.getCertifications(userId, null))
+                .thenReturn(mockResponse);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                get("/api/v1/certification")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("자격 정보 전체 조회")
+                                .summary("로그인 사용자 기반 자격 정보 조회 API")
+                                .description("로그인 한 사용자가 작성한 자격 정보를 조회합니다.")
+                                .responseFields(response(
+                                        fieldWithPath("data.certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
+                                        fieldWithPath("data.certifications[].name").type(JsonFieldType.STRING).description("자격증 이름"),
+                                        fieldWithPath("data.certifications[].organization").type(JsonFieldType.STRING).description("발급 기관"),
+                                        fieldWithPath("data.certifications[].credential").type(JsonFieldType.STRING).description("자격 번호"),
+                                        fieldWithPath("data.certifications[].acquisitionAt").type(JsonFieldType.STRING).description("취득 날짜"),
+                                        fieldWithPath("data.certifications[].grade").type(JsonFieldType.STRING).description("등급"),
+                                        fieldWithPath("data.certifications[].certificationType").type(JsonFieldType.STRING).description("자격증 유형"),
+                                        fieldWithPath("data.certifications[].certificationId").type(JsonFieldType.NUMBER).description("자격증 PK")
+                                )).build()
+                )));
+    }
+
+    @Test
+    @DisplayName("자격증_타입지정_정보_전체_조회")
+    @CustomMockUser
+    void 자격증_타입지정_정보_전체_조회() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+        CertificationForm certificationForm = CertificationForm.of(
+                1L,
+                "정보처리기사",
+                "한국산업인력공단",
+                "12345678",
+                LocalDate.of(2022, 5, 1),
+                "1급",
+                CertificationType.LANGUAGE,
+                10L
+        );
+
+        CertificationResponse mockResponse = new CertificationResponse(List.of(certificationForm));
+        when(certificationService.getCertifications(userId, CertificationType.LANGUAGE.toString()))
+                .thenReturn(mockResponse);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                get("/api/v1/certification").queryParam("type", CertificationType.LANGUAGE.toString())
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("자격(어학) 정보 전체 조회")
+                                .summary("로그인 사용자 기반 어학 정보 조회 API")
+                                .description("로그인 한 사용자가 작성한 자격 정보(어학)를 조회합니다.")
+                                .queryParameters(
+                                        parameterWithName("type").description("조회할 자격 유형을 작성합니다. (예: language, qualification")
+                                )
+                                .responseFields(response(
+                                        fieldWithPath("data.certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
+                                        fieldWithPath("data.certifications[].name").type(JsonFieldType.STRING).description("자격증 이름"),
+                                        fieldWithPath("data.certifications[].organization").type(JsonFieldType.STRING).description("발급 기관"),
+                                        fieldWithPath("data.certifications[].credential").type(JsonFieldType.STRING).description("자격 번호"),
+                                        fieldWithPath("data.certifications[].acquisitionAt").type(JsonFieldType.STRING).description("취득 날짜"),
+                                        fieldWithPath("data.certifications[].grade").type(JsonFieldType.STRING).description("등급"),
+                                        fieldWithPath("data.certifications[].certificationType").type(JsonFieldType.STRING).description("자격증 유형(어학)"),
+                                        fieldWithPath("data.certifications[].certificationId").type(JsonFieldType.NUMBER).description("자격증 PK")
+                                )).build()
+                )));
     }
 }

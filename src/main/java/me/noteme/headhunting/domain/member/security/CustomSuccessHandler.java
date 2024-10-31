@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.utils.CookieUtils;
 import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
