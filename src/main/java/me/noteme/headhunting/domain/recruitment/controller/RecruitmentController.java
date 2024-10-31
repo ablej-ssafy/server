@@ -5,6 +5,7 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
 import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1/recruitment")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
+    private final StorageService storageService;
 
     @PostMapping("/recommend")
     public SuccessResponse<List<RecommendResponse>> analyzeResume(
@@ -34,7 +36,7 @@ public class RecruitmentController {
 
     // TODO: 추후 PreSignedUrl 구현
     @GetMapping("/download")
-    public SuccessResponse<String> download(){
+    public SuccessResponse<String> download() {
         return SuccessResponse.of(null);
     }
 

@@ -48,7 +48,7 @@ public class GoogleStorageService implements StorageService {
 
             storage.create(blob, file.getInputStream().readAllBytes());
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+            throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 
@@ -66,7 +66,7 @@ public class GoogleStorageService implements StorageService {
 
             storage.create(blob, data.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+            throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 
@@ -88,7 +88,21 @@ public class GoogleStorageService implements StorageService {
                     StandardCharsets.UTF_8
             );
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    @Override
+    public void delete(String path) {
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
+                    .getService();
+
+            storage.delete(bucketName, path);
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 

@@ -21,8 +21,7 @@ public enum ErrorCode {
     AI_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI 서버 에러입니다. 관리자이게 문의해주세요."),
 
     // FILE
-    FAIL_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 업로드 중 오류가 발생했습니다."),
-
+    FILE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PDF 업로드 중 오류가 발생했습니다."),
     ;
     private final HttpStatus status;
     private final String message;

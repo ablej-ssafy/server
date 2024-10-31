@@ -11,4 +11,6 @@ public interface StorageService {
     String getFileUrl(Long userId, String fileName);
 
     String getData(String path);
+
+    void delete(String path);
 }
