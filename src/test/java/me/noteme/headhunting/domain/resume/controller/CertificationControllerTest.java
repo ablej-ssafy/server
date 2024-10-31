@@ -107,7 +107,7 @@ public class CertificationControllerTest extends RestDocsSupport {
                 10L
         );
 
-        CertificationResponse mockResponse = new CertificationResponse(List.of(certificationForm));
+        CertificationResponse mockResponse = CertificationResponse.of(List.of(certificationForm));
         when(certificationService.getCertifications(userId, null))
                 .thenReturn(mockResponse);
 
@@ -153,7 +153,7 @@ public class CertificationControllerTest extends RestDocsSupport {
                 10L
         );
 
-        CertificationResponse mockResponse = new CertificationResponse(List.of(certificationForm));
+        CertificationResponse mockResponse = CertificationResponse.of(List.of(certificationForm));
         when(certificationService.getCertifications(userId, CertificationType.LANGUAGE.toString()))
                 .thenReturn(mockResponse);
 
