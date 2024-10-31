@@ -1,17 +1,18 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlResponse;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.repository.TechSkillRepository;
 import me.noteme.headhunting.domain.resume.repository.TechStackRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TechService {
     private final TechSkillRepository techSkillRepository;

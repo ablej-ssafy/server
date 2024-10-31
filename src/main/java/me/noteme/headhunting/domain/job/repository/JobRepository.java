@@ -1,6 +1,5 @@
 package me.noteme.headhunting.domain.job.repository;
 
-import me.noteme.headhunting.domain.job.entity.InterestJob;
 import me.noteme.headhunting.domain.job.entity.Job;
 import org.springframework.data.jpa.repository.JpaRepository;
 

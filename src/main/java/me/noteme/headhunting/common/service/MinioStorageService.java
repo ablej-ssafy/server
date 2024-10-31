@@ -1,26 +1,27 @@
 package me.noteme.headhunting.common.service;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Profile("dev")
-@Component
+@Service
 @RequiredArgsConstructor
 public class MinioStorageService implements StorageService {
     private final MinioClient minioClient;
@@ -36,37 +37,100 @@ public class MinioStorageService implements StorageService {
 
     @Override
     public void uploadFile(Long userId, String fileName, MultipartFile file) {
+        try (InputStream inputStream = file.getInputStream()) {
+            String contentType = file.getContentType();
+            String bucketName = fileName.toLowerCase().endsWith(".pdf") ? resumeBucketName : imagesBucketName;
+
+            upload(userId, fileName, inputStream, contentType, bucketName, file.getSize());
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    @Override
+    public void uploadFile(Long userId, String fileName, String data) {
+        byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
+        try (InputStream inputStream = new ByteArrayInputStream(dataBytes)) {
+            upload(userId, fileName, inputStream, "text/plain", resumeBucketName, dataBytes.length);
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    private void upload(Long userId, String fileName, InputStream inputStream, String contentType, String bucketName, long size) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket(Objects.requireNonNull(fileName).toLowerCase().endsWith(".pdf") ? resumeBucketName : imagesBucketName)
-                            .object(fileName)
-                            .stream(file.getInputStream(), file.getSize(), -1)
-                            .contentType(file.getContentType())
+                            .bucket(bucketName)
+                            .object(path(userId, fileName))
+                            .stream(inputStream, size, -1)
+                            .contentType(contentType)
                             .build()
             );
-        } catch (IOException | MinioException | GeneralSecurityException e) {
-            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+        } catch (MinioException | GeneralSecurityException | IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 
     @Override
     public String getFileUrl(Long userId, String fileName) {
         try {
-            if (Objects.requireNonNull(fileName).toLowerCase().endsWith(".pdf")) {
-                return minioClient.getPresignedObjectUrl(
-                        GetPresignedObjectUrlArgs.builder()
-                                .bucket(resumeBucketName)
-                                .object(fileName)
-                                .method(Method.GET)
-                                .expiry(2, TimeUnit.HOURS)
-                                .build()
-                );
-            } else {
+            if (!fileName.toLowerCase().endsWith(".pdf")) {
                 return String.format("%s/%s/%s", minioEndpoint, imagesBucketName, fileName);
             }
-        }  catch (IOException | MinioException | GeneralSecurityException e) {
-            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .bucket(resumeBucketName)
+                            .object(path(userId, fileName))
+                            .method(Method.GET)
+                            .expiry(2, TimeUnit.HOURS)
+                            .build()
+            );
+        } catch (IOException | MinioException | GeneralSecurityException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    @Override
+    public String getData(String path) {
+        try (GetObjectResponse response = minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(resumeBucketName)
+                        .object(path)
+                        .build())) {
+            return new String(response.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (MinioException | IOException | GeneralSecurityException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    @Override
+    public void delete(String path) {
+        log.debug("삭제 {}", path);
+        try {
+            String bucketName = getBucketName(path);
+
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(path)
+                            .build()
+            );
+        } catch (MinioException | IOException | GeneralSecurityException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR, "파일 삭제 중 문제가 생겼습니다.");
+        }
+    }
+
+    private String path(Long userId, String fileName) {
+        return String.format("%s/%s", userId, fileName);
+    }
+
+    private String getBucketName(String path) {
+        if (path.endsWith(".pdf") || !path.contains(".")) {
+            return resumeBucketName;
+        } else {
+            return imagesBucketName;
         }
     }
 }

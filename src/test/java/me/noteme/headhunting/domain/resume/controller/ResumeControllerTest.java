@@ -1,10 +1,8 @@
 package me.noteme.headhunting.domain.resume.controller;
 
-import com.epages.restdocs.apispec.FieldDescriptors;
-import com.epages.restdocs.apispec.ParameterDescriptorWithType;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
-import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.AuthController;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
@@ -136,32 +134,6 @@ class ResumeControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("이력서_PDF_업로드_테스트")
-    void 이력서_PDF_업로드_테스트() throws Exception {
-        // * GIVEN: 이런게 주어졌을 때
-        String fileName = "resume.pdf";
-        Resource source = loader.getResource("classpath:/media/" + fileName);
-        MockMultipartFile file = new MockMultipartFile("file", fileName, "application/pdf", source.getInputStream());
-
-        // * WHEN: 이걸 실행하면
-        ResultActions actions = this.mockMvc.perform(multipart("/api/v1/resume/pdf")
-                        .file(file)
-                        .contentType("multipart/form-data")
-        );
-
-        // * THEN: 이런 결과가 나와야 한다
-        actions.andExpect(status().isOk())
-                .andDo(restDocs.document(resource(
-                        ResourceSnippetParameters.builder()
-                                .tag("이력서 관리")
-                                .summary("이력서 PDF 업로드 API")
-                                .description("PDF 파일을 업로드합니다.")
-                                .responseFields(empty())
-                                .build()
-                )));
-    }
-
-    @Test
     @DisplayName("이력서_PDF_문자열_변환_테스트")
     void 이력서_PDF_문자열_변환_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
@@ -189,8 +161,6 @@ class ResumeControllerTest extends RestDocsSupport {
                                 )).build()
                 )));
     }
-
-
 
 //    @Test
 //    @DisplayName("이력서_PDF_다운로드_링크_테스트")

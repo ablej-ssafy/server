@@ -7,7 +7,6 @@ import java.util.Objects;
 
 @Getter
 public class CustomException extends RuntimeException{
-
     private final ErrorCode errorCode;
     private final Errors errors;
 

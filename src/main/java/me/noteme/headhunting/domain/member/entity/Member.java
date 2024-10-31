@@ -16,7 +16,6 @@ import java.util.List;
                 @UniqueConstraint(name = "username_unique", columnNames = "username")
         }
 )
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -56,9 +55,6 @@ public class Member extends BaseEntity {
     @Column(name = "provider_type", nullable = false)
     @Builder.Default
     private ProviderType providerType = ProviderType.LOCAL;
-
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Resume resume;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
