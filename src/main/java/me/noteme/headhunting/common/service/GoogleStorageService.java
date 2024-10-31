@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Profile("prod")
 @Component
@@ -47,13 +48,62 @@ public class GoogleStorageService implements StorageService {
 
             storage.create(blob, file.getInputStream().readAllBytes());
         } catch (IOException e) {
-            throw new CustomException(ErrorCode.FAIL_UPLOAD);
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    @Override
+    public void uploadFile(Long userId, String fileName, String data) {
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
+                    .getService();
+
+            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(userId, fileName))
+                    .setContentType("text/plain")
+                    .build();
+
+            storage.create(blob, data.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 
     @Override
     public String getFileUrl(Long userId, String fileName) {
         return GoogleStorageConst.BASE_URL + bucketName + "/" + path(userId, fileName);
+    }
+
+    @Override
+    public String getData(String path) {
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
+                    .getService();
+
+            return new String(
+                    storage.readAllBytes(bucketName, path),
+                    StandardCharsets.UTF_8
+            );
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
+    }
+
+    @Override
+    public void delete(String path) {
+        try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
+            Storage storage = StorageOptions.newBuilder()
+                    .setCredentials(GoogleCredentials.fromStream(stream))
+                    .build()
+                    .getService();
+
+            storage.delete(bucketName, path);
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_ERROR);
+        }
     }
 
     private String path(Long userId, String fileName) {

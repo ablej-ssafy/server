@@ -9,9 +9,32 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CertificationRepository extends JpaRepository<Certification, Long> {
-    @Query("SELECT c FROM Certification c WHERE c.resume.id = :resumeId ORDER BY c.id ASC")
+    @Query("""
+        SELECT c
+        FROM Certification c
+        WHERE c.resume.id = :resumeId
+        ORDER BY c.id ASC
+    """)
     List<Certification> findAllByResumeId(@Param("resumeId") Long resumeId);
 
-    @Query("SELECT c FROM Certification c WHERE c.resume.id = :resumeId and c.certificationType = :type ORDER BY c.id ASC")
-    List<Certification> findAllCategoryByResumeId(@Param("resumeId") Long resumeId, @Param("type") CertificationType type);
+    @Query("""
+        SELECT c
+        FROM Certification c
+        JOIN Resume r
+        ON r.id = c.resume.id
+        WHERE r.member.id = :memberId
+        ORDER BY c.id ASC
+    """)
+    List<Certification> findAllByMemberId(@Param("memberId") Long memberId);
+
+    @Query("""
+        SELECT c
+        FROM Certification c
+        JOIN Resume r
+        ON r.id = c.resume.id
+        WHERE r.member.id = :memberId
+        AND c.certificationType = :type
+        ORDER BY c.id ASC
+    """)
+    List<Certification> findAllByMemberIdAndType(@Param("memberId") Long memberId, @Param("type") CertificationType type);
 }

@@ -1,16 +1,14 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.ExperienceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;

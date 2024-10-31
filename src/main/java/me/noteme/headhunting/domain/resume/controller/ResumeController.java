@@ -3,11 +3,10 @@ package me.noteme.headhunting.domain.resume.controller;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +19,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class ResumeController {
     private final ResumeService resumeService;
 
+    @GetMapping("/download/{resumePdfId}")
+    public SuccessResponse<String> download(
+            @LoginUser Long userId,
+            @PathVariable Long resumePdfId
+    ) {
+        return SuccessResponse.of(
+                resumeService.download(userId,resumePdfId)
+        );
+    }
+
+    // TODO: 테스트 용도
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResume() {
@@ -45,7 +55,6 @@ public class ResumeController {
         }
 
         // TODO: Profile 업로드 로직 분리
-
         resumeService.saveResumeBasic(
                 request.getResumeId(),
                 request.getJobId(),
@@ -69,21 +78,9 @@ public class ResumeController {
      * @param pdfFile PDF 파일
      * @return 변환된 텍스트
      */
+    @Deprecated
     @PostMapping("/convert")
     public SuccessResponse<String> pdfToText(@RequestPart(name = "file") MultipartFile pdfFile) {
-        return SuccessResponse.of(
-                resumeService.getText(pdfFile)
-        );
-    }
-
-    /**
-     * PDF 파일을 업로드합니다.
-     *
-     * @param pdfFile PDF 파일
-     * @return 성공 응답
-     */
-    @PostMapping("/pdf")
-    public SuccessResponse<Void> uploadPDF(@RequestPart(name = "file") MultipartFile pdfFile) {
-        return SuccessResponse.empty();
+        return SuccessResponse.of(resumeService.getText(pdfFile));
     }
 }

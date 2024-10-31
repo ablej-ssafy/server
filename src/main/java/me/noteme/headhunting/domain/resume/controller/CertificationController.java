@@ -52,7 +52,7 @@ public class CertificationController {
     public SuccessResponse<CertificationResponse> getLanguageCertifications(
             @LoginUser Long userId
     ) {
-        CertificationResponse response = certificationService.findLanguageCertifications(userId, CertificationType.LANGUAGE);
+        CertificationResponse response = certificationService.getLanguageCertifications(userId, CertificationType.LANGUAGE);
 
         return SuccessResponse.of(response);
     }
@@ -61,7 +61,7 @@ public class CertificationController {
     public SuccessResponse<CertificationResponse> getQualificationCertifications(
             @LoginUser Long userId
     ) {
-        CertificationResponse response = certificationService.findLanguageCertifications(userId, CertificationType.QUALIFICATION);
+        CertificationResponse response = certificationService.getLanguageCertifications(userId, CertificationType.QUALIFICATION);
 
         return SuccessResponse.of(response);
     }
@@ -70,7 +70,7 @@ public class CertificationController {
     public SuccessResponse<CertificationForm> getCertificationById(
             @PathVariable("certificationId") Long certificationId
     ) {
-        CertificationForm response = certificationService.findCertification(certificationId);
+        CertificationForm response = certificationService.getCertification(certificationId);
 
         return SuccessResponse.of(response);
     }

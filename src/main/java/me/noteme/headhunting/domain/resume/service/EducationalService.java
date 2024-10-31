@@ -1,10 +1,7 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.entity.Educational;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
@@ -12,11 +9,13 @@ import me.noteme.headhunting.domain.resume.entity.GradeType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.EducationalRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EducationalService {
     private final EducationalRepository educationalRepository;

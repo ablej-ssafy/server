@@ -154,7 +154,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         );
 
         CertificationResponse mockResponse = new CertificationResponse(List.of(certificationForm));
-        when(certificationService.findLanguageCertifications(userId, CertificationType.LANGUAGE))
+        when(certificationService.getLanguageCertifications(userId, CertificationType.LANGUAGE))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -210,7 +210,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         );
         
         CertificationResponse mockResponse = new CertificationResponse(List.of(certificationForm1, certificationForm2));
-        when(certificationService.findLanguageCertifications(userId, CertificationType.QUALIFICATION))
+        when(certificationService.getLanguageCertifications(userId, CertificationType.QUALIFICATION))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -254,7 +254,7 @@ public class CertificationControllerTest extends RestDocsSupport {
                 1L
         );
 
-        when(certificationService.findCertification(1L))
+        when(certificationService.getCertification(1L))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면

@@ -1,12 +1,9 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
 import me.noteme.headhunting.domain.resume.entity.Certification;
@@ -14,11 +11,13 @@ import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.CertificationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CertificationService {
     private final CertificationRepository certificationRepository;
@@ -44,18 +43,12 @@ public class CertificationService {
     }
 
     public CertificationResponse getCertifications(Long userId) {
-        Member member = em.find(Member.class, userId);
-        Long resumeId = member.getResume().getId();
-
-        List<Certification> certifications = certificationRepository.findAllByResumeId(resumeId);
+        List<Certification> certifications = certificationRepository.findAllByMemberId(userId);
         return new CertificationResponse(getCertificationForms(certifications));
     }
 
-    public CertificationResponse findLanguageCertifications(Long userId, CertificationType type) {
-        Member member = em.find(Member.class, userId);
-        Long resumeId = member.getResume().getId();
-
-        List<Certification> certifications = certificationRepository.findAllCategoryByResumeId(resumeId, type);
+    public CertificationResponse getLanguageCertifications(Long userId, CertificationType type) {
+        List<Certification> certifications = certificationRepository.findAllByMemberIdAndType(userId, type);
         return new CertificationResponse(getCertificationForms(certifications));
     }
 
@@ -65,12 +58,12 @@ public class CertificationService {
                 .toList();
     }
 
-    private Resume getResumeById(Long resumeId) {
-        return em.getReference(Resume.class, resumeId);
-    }
-
-    public CertificationForm findCertification(Long certificationId) {
+    public CertificationForm getCertification(Long certificationId) {
         return CertificationForm.fromEntity(certificationRepository.findById(certificationId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)));
+    }
+
+    private Resume getResumeById(Long resumeId) {
+        return em.getReference(Resume.class, resumeId);
     }
 }
