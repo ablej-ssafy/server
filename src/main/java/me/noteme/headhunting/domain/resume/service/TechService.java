@@ -3,6 +3,8 @@ package me.noteme.headhunting.domain.resume.service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlResponse;
+import me.noteme.headhunting.domain.resume.dto.TechResponse;
+import me.noteme.headhunting.domain.resume.dto.TechSkillResponse;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.repository.TechSkillRepository;
 import me.noteme.headhunting.domain.resume.repository.TechStackRepository;
@@ -28,6 +30,7 @@ public class TechService {
                 .resume(resume)
                 .build();
 
+        // TODO: ReferenceUrl 저장 로직 수정 -> 불필요한 쿼리 조회 및 PK 증가 ISSUE
         List<ReferenceUrl> referenceUrls = urls.stream()
                 .map(dto -> ReferenceUrl.builder()
                         .techStack(techStack)
@@ -39,6 +42,8 @@ public class TechService {
         techStack.getReferenceUrls().addAll(referenceUrls);
 
         List<TechSkill> techSkillList = techSkillRepository.findAllById(techSkills);
+
+        // TODO: StackSkill 저장 로직 수정 -> 불필요한 쿼리 조회 및 PK 증가 ISSUE
         List<StackSkill> stackSkills = techSkillList.stream()
                 .map(techSkill -> StackSkill.builder()
                         .techStack(techStack)
@@ -58,5 +63,21 @@ public class TechService {
                 .build();
 
         techSkillRepository.save(techSkill);
+    }
+
+    public TechResponse getTechStack(Long userId) {
+        TechStack techStack = techStackRepository.findByMemberId(userId);
+
+        return TechResponse.fromEntity(techStack);
+    }
+
+    public List<TechSkillResponse> getAllTechSkills() {
+        return techSkillRepository.findAll().stream()
+                .map(skill -> TechSkillResponse.of(
+                        skill.getId(),
+                        skill.getName(),
+                        skill.getIconUrl()
+                ))
+                .toList();
     }
 }
