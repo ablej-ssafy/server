@@ -34,12 +34,6 @@ public class RecruitmentController {
         );
     }
 
-    // TODO: 추후 PreSignedUrl 구현
-    @GetMapping("/download")
-    public SuccessResponse<String> download() {
-        return SuccessResponse.of(null);
-    }
-
     @Deprecated
     @PostMapping("/resume/keywords")
     public SuccessResponse<List<String>> getResumeKeywords(

@@ -36,6 +36,7 @@ public class RecruitmentService {
 
     public List<RecommendResponse> analyzeResume(Long userId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
+
         // TODO: 비동기 처리
         publisher.publishEvent(FileUploadEvent.of(userId, resumePdf, resumeText));
 
@@ -73,9 +74,5 @@ public class RecruitmentService {
             throw new CustomException(ErrorCode.AI_SERVER_ERROR);
         }
         return companyInfo.getCompanyReport();
-    }
-
-    public String test(String key) {
-        return storageService.getData(key);
     }
 }

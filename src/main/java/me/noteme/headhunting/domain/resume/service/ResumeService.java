@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
@@ -23,9 +24,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ResumeService {
-    private final PDFToTextConverter pdfConverter;
     private final ResumePdfRepository resumePdfRepository;
+    private final PDFToTextConverter pdfConverter;
+    private final StorageService storageService;
     private final EntityManager em;
+
+    public String download(Long userId, Long resumePdfId) {
+        ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        String key = resumePdf.getKey() + ".pdf";
+
+        return storageService.getFileUrl(userId, key);
+    }
 
     @Transactional
     public void savePdf(Long userId, String fileName, String key) {
