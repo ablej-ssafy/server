@@ -3,6 +3,8 @@ package me.noteme.headhunting.domain.resume.service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
+import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
+import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
 import me.noteme.headhunting.domain.resume.entity.Educational;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -37,6 +40,19 @@ public class EducationalService {
                 .toList();
 
         educationalRepository.saveAll(educationals);
+    }
+
+    public EducationalResponse getAllEducationals(Long userId) {
+        return EducationalResponse.of(educationalRepository.findAllByMemberId(userId).stream()
+                .map(EducationalForm::fromEntity)
+                .toList()
+        );
+    }
+
+    public List<EducationalTypeResponse> getEducationTypes() {
+        return Arrays.stream(EducationalType.values())
+                .map(type -> EducationalTypeResponse.of(type.name(), type.getName()))
+                .toList();
     }
 
     private Resume getResumeById(Long resumeId) {
