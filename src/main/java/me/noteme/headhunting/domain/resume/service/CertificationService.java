@@ -2,8 +2,6 @@ package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
 import me.noteme.headhunting.domain.resume.entity.Certification;
@@ -24,15 +22,6 @@ public class CertificationService {
     private final EntityManager em;
 
     @Transactional
-    public void saveCertification(Long resumeId, String name, String organization, String credential, LocalDate acquisitionAt, String grade, CertificationType certificationType, Long certificationId) {
-        Resume resume = getResumeById(resumeId);
-
-        Certification certification = Certification.of(certificationId, name, organization, credential, acquisitionAt, grade, certificationType, resume);
-
-        certificationRepository.save(certification);
-    }
-
-    @Transactional
     public void saveAllCertifications(List<CertificationForm> certificationForms) {
         // TODO: 자격 정보 저장에 대한 최대 값 검증 로직
         List<Certification> certifications = certificationForms.stream()
@@ -42,13 +31,14 @@ public class CertificationService {
         certificationRepository.saveAll(certifications);
     }
 
-    public CertificationResponse getCertifications(Long userId) {
-        List<Certification> certifications = certificationRepository.findAllByMemberId(userId);
-        return new CertificationResponse(getCertificationForms(certifications));
-    }
-
-    public CertificationResponse getLanguageCertifications(Long userId, CertificationType type) {
-        List<Certification> certifications = certificationRepository.findAllByMemberIdAndType(userId, type);
+    public CertificationResponse getCertifications(Long userId, String type) {
+        List<Certification> certifications;
+        if (type == null || type.isEmpty()) {
+            certifications = certificationRepository.findAllByMemberId(userId);
+        } else {
+            CertificationType certificationType = CertificationType.from(type);
+            certifications = certificationRepository.findAllByMemberIdAndType(userId, certificationType);
+        }
         return new CertificationResponse(getCertificationForms(certifications));
     }
 
@@ -56,11 +46,6 @@ public class CertificationService {
         return certifications.stream()
                 .map(CertificationForm::fromEntity)
                 .toList();
-    }
-
-    public CertificationForm getCertification(Long certificationId) {
-        return CertificationForm.fromEntity(certificationRepository.findById(certificationId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)));
     }
 
     private Resume getResumeById(Long resumeId) {

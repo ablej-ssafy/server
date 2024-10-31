@@ -39,38 +39,11 @@ public class CertificationController {
     }
 
     @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
-    public SuccessResponse<CertificationResponse> getCertification(
+    public SuccessResponse<CertificationResponse> getCertifications(
+            @RequestParam(name = "type", required = false) String type,
             @LoginUser Long userId
     ) {
-        CertificationResponse response = certificationService.getCertifications(userId);
-
-        return SuccessResponse.of(response);
-    }
-
-    @GetMapping("/language")
-    public SuccessResponse<CertificationResponse> getLanguageCertifications(
-            @LoginUser Long userId
-    ) {
-        CertificationResponse response = certificationService.getLanguageCertifications(userId, CertificationType.LANGUAGE);
-
-        return SuccessResponse.of(response);
-    }
-
-    @GetMapping("/qualification")
-    public SuccessResponse<CertificationResponse> getQualificationCertifications(
-            @LoginUser Long userId
-    ) {
-        CertificationResponse response = certificationService.getLanguageCertifications(userId, CertificationType.QUALIFICATION);
-
-        return SuccessResponse.of(response);
-    }
-
-    @GetMapping("/{certificationId}")
-    public SuccessResponse<CertificationForm> getCertificationById(
-            @PathVariable("certificationId") Long certificationId
-    ) {
-        CertificationForm response = certificationService.getCertification(certificationId);
+        CertificationResponse response = certificationService.getCertifications(userId, type);
 
         return SuccessResponse.of(response);
     }
