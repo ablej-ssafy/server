@@ -14,7 +14,7 @@ import org.checkerframework.checker.units.qual.C;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class CertificationForm {
     @NotNull(message = "이력서 번호는 필수값입니다.")
     private Long resumeId;
@@ -67,7 +67,7 @@ public class CertificationForm {
     }
 
     public static CertificationForm fromEntity(Certification certification) {
-        return new CertificationForm(
+        return CertificationForm.of(
                 certification.getResume().getId(),
                 certification.getName(),
                 certification.getOrganization(),
