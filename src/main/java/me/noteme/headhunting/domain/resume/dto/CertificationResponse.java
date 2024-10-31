@@ -7,7 +7,7 @@ import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class CertificationResponse {
     List<CertificationForm> certifications;
 }

@@ -35,11 +35,12 @@ public class CertificationService {
         List<Certification> certifications;
         if (type == null || type.isEmpty()) {
             certifications = certificationRepository.findAllByMemberId(userId);
-        } else {
-            CertificationType certificationType = CertificationType.from(type);
-            certifications = certificationRepository.findAllByMemberIdAndType(userId, certificationType);
+            return CertificationResponse.of(getCertificationForms(certifications));
         }
-        return new CertificationResponse(getCertificationForms(certifications));
+
+        CertificationType certificationType = CertificationType.from(type);
+        certifications = certificationRepository.findAllByMemberIdAndType(userId, certificationType);
+        return CertificationResponse.of(getCertificationForms(certifications));
     }
 
     private List<CertificationForm> getCertificationForms(List<Certification> certifications) {
