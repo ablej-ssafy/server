@@ -1,9 +1,14 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.exception.CustomException;
+import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
+import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
 import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
@@ -38,7 +43,34 @@ public class CertificationService {
         certificationRepository.saveAll(certifications);
     }
 
+    public CertificationResponse getCertifications(Long userId) {
+        Member member = em.find(Member.class, userId);
+        Long resumeId = member.getResume().getId();
+
+        List<Certification> certifications = certificationRepository.findAllByResumeId(resumeId);
+        return new CertificationResponse(getCertificationForms(certifications));
+    }
+
+    public CertificationResponse findLanguageCertifications(Long userId, CertificationType type) {
+        Member member = em.find(Member.class, userId);
+        Long resumeId = member.getResume().getId();
+
+        List<Certification> certifications = certificationRepository.findAllCategoryByResumeId(resumeId, type);
+        return new CertificationResponse(getCertificationForms(certifications));
+    }
+
+    private List<CertificationForm> getCertificationForms(List<Certification> certifications) {
+        return certifications.stream()
+                .map(CertificationForm::fromEntity)
+                .toList();
+    }
+
     private Resume getResumeById(Long resumeId) {
         return em.getReference(Resume.class, resumeId);
+    }
+
+    public CertificationForm findCertification(Long certificationId) {
+        return CertificationForm.fromEntity(certificationRepository.findById(certificationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)));
     }
 }

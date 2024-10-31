@@ -9,6 +9,7 @@ import lombok.Data;
 import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
+import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDate;
 
@@ -62,6 +63,19 @@ public class CertificationForm {
                 this.grade,
                 this.certificationType,
                 resume
+        );
+    }
+
+    public static CertificationForm fromEntity(Certification certification) {
+        return new CertificationForm(
+                certification.getResume().getId(),
+                certification.getName(),
+                certification.getOrganization(),
+                certification.getCredential(),
+                certification.getAcquisitionAt(),
+                certification.getGrade(),
+                certification.getCertificationType(),
+                certification.getId()
         );
     }
 }
