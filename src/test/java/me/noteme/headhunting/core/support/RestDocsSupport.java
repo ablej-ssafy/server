@@ -1,6 +1,7 @@
 package me.noteme.headhunting.core.support;
 
 import com.google.gson.Gson;
+import me.noteme.headhunting.core.config.GsonConfig;
 import me.noteme.headhunting.core.config.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
@@ -28,10 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @Disabled
 @ExtendWith({RestDocumentationExtension.class})
-@Import(RestDocsConfig.class)
+@Import({RestDocsConfig.class, GsonConfig.class})
 @AutoConfigureRestDocs
 public abstract class RestDocsSupport {
-    private final Gson gson = new Gson();
+
+    @Autowired
+    private Gson gson;
 
     @Autowired
     protected RestDocumentationResultHandler restDocs;

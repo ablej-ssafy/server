@@ -20,8 +20,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/ablej
-    username: ${app.db-username}
-    password: ${app.db-password}
+    username: ablej
+    password: ablej
 
   jpa:
     hibernate:
@@ -32,4 +32,4 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: ${app.redis-password}
+      password: ablej

@@ -22,7 +22,6 @@ import java.util.List;
 @RequestMapping("/api/v1/recruitment")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
-    private final StorageService storageService;
 
     @PostMapping("/recommend")
     public SuccessResponse<List<RecommendResponse>> analyzeResume(

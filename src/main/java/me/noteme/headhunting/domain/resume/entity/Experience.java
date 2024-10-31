@@ -23,7 +23,8 @@ public class Experience {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "experience_type")
-    private ExperienceType experienceType;
+    @Builder.Default
+    private ExperienceType experienceType = ExperienceType.PROJECT;
 
     private String title;
 
@@ -38,4 +39,18 @@ public class Experience {
     private String description;
 
     private String referenceUrl;
+
+    public static Experience of(Long experienceId, ExperienceType experienceType, String title, String affiliation, LocalDate startAt, LocalDate endAt, String description, String referenceUrl, Resume resume) {
+        return Experience.builder()
+                .id(experienceId)
+                .experienceType(experienceType)
+                .title(title)
+                .affiliation(affiliation)
+                .startAt(startAt)
+                .endAt(endAt)
+                .description(description)
+                .referenceUrl(referenceUrl)
+                .resume(resume)
+                .build();
+    }
 }

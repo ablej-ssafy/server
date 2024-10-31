@@ -32,7 +32,6 @@ public class RecruitmentService {
     private final PDFToTextConverter pdfToTextConverter;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
-    private final StorageService storageService;
 
     public List<RecommendResponse> analyzeResume(Long userId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
@@ -45,7 +44,7 @@ public class RecruitmentService {
         Job job = member.getInterestJobs().getFirst().getJob();
 
         JobRecommendRequest request = JobRecommendRequest.of(
-                resumeText, member.getCareer(), job.getId(), job.getTitle()
+                resumeText, member.getCareer(), job.getId(), job.getJobTitle()
         );
 
         AbleJResponse<List<RecommendResponse>> resumeRecommend = aiRequestClient.getResumeRecommend(request);

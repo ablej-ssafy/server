@@ -3,7 +3,7 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "educational")
@@ -29,20 +29,38 @@ public class Educational {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EducationalType category;
+    @Builder.Default
+    private EducationalType category = EducationalType.BACHELOR;
 
     private String grade;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "grade_type", nullable = false)
-    private GradeType gradeType;
+    @Builder.Default
+    private GradeType gradeType = GradeType.FOUR_POINT_FIVE;
 
     private String description;
 
     @Column(name = "start_at", nullable = false)
-    private LocalDateTime startAt;
+    private LocalDate startAt;
 
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
+
+    public static Educational of(Long educationalId, String name, String major, EducationalType category, String grade,
+                                 GradeType gradeType, String description, LocalDate startAt, LocalDate endAt, Resume resume) {
+        Educational educational = new Educational();
+        educational.id = educationalId;
+        educational.name = name;
+        educational.major = major;
+        educational.category = category;
+        educational.grade = grade;
+        educational.gradeType = gradeType;
+        educational.description = description;
+        educational.startAt = startAt;
+        educational.endAt = endAt;
+        educational.resume = resume;
+        return educational;
+    }
 }
 
