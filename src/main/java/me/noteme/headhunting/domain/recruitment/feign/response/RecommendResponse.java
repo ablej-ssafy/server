@@ -10,7 +10,6 @@ public class RecommendResponse {
     private String company;
     private String companyLocation;
     private String careerYear;
-
     private String jobTitle;
     private Integer jobTitleId;
 }

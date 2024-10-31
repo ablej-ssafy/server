@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
-import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.job.entity.Job;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
