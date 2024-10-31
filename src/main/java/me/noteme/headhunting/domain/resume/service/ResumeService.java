@@ -7,6 +7,7 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
+import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
 import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
 import me.noteme.headhunting.domain.job.entity.Job;
@@ -88,5 +89,9 @@ public class ResumeService {
             throw new CustomException(ErrorCode.BAD_REQUEST, "PDF 파일이 아닙니다.");
         }
         return pdfConverter.convertPdfToText(pdfFile);
+    }
+
+    public ResumeBasicResponse getBasicInfo(Long userId) {
+        return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(userId));
     }
 }
