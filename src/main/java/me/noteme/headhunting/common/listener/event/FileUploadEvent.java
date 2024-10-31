@@ -5,9 +5,9 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class FileUploadEvent {
     private Long userId;
-    private String uuid;
     private MultipartFile file;
+    private String fileText;
 }

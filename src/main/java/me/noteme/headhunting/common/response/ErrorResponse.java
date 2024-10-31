@@ -1,24 +1,26 @@
 package me.noteme.headhunting.common.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nimbusds.jose.shaded.gson.Gson;
+
+import com.google.gson.Gson;
+import lombok.Getter;
 import me.noteme.headhunting.common.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ErrorResponse extends BaseResponse<Void> {
-    private final Gson gson = new Gson();
-
-    @JsonIgnore
-    protected Object data;
+@Getter
+public class ErrorResponse extends BaseResponse {
+    private List<CustomError> errors = new ArrayList<>();
+    private static final Gson gson = new Gson();
 
     public ErrorResponse(boolean isSuccess, int status, String message, Errors errors) {
         super(isSuccess, status, message);
-        super.errors = parseErrors(errors);
+        this.errors = parseErrors(errors);
     }
 
     private static ErrorResponse createErrorResponse(int status, String message, Errors errors) {

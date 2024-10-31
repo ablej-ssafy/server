@@ -28,6 +28,7 @@ public class Recruitment {
     private JobCategory category;
 
     @OneToMany(mappedBy = "recruitment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
     private List<RecruitmentCategory> childCategories = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

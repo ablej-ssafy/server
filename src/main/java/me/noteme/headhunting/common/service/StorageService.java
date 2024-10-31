@@ -6,6 +6,11 @@ public interface StorageService {
 
     void uploadFile(Long userId, String fileName, MultipartFile file);
 
+    void uploadFile(Long userId, String fileName, String data);
+
     String getFileUrl(Long userId, String fileName);
 
+    String getData(String path);
+
+    void delete(String path);
 }
