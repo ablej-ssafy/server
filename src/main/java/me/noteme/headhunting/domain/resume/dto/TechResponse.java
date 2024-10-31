@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor(staticName = "of")
 public class TechResponse {
+    Long resumeId;
     Long techId;
     List<TechSkillResponse> techSkills;
     List<ReferenceUrlResponse> referenceUrls;
@@ -32,6 +33,7 @@ public class TechResponse {
                 .toList();
 
         return TechResponse.of(
+                techStack.getResume().getId(),
                 techStack.getId(),
                 techSkillResponses,
                 referenceUrlResponses

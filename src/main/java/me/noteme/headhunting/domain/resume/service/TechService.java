@@ -2,7 +2,7 @@ package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlResponse;
+import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlRequest;
 import me.noteme.headhunting.domain.resume.dto.TechResponse;
 import me.noteme.headhunting.domain.resume.dto.TechSkillResponse;
 import me.noteme.headhunting.domain.resume.entity.*;
@@ -22,7 +22,7 @@ public class TechService {
     private final EntityManager em;
 
     @Transactional
-    public void saveTechStack(Long resumeId, List<ReferenceUrlResponse> urls, List<Long> techSkills, Long techStackId) {
+    public void saveTechStack(Long resumeId, List<ReferenceUrlRequest> urls, List<Long> techSkills, Long techStackId) {
         Resume resume = em.getReference(Resume.class, resumeId);
 
         TechStack techStack = TechStack.builder()
