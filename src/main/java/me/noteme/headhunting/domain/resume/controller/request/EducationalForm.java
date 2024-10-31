@@ -12,7 +12,7 @@ import me.noteme.headhunting.domain.resume.entity.Resume;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class EducationalForm {
     @Min(value = 1, message = "이력서 번호는 필수값입니다.(최소 1)")
     private Long resumeId;
@@ -69,4 +69,20 @@ public class EducationalForm {
                 resume
         );
     }
+
+    public static EducationalForm fromEntity(Educational educational) {
+        return EducationalForm.of(
+                educational.getResume().getId(),
+                educational.getName(),
+                educational.getMajor(),
+                educational.getCategory(),
+                educational.getGrade(),
+                educational.getGradeType(),
+                educational.getDescription(),
+                educational.getStartAt(),
+                educational.getEndAt(),
+                educational.getId()
+        );
+    }
+
 }

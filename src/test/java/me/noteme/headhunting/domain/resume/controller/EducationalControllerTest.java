@@ -50,8 +50,8 @@ public class EducationalControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         EducationalRequest request = new EducationalRequest();
         List<EducationalForm> educationalForms = List.of(
-                new EducationalForm(1L, "교육 이름", "전공", EducationalType.BACHELOR, "A", GradeType.FOUR_POINT_FIVE, "설명", LocalDate.of(2021, 3, 1), LocalDate.of(2021, 8, 31), 1L),
-                new EducationalForm(1L, "학위 이름", "세부 전공", EducationalType.MASTER, "B", GradeType.FOUR_POINT_ZERO, "설명", LocalDate.of(2019, 3, 1), LocalDate.of(2020, 8, 31), 2L)
+                EducationalForm.of(1L, "교육 이름", "전공", EducationalType.BACHELOR, "A", GradeType.FOUR_POINT_FIVE, "설명", LocalDate.of(2021, 3, 1), LocalDate.of(2021, 8, 31), 1L),
+                EducationalForm.of(1L, "학위 이름", "세부 전공", EducationalType.MASTER, "B", GradeType.FOUR_POINT_ZERO, "설명", LocalDate.of(2019, 3, 1), LocalDate.of(2020, 8, 31), 2L)
         );
         request.setEducationals(educationalForms);
 
