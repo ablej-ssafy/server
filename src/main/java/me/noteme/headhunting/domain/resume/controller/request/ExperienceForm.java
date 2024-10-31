@@ -11,7 +11,7 @@ import me.noteme.headhunting.domain.resume.entity.Resume;
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class ExperienceForm {
     @Min(value = 1, message = "이력서 번호는 필수값입니다.(최소 1)")
     private Long resumeId;
@@ -59,6 +59,20 @@ public class ExperienceForm {
                 this.description,
                 this.referenceUrl,
                 resume
+        );
+    }
+
+    public static ExperienceForm fromEntity(Experience experience) {
+        return ExperienceForm.of(
+                experience.getResume().getId(),
+                experience.getExperienceType(),
+                experience.getTitle(),
+                experience.getAffiliation(),
+                experience.getStartAt(),
+                experience.getEndAt(),
+                experience.getDescription(),
+                experience.getReferenceUrl(),
+                experience.getId()
         );
     }
 }

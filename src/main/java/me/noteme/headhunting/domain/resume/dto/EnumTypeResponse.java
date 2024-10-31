@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
-public class EducationalTypeResponse {
+public class EnumTypeResponse {
     private String code;
     private String name;
 }

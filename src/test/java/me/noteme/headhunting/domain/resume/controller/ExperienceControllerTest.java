@@ -49,8 +49,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
         // * GIVEN: 테스트 요청 데이터 생성
         ExperienceRequest request = new ExperienceRequest();
         List<ExperienceForm> experienceForms = List.of(
-                new ExperienceForm(1L, ExperienceType.PROJECT, "프로젝트 경험", "회사명", LocalDate.of(2021, 3, 1), LocalDate.of(2022, 3, 1), "설명", "https://example.com", 1L),
-                new ExperienceForm(1L, ExperienceType.ACTIVITY, "봉사 활동", "봉사단체", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 6, 1), "설명", "https://volunteer.com", 2L)
+                ExperienceForm.of(1L, ExperienceType.PROJECT, "프로젝트 경험", "회사명", LocalDate.of(2021, 3, 1), LocalDate.of(2022, 3, 1), "설명", "https://example.com", 1L),
+                ExperienceForm.of(1L, ExperienceType.ACTIVITY, "봉사 활동", "봉사단체", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 6, 1), "설명", "https://volunteer.com", 2L)
         );
         request.setExperiences(experienceForms);
 
