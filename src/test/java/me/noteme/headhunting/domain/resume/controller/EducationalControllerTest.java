@@ -2,9 +2,12 @@ package me.noteme.headhunting.domain.resume.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
+import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
+import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
+import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
 import me.noteme.headhunting.domain.resume.service.EducationalService;
@@ -25,6 +28,8 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,5 +89,85 @@ public class EducationalControllerTest extends RestDocsSupport {
                 )));
 
         verify(educationalService).saveAllEducationals(request.getEducationals());
+    }
+
+    @Test
+    @DisplayName("교육_정보_조회_테스트")
+    @CustomMockUser
+    void 교육_정보_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+        EducationalForm educationalForm = EducationalForm.of(
+                1L,
+                "바밤대학교",
+                "바밤과",
+                EducationalType.BACHELOR,
+                "4.3",
+                GradeType.FOUR_POINT_FIVE,
+                "학부재밌었다.",
+                LocalDate.of(2018, 3, 2),
+                LocalDate.of(2024, 2, 15),
+                1L
+        );
+
+        EducationalResponse mockResponse = EducationalResponse.of(List.of(educationalForm));
+        when(educationalService.getAllEducationals(userId))
+                .thenReturn(mockResponse);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                get("/api/v1/educational")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("학교 정보 전체 조회")
+                                .summary("로그인 사용자 기반 학교 정보 조회 API")
+                                .description("로그인 한 사용자가 작성한 학교 정보를 조회합니다.")
+                                .responseFields(response(
+                                        fieldWithPath("data.educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
+                                        fieldWithPath("data.educationals[].name").type(JsonFieldType.STRING).description("학교 이름"),
+                                        fieldWithPath("data.educationals[].major").type(JsonFieldType.STRING).description("전공"),
+                                        fieldWithPath("data.educationals[].category").type(JsonFieldType.STRING).description("학교 타입(ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),
+                                        fieldWithPath("data.educationals[].grade").type(JsonFieldType.STRING).description("학점"),
+                                        fieldWithPath("data.educationals[].gradeType").type(JsonFieldType.STRING).description("최대 학점"),
+                                        fieldWithPath("data.educationals[].description").type(JsonFieldType.STRING).description("활동 내용 설명"),
+                                        fieldWithPath("data.educationals[].startAt").type(JsonFieldType.STRING).description("입학 날짜"),
+                                        fieldWithPath("data.educationals[].endAt").type(JsonFieldType.STRING).description("졸업 날짜"),
+                                        fieldWithPath("data.educationals[].educationalId").type(JsonFieldType.NUMBER).description("학력 PK")
+                                        )).build()
+                )));
+    }
+
+    @Test
+    @DisplayName("교육_타입_정보_조회_테스트")
+    void 교육_타입_정보_조회_테스트() throws Exception {
+        // * GIVEN: 교육 타입 목록이 주어졌을 때
+        List<EducationalTypeResponse> mockResponse = List.of(
+                EducationalTypeResponse.of("ASSOCIATE_DEGREE", "전문대"),
+                EducationalTypeResponse.of("BACHELOR", "대학"),
+                EducationalTypeResponse.of("MASTER", "석사"),
+                EducationalTypeResponse.of("DOCTOR", "박사")
+        );
+
+        when(educationalService.getEducationTypes()).thenReturn(mockResponse);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(get("/api/v1/educational/type"));
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("교육 타입 정보 조회")
+                                .summary("교육 타입 전체 조회 API")
+                                .description("사용 가능한 교육 타입 정보를 조회합니다.")
+                                .responseFields(response(
+                                        fieldWithPath("data[].code").type(JsonFieldType.STRING).description("교육 타입 코드 (예: ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),
+                                        fieldWithPath("data[].name").type(JsonFieldType.STRING).description("교육 타입 이름 (예: 전문대, 대학, 석사, 박사)")
+                                )).build()
+                )));
     }
 }
