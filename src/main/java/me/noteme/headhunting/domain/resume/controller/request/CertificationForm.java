@@ -9,11 +9,12 @@ import lombok.Data;
 import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
+import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class CertificationForm {
     @NotNull(message = "이력서 번호는 필수값입니다.")
     private Long resumeId;
@@ -62,6 +63,19 @@ public class CertificationForm {
                 this.grade,
                 this.certificationType,
                 resume
+        );
+    }
+
+    public static CertificationForm fromEntity(Certification certification) {
+        return CertificationForm.of(
+                certification.getResume().getId(),
+                certification.getName(),
+                certification.getOrganization(),
+                certification.getCredential(),
+                certification.getAcquisitionAt(),
+                certification.getGrade(),
+                certification.getCertificationType(),
+                certification.getId()
         );
     }
 }
