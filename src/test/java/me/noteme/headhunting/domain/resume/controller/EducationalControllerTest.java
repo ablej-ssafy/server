@@ -7,7 +7,7 @@ import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
 import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
-import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
+import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
 import me.noteme.headhunting.domain.resume.service.EducationalService;
@@ -145,11 +145,11 @@ public class EducationalControllerTest extends RestDocsSupport {
     @DisplayName("교육_타입_정보_조회_테스트")
     void 교육_타입_정보_조회_테스트() throws Exception {
         // * GIVEN: 교육 타입 목록이 주어졌을 때
-        List<EducationalTypeResponse> mockResponse = List.of(
-                EducationalTypeResponse.of("ASSOCIATE_DEGREE", "전문대"),
-                EducationalTypeResponse.of("BACHELOR", "대학"),
-                EducationalTypeResponse.of("MASTER", "석사"),
-                EducationalTypeResponse.of("DOCTOR", "박사")
+        List<EnumTypeResponse> mockResponse = List.of(
+                EnumTypeResponse.of("ASSOCIATE_DEGREE", "전문대"),
+                EnumTypeResponse.of("BACHELOR", "대학"),
+                EnumTypeResponse.of("MASTER", "석사"),
+                EnumTypeResponse.of("DOCTOR", "박사")
         );
 
         when(educationalService.getEducationTypes()).thenReturn(mockResponse);

@@ -3,6 +3,8 @@ package me.noteme.headhunting.domain.resume.service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
+import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
+import me.noteme.headhunting.domain.resume.dto.ExperienceResponse;
 import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,6 +38,29 @@ public class ExperienceService {
                 .toList();
 
         experienceRepository.saveAll(experiences);
+    }
+
+    public ExperienceResponse getExperiences(Long userId, String type) {
+        List<Experience> experiences;
+        if (type == null || type.isEmpty()) {
+            return ExperienceResponse.of(getExperienceForms(experienceRepository.findAllByMemberId(userId)));
+        }
+
+        ExperienceType experienceType = ExperienceType.from(type);
+        experiences = experienceRepository.findAllByMemberIdAndType(userId, experienceType);
+        return ExperienceResponse.of(getExperienceForms(experiences));
+    }
+
+    public List<EnumTypeResponse> getExperienceTypes() {
+        return Arrays.stream(ExperienceType.values())
+                .map(type -> EnumTypeResponse.of(type.name(), type.getValue()))
+                .toList();
+    }
+
+    private List<ExperienceForm> getExperienceForms(List<Experience> experiences) {
+        return experiences.stream()
+                .map(ExperienceForm::fromEntity)
+                .toList();
     }
 
     private Resume getResumeById(Long resumeId) {

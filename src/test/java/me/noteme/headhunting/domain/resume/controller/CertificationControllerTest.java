@@ -166,9 +166,9 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격(어학) 정보 전체 조회")
+                                .tag("자격(어학, 자격증) 정보 전체 조회")
                                 .summary("로그인 사용자 기반 어학 정보 조회 API")
-                                .description("로그인 한 사용자가 작성한 자격 정보(어학)를 조회합니다.")
+                                .description("로그인 한 사용자가 작성한 자격 정보(어학, 자격증)를 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("type").description("조회할 자격 유형을 작성합니다. (예: language, qualification")
                                 )
@@ -179,7 +179,7 @@ public class CertificationControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.certifications[].credential").type(JsonFieldType.STRING).description("자격 번호"),
                                         fieldWithPath("data.certifications[].acquisitionAt").type(JsonFieldType.STRING).description("취득 날짜"),
                                         fieldWithPath("data.certifications[].grade").type(JsonFieldType.STRING).description("등급"),
-                                        fieldWithPath("data.certifications[].certificationType").type(JsonFieldType.STRING).description("자격증 유형(어학)"),
+                                        fieldWithPath("data.certifications[].certificationType").type(JsonFieldType.STRING).description("자격증 유형(어학, 자격증)"),
                                         fieldWithPath("data.certifications[].certificationId").type(JsonFieldType.NUMBER).description("자격증 PK")
                                 )).build()
                 )));

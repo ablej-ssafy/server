@@ -7,7 +7,7 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
 import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
-import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
+import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
 import me.noteme.headhunting.domain.resume.service.EducationalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
@@ -49,8 +49,8 @@ public class EducationalController {
     }
 
     @GetMapping("/type")
-    public SuccessResponse<List<EducationalTypeResponse>> getEducationalType() {
-        List<EducationalTypeResponse> response = educationalService.getEducationTypes();
+    public SuccessResponse<List<EnumTypeResponse>> getEducationalType() {
+        List<EnumTypeResponse> response = educationalService.getEducationTypes();
 
         return SuccessResponse.of(response);
     }
