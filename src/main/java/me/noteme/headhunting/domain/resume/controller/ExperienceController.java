@@ -44,9 +44,7 @@ public class ExperienceController {
             @RequestParam(name = "type", required = false) String type,
             @LoginUser Long memberId
     ) {
-        ExperienceResponse response = experienceService.getExperiences(memberId, type);
-
-        return SuccessResponse.of(response);
+        return SuccessResponse.of(experienceService.getExperiences(memberId, type));
     }
 
     @DeleteMapping("/{experienceId}")
@@ -58,8 +56,6 @@ public class ExperienceController {
 
     @GetMapping("/type")
     public SuccessResponse<List<EnumTypeResponse>> getExperienceTypes() {
-        List<EnumTypeResponse> response = experienceService.getExperienceTypes();
-
-        return SuccessResponse.of(response);
+        return SuccessResponse.of(experienceService.getExperienceTypes());
     }
 }

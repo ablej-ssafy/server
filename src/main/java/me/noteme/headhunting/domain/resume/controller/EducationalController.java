@@ -40,25 +40,17 @@ public class EducationalController {
     }
 
     @GetMapping("")
-    public SuccessResponse<EducationalResponse> getEducational(
-            @LoginUser Long memberId
-    ) {
-        EducationalResponse response = educationalService.getAllEducationals(memberId);
-
-        return SuccessResponse.of(response);
+    public SuccessResponse<EducationalResponse> getEducational(@LoginUser Long memberId) {
+        return SuccessResponse.of(educationalService.getAllEducationals(memberId));
     }
 
     @GetMapping("/type")
     public SuccessResponse<List<EnumTypeResponse>> getEducationalType() {
-        List<EnumTypeResponse> response = educationalService.getEducationTypes();
-
-        return SuccessResponse.of(response);
+        return SuccessResponse.of(educationalService.getEducationTypes());
     }
 
     @DeleteMapping("/{educationalId}")
-    public SuccessResponse<Void> deleteEducational(
-            @PathVariable("educationalId") Long educationalId
-    ) {
+    public SuccessResponse<Void> deleteEducational(@PathVariable("educationalId") Long educationalId) {
         educationalService.deleteById(educationalId);
 
         return SuccessResponse.empty();

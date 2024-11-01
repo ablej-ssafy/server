@@ -41,9 +41,7 @@ public class CertificationController {
             @RequestParam(name = "type", required = false) String type,
             @LoginUser Long memberId
     ) {
-        CertificationResponse response = certificationService.getCertifications(memberId, type);
-
-        return SuccessResponse.of(response);
+        return SuccessResponse.of(certificationService.getCertifications(memberId, type));
     }
 
     @DeleteMapping("/{certificationId}")
