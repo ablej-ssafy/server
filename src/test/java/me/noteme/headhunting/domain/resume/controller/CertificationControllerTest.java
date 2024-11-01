@@ -27,10 +27,8 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -183,5 +181,29 @@ public class CertificationControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.certifications[].certificationId").type(JsonFieldType.NUMBER).description("자격증 PK")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("자격_정보_삭제_테스트")
+    void 자격_정보_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long certificationId = 1L;
+        doNothing().when(certificationService).deleteById(certificationId);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                delete("/api/v1/certification/{certificationId}", certificationId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-자격")
+                                .summary("자격 삭제 API")
+                                .description("자격 정보를 삭제합니다.")
+                                .build()
+                )));
+        verify(certificationService).deleteById(certificationId);
     }
 }

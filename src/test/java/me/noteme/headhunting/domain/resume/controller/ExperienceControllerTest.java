@@ -27,10 +27,8 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -190,8 +188,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("경험 타입 목록 조회 테스트")
-    void getExperienceTypesTest() throws Exception {
+    @DisplayName("경험_타입_목록_조회_테스트")
+    void 경험_타입_목록_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         List<EnumTypeResponse> mockResponse = List.of(
                 EnumTypeResponse.of("COMPANY", "회사"),
@@ -216,5 +214,29 @@ public class ExperienceControllerTest extends RestDocsSupport {
                                         fieldWithPath("data[].name").type(JsonFieldType.STRING).description("경험 타입 이름 (예: 회사, 프로젝트, 대내외활동)")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("경험_정보_삭제_테스트")
+    void 경험_정보_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long experienceId = 1L;
+        doNothing().when(experienceService).deleteById(experienceId);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                delete("/api/v1/experience/{experienceId}", experienceId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-경험")
+                                .summary("경험 삭제 API")
+                                .description("경험 정보를 삭제합니다.")
+                                .build()
+                )));
+        verify(experienceService).deleteById(experienceId);
     }
 }
