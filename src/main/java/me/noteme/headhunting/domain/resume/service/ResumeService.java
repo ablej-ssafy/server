@@ -104,8 +104,6 @@ public class ResumeService {
         return pdfConverter.convertPdfToText(pdfFile);
     }
 
-
-
     public ResumeBasicResponse getBasicInfo(Long userId) {
         return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(userId));
     }
