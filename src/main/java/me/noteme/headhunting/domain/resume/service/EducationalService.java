@@ -46,6 +46,11 @@ public class EducationalService {
                 .toList();
     }
 
+    @Transactional
+    public void deleteById(Long educationId) {
+        educationalRepository.deleteById(educationId);
+    }
+
     private Resume getResumeById(Long resumeId) {
         return em.getReference(Resume.class, resumeId);
     }

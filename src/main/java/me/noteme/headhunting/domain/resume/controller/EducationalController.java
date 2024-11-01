@@ -54,4 +54,13 @@ public class EducationalController {
 
         return SuccessResponse.of(response);
     }
+
+    @DeleteMapping("/{educationalId}")
+    public SuccessResponse<Void> deleteEducational(
+            @PathVariable("educationalId") Long educationalId
+    ) {
+        educationalService.deleteById(educationalId);
+
+        return SuccessResponse.empty();
+    }
 }
