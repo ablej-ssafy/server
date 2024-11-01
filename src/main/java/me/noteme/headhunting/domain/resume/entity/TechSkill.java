@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,5 +24,6 @@ public class TechSkill {
     private String name;
 
     @OneToMany(mappedBy = "techSkill", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StackSkill> stackSkills;
+    @Builder.Default
+    private List<StackSkill> stackSkills = new ArrayList<>();
 }

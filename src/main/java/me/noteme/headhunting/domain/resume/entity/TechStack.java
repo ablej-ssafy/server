@@ -3,7 +3,8 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tech_stack")
@@ -22,8 +23,10 @@ public class TechStack {
     private Resume resume;
 
     @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReferenceUrl> referenceUrls;
+    @Builder.Default
+    private Set<ReferenceUrl> referenceUrls = new HashSet<>();
 
     @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StackSkill> stackSkills;
+    @Builder.Default
+    private Set<StackSkill> stackSkills = new HashSet<>();
 }
