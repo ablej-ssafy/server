@@ -7,6 +7,7 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumeResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
@@ -28,6 +29,15 @@ public class ResumeController {
         return SuccessResponse.of(
                 resumeService.download(userId,resumePdfId)
         );
+    }
+
+    @GetMapping("")
+    public SuccessResponse<ResumeResponse> getResumeInfo(
+            @LoginUser Long memberId
+    ) {
+        ResumeResponse response = resumeService.getResume(memberId);
+
+        return SuccessResponse.of(response);
     }
 
     @GetMapping("/basic")
