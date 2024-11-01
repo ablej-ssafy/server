@@ -4,7 +4,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-                             import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
+import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
