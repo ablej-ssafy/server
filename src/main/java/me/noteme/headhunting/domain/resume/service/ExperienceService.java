@@ -52,6 +52,11 @@ public class ExperienceService {
         return ExperienceResponse.of(getExperienceForms(experiences));
     }
 
+    @Transactional
+    public void deleteById(Long experienceId) {
+        experienceRepository.deleteById(experienceId);
+    }
+
     public List<EnumTypeResponse> getExperienceTypes() {
         return Arrays.stream(ExperienceType.values())
                 .map(type -> EnumTypeResponse.of(type.name(), type.getValue()))

@@ -45,4 +45,11 @@ public class CertificationController {
 
         return SuccessResponse.of(response);
     }
+
+    @DeleteMapping("/{certificationId}")
+    public SuccessResponse<Void> deleteCertification(@PathVariable("certificationId") Long certificationId) {
+        certificationService.deleteById(certificationId);
+
+        return SuccessResponse.empty();
+    }
 }

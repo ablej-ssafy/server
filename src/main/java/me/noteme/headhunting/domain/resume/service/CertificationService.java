@@ -43,6 +43,11 @@ public class CertificationService {
         return CertificationResponse.of(getCertificationForms(certifications));
     }
 
+    @Transactional
+    public void deleteById(Long certificationId) {
+        certificationRepository.deleteById(certificationId);
+    }
+
     private List<CertificationForm> getCertificationForms(List<Certification> certifications) {
         return certifications.stream()
                 .map(CertificationForm::fromEntity)

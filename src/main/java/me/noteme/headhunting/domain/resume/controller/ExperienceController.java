@@ -49,6 +49,13 @@ public class ExperienceController {
         return SuccessResponse.of(response);
     }
 
+    @DeleteMapping("/{experienceId}")
+    public SuccessResponse<Void> deleteExperience(@PathVariable("experienceId") Long experienceId) {
+        experienceService.deleteById(experienceId);
+
+        return SuccessResponse.empty();
+    }
+
     @GetMapping("/type")
     public SuccessResponse<List<EnumTypeResponse>> getExperienceTypes() {
         List<EnumTypeResponse> response = experienceService.getExperienceTypes();
