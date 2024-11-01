@@ -27,10 +27,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -169,5 +167,29 @@ public class EducationalControllerTest extends RestDocsSupport {
                                         fieldWithPath("data[].name").type(JsonFieldType.STRING).description("교육 타입 이름 (예: 전문대, 대학, 석사, 박사)")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("교육_정보_삭제_테스트")
+    void 교육_정보_삭제_테스트() throws Exception {
+        // * GIVEN: 교육 타입 목록이 주어졌을 때
+        Long educationalId = 1L;
+        doNothing().when(educationalService).deleteById(educationalId);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                delete("/api/v1/educational/{educationalId}", educationalId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-교육")
+                                .summary("교육 삭제 API")
+                                .description("교육 정보를 삭제합니다.")
+                                .build()
+                )));
+        verify(educationalService).deleteById(educationalId);
     }
 }
