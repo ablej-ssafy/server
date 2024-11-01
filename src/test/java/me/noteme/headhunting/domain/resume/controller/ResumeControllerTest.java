@@ -7,6 +7,7 @@ import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.AuthController;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +24,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.verify;
@@ -69,6 +72,39 @@ class ResumeControllerTest extends RestDocsSupport {
 
         // 서비스 메서드 호출 검증
         verify(resumeService).resumeInit(memberId);
+    }
+
+    @Test
+    @DisplayName("이력서_PDF_목록_조회_테스트")
+    @CustomMockUser
+    void 이력서_PDF_목록_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+        List<ResumePdfResponse> response = Stream.of(1, 2, 3).map(index ->
+                ResumePdfResponse.of((long) index, "파일 이름", LocalDate.of(2024, 10, 1))
+        ).toList();
+
+        when(resumeService.getPdfList(userId)).thenReturn(
+            response
+        );
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(get("/api/v1/resume/pdf"));
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서 PDF 목록")
+                                .summary("이력서 PDF 목록 반환 API")
+                                .description("PDF List 정보를 반환합니다.")
+                                .responseFields(response(
+                                        fieldWithPath("data").type(JsonFieldType.ARRAY).description("이력서 PDF 목록"),
+                                        fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("이력서 PDF ID"),
+                                        fieldWithPath("data[].fileName").type(JsonFieldType.STRING).description("이력서 PDF 파일 이름"),
+                                        fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 날짜(yyy-MM-dd 형식)")
+                                )).build()
+                )));
     }
 
     @Test
