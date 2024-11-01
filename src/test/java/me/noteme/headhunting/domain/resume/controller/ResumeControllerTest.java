@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,23 +80,25 @@ class ResumeControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 이력서_PDF_목록_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         List<ResumePdfResponse> response = Stream.of(1, 2, 3).map(index ->
                 ResumePdfResponse.of((long) index, "파일 이름", LocalDate.of(2024, 10, 1))
         ).toList();
 
-        when(resumeService.getPdfList(userId)).thenReturn(
+        when(resumeService.getPdfList(memberId)).thenReturn(
             response
         );
 
         // * WHEN: 이걸 실행하면
-        ResultActions actions = mockMvc.perform(get("/api/v1/resume/pdf"));
+        ResultActions actions = mockMvc.perform(
+                get("/api/v1/resume/pdf")
+        );
 
         // * THEN: 이런 결과가 나와야 한다
         actions.andExpect(status().isOk())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("이력서 PDF 목록")
+                                .tag("이력서")
                                 .summary("이력서 PDF 목록 반환 API")
                                 .description("PDF List 정보를 반환합니다.")
                                 .responseFields(response(
@@ -228,7 +231,8 @@ class ResumeControllerTest extends RestDocsSupport {
         Resource source = loader.getResource("classpath:/media/" + fileName);
         MockMultipartFile file = new MockMultipartFile("file", fileName, "application/pdf", source.getInputStream());
 
-        when(resumeService.getText(file)).thenReturn("추출한 텍스트");
+        when(resumeService.getText(file))
+                .thenReturn("추출한 텍스트");
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(multipart("/api/v1/resume/convert")
@@ -249,35 +253,37 @@ class ResumeControllerTest extends RestDocsSupport {
                 )));
     }
 
-//    @Test
-//    @DisplayName("이력서_PDF_다운로드_링크_테스트")
-//    void 이력서_PDF_다운로드_링크_테스트() throws Exception {
-//        // * GIVEN: 이런게 주어졌을 때
-//        String fileName = "resume.pdf";
-//        String fileUrl = "https://url/to/download/file/" + fileName;
-//
-//        // TODO: 추후 수정해야합니다. To. 민준수
-//        Long memberId = 1L;
-//        when(storageService.getFileUrl(memberId, fileName)).thenReturn(fileUrl);
-//
-//        // * WHEN: 이걸 실행하면
-//        ResultActions actions = this.mockMvc.perform(
-//                get("/api/v1/resume/pdf/{fileName}", fileName)
-//        );
-//
-//        // * THEN: 이런 결과가 나와야 한다
-//        actions.andExpect(status().isOk())
-//                .andDo(restDocs.document(resource(
-//                        ResourceSnippetParameters.builder()
-//                                .tag("이력서 관리")
-//                                .summary("이력서 PDF 다운로드 API")
-//                                .description("PDF 파일을 다운로드할 수 있는 URL 반환한다.")
-//                                .pathParameters(
-//                                        parameterWithName("fileName").description("파일 이름")
-//                                )
-//                                .responseFields(response(
-//                                        fieldWithPath("data").type(JsonFieldType.STRING).description("파일 URL")
-//                                )).build()
-//                )));
-//    }
+    @Test
+    @DisplayName("이력서_PDF_다운로드_링크_테스트")
+    @CustomMockUser
+    void 이력서_PDF_다운로드_링크_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long resumePdfId = 1L;
+
+        String response = "다운로드 링크";
+
+        when(resumeService.download(memberId, resumePdfId))
+                .thenReturn(response);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/resume/download/{resumePdfId}", resumePdfId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서")
+                                .summary("이력서 PDF 다운로드 API")
+                                .description("PDF 파일을 다운로드할 수 있는 URL 반환한다.")
+                                .pathParameters(
+                                        parameterWithName("resumePdfId").description("이력서 파일 번호")
+                                )
+                                .responseFields(response(
+                                        fieldWithPath("data").type(JsonFieldType.STRING).description("파일 URL")
+                                )).build()
+                )));
+    }
 }
