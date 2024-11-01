@@ -12,6 +12,9 @@ import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.*;
+import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
+import me.noteme.headhunting.domain.resume.entity.ResumePdf;
 import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
 import me.noteme.headhunting.domain.job.entity.Job;
 import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
@@ -53,6 +56,16 @@ public class ResumeService {
         resumePdfRepository.save(resumePdf);
     }
 
+    public List<ResumePdfResponse> getPdfList(Long memberId) {
+        List<ResumePdf> resumePdfList = resumePdfRepository.findAllByMemberId(memberId);
+
+        return resumePdfList.stream()
+                .map(o -> ResumePdfResponse.of(
+                                o.getId(),
+                                o.getFileName(),
+                                LocalDate.from(o.getCreatedAt())
+                )).toList();
+    }
 
     @Transactional
     public void saveResumeBasic(Long resumeId, Long jobId, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Long resumeBasicId) {
@@ -70,6 +83,7 @@ public class ResumeService {
         Resume resume = Resume.builder()
                 .member(getMemberById(memberId))
                 .build();
+
         resumeRepository.save(resume);
     }
 
