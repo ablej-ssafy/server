@@ -6,6 +6,7 @@ import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.AuthController;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
+import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +27,7 @@ import java.time.LocalDate;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,6 +69,57 @@ class ResumeControllerTest extends RestDocsSupport {
 
         // 서비스 메서드 호출 검증
         verify(resumeService).resumeInit(memberId);
+    }
+
+    @Test
+    @DisplayName("이력서_기본정보_조회_테스트")
+    @CustomMockUser
+    void 이력서_기본정보_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+        ResumeBasicResponse mockResponse = ResumeBasicResponse.of(
+                1L,
+                10L,
+                "이력서 제목",
+                "https://portfolio.example.com/profile.png",
+                "바밤바",
+                "ablej@example.com",
+                LocalDate.of(1999, 10, 29),
+                "010-1234-5678",
+                "백엔드 개발자",
+                "같이하는 가치",
+                "https://portfolio.example.com"
+        );
+
+        when(resumeService.getBasicInfo(userId))
+                .thenReturn(mockResponse);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                get("/api/v1/resume/basic")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서 기본 정보 조회")
+                                .summary("로그인 사용자 기반 이력서 기본 정보 조회 API")
+                                .description("로그인한 사용자의 이력서 기본 정보를 조회합니다.")
+                                .responseFields(response(
+                                        fieldWithPath("data.resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
+                                        fieldWithPath("data.resumeBasicId").type(JsonFieldType.NUMBER).description("기본 이력서 정보 PK"),
+                                        fieldWithPath("data.title").type(JsonFieldType.STRING).description("이력서 제목"),
+                                        fieldWithPath("data.profile").type(JsonFieldType.STRING).description("프로필 이미지 URL"),
+                                        fieldWithPath("data.name").type(JsonFieldType.STRING).description("사용자 이름"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("사용자 이메일"),
+                                        fieldWithPath("data.birth").type(JsonFieldType.STRING).description("생년월일"),
+                                        fieldWithPath("data.phone").type(JsonFieldType.STRING).description("전화번호"),
+                                        fieldWithPath("data.job").type(JsonFieldType.STRING).description("직업"),
+                                        fieldWithPath("data.introduce").type(JsonFieldType.STRING).description("자기소개"),
+                                        fieldWithPath("data.portfolioUrl").type(JsonFieldType.STRING).description("포트폴리오 URL")
+                                )).build()
+                )));
     }
 
     @Test

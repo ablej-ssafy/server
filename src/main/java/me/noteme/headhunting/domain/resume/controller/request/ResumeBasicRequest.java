@@ -41,7 +41,7 @@ public class ResumeBasicRequest {
     private LocalDate birth;
 
     /**
-     * 작성자 핸드폰 (01011112222)
+     * 작성자 핸드폰 (010-1111-2222)
      */
     @Length(max = 13)
     private String phone;

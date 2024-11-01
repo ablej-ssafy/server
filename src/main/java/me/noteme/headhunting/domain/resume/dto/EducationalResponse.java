@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor(staticName = "of")
 public class EducationalResponse {
-    List<EducationalForm> educationals;
+    private List<EducationalForm> educationals;
 }
