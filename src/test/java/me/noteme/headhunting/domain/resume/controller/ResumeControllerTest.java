@@ -102,8 +102,8 @@ class ResumeControllerTest extends RestDocsSupport {
                                 .summary("이력서 기본 정보 업데이트 API")
                                 .description("이력서 기본 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("resumeId").type(JsonFieldType.NUMBER).description("이력서 ID"),
-                                        fieldWithPath("jobId").type(JsonFieldType.NUMBER).description("직무 ID"),
+                                        fieldWithPath("resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
+                                        fieldWithPath("jobId").type(JsonFieldType.NUMBER).description("직무 PK"),
                                         fieldWithPath("profile").type(JsonFieldType.STRING).optional().description("프로필 이미지 URL"),
                                         fieldWithPath("title").type(JsonFieldType.STRING).description("이력서 제목"),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
@@ -112,7 +112,7 @@ class ResumeControllerTest extends RestDocsSupport {
                                         fieldWithPath("phone").type(JsonFieldType.STRING).description("핸드폰 번호"),
                                         fieldWithPath("introduce").type(JsonFieldType.STRING).description("한 줄 소개"),
                                         fieldWithPath("portfolioUrl").type(JsonFieldType.STRING).optional().description("포트폴리오 URL"),
-                                        fieldWithPath("resumeBasicId").type(JsonFieldType.NUMBER).optional().description("이력서 기본 ID (새로 추가 시 null)")
+                                        fieldWithPath("resumeBasicId").type(JsonFieldType.NUMBER).optional().description("이력서 기본 PK (새로 추가 시 null)")
                                 ).responseFields(empty())
                                 .build()
                 )));

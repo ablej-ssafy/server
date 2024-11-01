@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class ReferenceUrlResponse {
+@AllArgsConstructor(staticName = "of")
+public class ReferenceUrlRequest {
     private Long id;
-
     private String url;
 }
