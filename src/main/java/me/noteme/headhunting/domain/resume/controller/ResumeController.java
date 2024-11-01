@@ -36,6 +36,14 @@ public class ResumeController {
         return SuccessResponse.of(response);
     }
 
+    @DeleteMapping("/pdf/{resumePdfId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public SuccessResponse<Void> deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
+        resumeService.delete(memberId, resumePdfId);
+
+        return SuccessResponse.empty();
+    }
+
     @GetMapping("/pdf")
     public SuccessResponse<List<ResumePdfResponse>> getPdfList(@LoginUser Long memberId) {
         return SuccessResponse.of(resumeService.getPdfList(memberId));

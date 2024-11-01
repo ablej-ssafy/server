@@ -56,6 +56,14 @@ public class ResumeService {
         resumePdfRepository.save(resumePdf);
     }
 
+    @Transactional
+    public void delete(Long memberId, Long resumePdfId) {
+        resumePdfRepository.findByIdAndMemberId(resumePdfId, memberId)
+                .orElseThrow(()->new CustomException(ErrorCode.ACCESS_DENIED));
+
+        resumePdfRepository.deleteById(resumePdfId);
+    }
+
     public List<ResumePdfResponse> getPdfList(Long memberId) {
         List<ResumePdf> resumePdfList = resumePdfRepository.findAllByMemberId(memberId);
 
@@ -148,4 +156,6 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
+
+
 }
