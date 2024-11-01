@@ -26,7 +26,7 @@ public class RecruitmentController {
     @PostMapping("/recommend")
     public SuccessResponse<List<RecommendResponse>> analyzeResume(
             @LoginUser Long memberId,
-            MultipartFile file
+            @RequestPart("file") MultipartFile file
     ) {
         return SuccessResponse.of(
                 recruitmentService.analyzeResume(memberId, file)
