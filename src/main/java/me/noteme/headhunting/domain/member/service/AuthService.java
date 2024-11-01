@@ -108,18 +108,18 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
 
-    public void signOut(Long userId, String refreshToken) {
-        validateToken(userId, refreshToken);
-        memberCacheRepository.saveAuthenticationKey(userId, refreshToken);
+    public void signOut(Long memberId, String refreshToken) {
+        validateToken(memberId, refreshToken);
+        memberCacheRepository.saveAuthenticationKey(memberId, refreshToken);
     }
 
-    public JwtToken refresh(Long userId, String refreshToken) {
-        validateToken(userId, refreshToken);
+    public JwtToken refresh(Long memberId, String refreshToken) {
+        validateToken(memberId, refreshToken);
         return jwtTokenProvider.refreshToken(refreshToken);
     }
 
-    private void validateToken(Long userId, String refreshToken) {
-        memberCacheRepository.findAuthenticationKey(userId).ifPresent(key -> {
+    private void validateToken(Long memberId, String refreshToken) {
+        memberCacheRepository.findAuthenticationKey(memberId).ifPresent(key -> {
             if (key.equals(refreshToken)) {
                 throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "이미 로그아웃된 사용자 입니다.");
             }

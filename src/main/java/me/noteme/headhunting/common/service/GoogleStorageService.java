@@ -29,7 +29,7 @@ public class GoogleStorageService implements StorageService {
     private String bucketName;
 
     @Override
-    public void uploadFile(Long userId, String fileName, MultipartFile file) {
+    public void uploadFile(Long memberId, String fileName, MultipartFile file) {
         if (file.isEmpty()) {
             return;
         }
@@ -42,7 +42,7 @@ public class GoogleStorageService implements StorageService {
                     .build()
                     .getService();
 
-            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(userId, fileName))
+            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(memberId, fileName))
                     .setContentType(contentType)
                     .build();
 
@@ -53,14 +53,14 @@ public class GoogleStorageService implements StorageService {
     }
 
     @Override
-    public void uploadFile(Long userId, String fileName, String data) {
+    public void uploadFile(Long memberId, String fileName, String data) {
         try (InputStream stream = ResourceUtils.getURL(keyName).openStream()) {
             Storage storage = StorageOptions.newBuilder()
                     .setCredentials(GoogleCredentials.fromStream(stream))
                     .build()
                     .getService();
 
-            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(userId, fileName))
+            BlobInfo blob = BlobInfo.newBuilder(bucketName, path(memberId, fileName))
                     .setContentType("text/plain")
                     .build();
 
@@ -71,8 +71,8 @@ public class GoogleStorageService implements StorageService {
     }
 
     @Override
-    public String getFileUrl(Long userId, String fileName) {
-        return GoogleStorageConst.BASE_URL + bucketName + "/" + path(userId, fileName);
+    public String getFileUrl(Long memberId, String fileName) {
+        return GoogleStorageConst.BASE_URL + bucketName + "/" + path(memberId, fileName);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class GoogleStorageService implements StorageService {
         }
     }
 
-    private String path(Long userId, String fileName) {
-        return userId + "/" + fileName;
+    private String path(Long memberId, String fileName) {
+        return memberId + "/" + fileName;
     }
 }

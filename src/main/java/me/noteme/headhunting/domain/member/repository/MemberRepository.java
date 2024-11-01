@@ -36,7 +36,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             SELECT m FROM Member m
             JOIN FETCH m.interestJobs ij
             JOIN FETCH ij.job
-            WHERE m.id = :userId
+            WHERE m.id = :memberId
     """)
-    Optional<Member> findFetchById(@Param("userId") long userId);
+    Optional<Member> findFetchById(@Param("memberId") long memberId);
 }

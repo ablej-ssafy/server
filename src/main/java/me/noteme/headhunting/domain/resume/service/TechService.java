@@ -65,8 +65,8 @@ public class TechService {
         techSkillRepository.save(techSkill);
     }
 
-    public TechResponse getTechStack(Long userId) {
-        TechStack techStack = techStackRepository.findByMemberId(userId);
+    public TechResponse getTechStack(Long memberId) {
+        TechStack techStack = techStackRepository.findByMemberId(memberId);
 
         return TechResponse.fromEntity(techStack);
     }

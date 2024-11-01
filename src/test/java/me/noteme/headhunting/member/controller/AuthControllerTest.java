@@ -167,7 +167,7 @@ class AuthControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 로그아웃_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         String refreshToken = "refreshToken";
 
         RefreshRequest request = new RefreshRequest();
@@ -196,7 +196,7 @@ class AuthControllerTest extends RestDocsSupport {
                                 .build()
                 )));
 
-        verify(authService).signOut(userId, refreshToken);
+        verify(authService).signOut(memberId, refreshToken);
     }
 
     @Test
@@ -204,14 +204,14 @@ class AuthControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 토큰_재발급_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         String refreshToken = "refreshToken";
 
         RefreshRequest request = new RefreshRequest();
         request.setRefreshToken(refreshToken);
 
         JwtToken response = new JwtToken("newAccessToken", "newRefreshToken");
-        when(authService.refresh(userId, refreshToken)).thenReturn(response);
+        when(authService.refresh(memberId, refreshToken)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/refresh")

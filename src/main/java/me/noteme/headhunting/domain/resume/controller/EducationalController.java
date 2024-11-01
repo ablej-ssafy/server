@@ -41,9 +41,9 @@ public class EducationalController {
 
     @GetMapping("")
     public SuccessResponse<EducationalResponse> getEducational(
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        EducationalResponse response = educationalService.getAllEducationals(userId);
+        EducationalResponse response = educationalService.getAllEducationals(memberId);
 
         return SuccessResponse.of(response);
     }
@@ -53,5 +53,14 @@ public class EducationalController {
         List<EnumTypeResponse> response = educationalService.getEducationTypes();
 
         return SuccessResponse.of(response);
+    }
+
+    @DeleteMapping("/{educationalId}")
+    public SuccessResponse<Void> deleteEducational(
+            @PathVariable("educationalId") Long educationalId
+    ) {
+        educationalService.deleteById(educationalId);
+
+        return SuccessResponse.empty();
     }
 }

@@ -25,11 +25,11 @@ public class RecruitmentController {
 
     @PostMapping("/recommend")
     public SuccessResponse<List<RecommendResponse>> analyzeResume(
-            @LoginUser Long userId,
+            @LoginUser Long memberId,
             MultipartFile file
     ) {
         return SuccessResponse.of(
-                recruitmentService.analyzeResume(userId, file)
+                recruitmentService.analyzeResume(memberId, file)
         );
     }
 

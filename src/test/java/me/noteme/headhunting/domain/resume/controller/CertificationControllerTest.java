@@ -27,10 +27,8 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,8 +69,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격증 필드 생성")
-                                .summary("자격증 업데이트 API")
+                                .tag("이력서-자격증")
+                                .summary("자격 정보 업데이트 API")
                                 .description("자격증 정보를 업데이트합니다.")
                                 .requestFields(
                                         fieldWithPath("certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -95,7 +93,7 @@ public class CertificationControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 전체_자격증_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         CertificationForm certificationForm = CertificationForm.of(
                 1L,
                 "정보처리기사",
@@ -108,7 +106,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         );
 
         CertificationResponse mockResponse = CertificationResponse.of(List.of(certificationForm));
-        when(certificationService.getCertifications(userId, null))
+        when(certificationService.getCertifications(memberId, null))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -120,8 +118,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격 정보 전체 조회")
-                                .summary("로그인 사용자 기반 자격 정보 조회 API")
+                                .tag("이력서-자격증")
+                                .summary("자격 전체 조회 API")
                                 .description("로그인 한 사용자가 작성한 자격 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -141,7 +139,7 @@ public class CertificationControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 자격증_타입지정_정보_전체_조회() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         CertificationForm certificationForm = CertificationForm.of(
                 1L,
                 "정보처리기사",
@@ -154,7 +152,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         );
 
         CertificationResponse mockResponse = CertificationResponse.of(List.of(certificationForm));
-        when(certificationService.getCertifications(userId, CertificationType.LANGUAGE.toString()))
+        when(certificationService.getCertifications(memberId, CertificationType.LANGUAGE.toString()))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -166,8 +164,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격(어학, 자격증) 정보 전체 조회")
-                                .summary("로그인 사용자 기반 어학 정보 조회 API")
+                                .tag("이력서-자격증")
+                                .summary("자격증 타입 조회 API")
                                 .description("로그인 한 사용자가 작성한 자격 정보(어학, 자격증)를 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("type").description("조회할 자격 유형을 작성합니다. (예: language, qualification")
@@ -183,5 +181,29 @@ public class CertificationControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.certifications[].certificationId").type(JsonFieldType.NUMBER).description("자격증 PK")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("자격_정보_삭제_테스트")
+    void 자격_정보_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long certificationId = 1L;
+        doNothing().when(certificationService).deleteById(certificationId);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                delete("/api/v1/certification/{certificationId}", certificationId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-자격")
+                                .summary("자격 삭제 API")
+                                .description("자격 정보를 삭제합니다.")
+                                .build()
+                )));
+        verify(certificationService).deleteById(certificationId);
     }
 }
