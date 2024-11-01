@@ -230,7 +230,7 @@ class ResumeControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 이력서_기본정보_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         ResumeBasicResponse mockResponse = ResumeBasicResponse.of(
                 1L,
                 10L,
@@ -245,7 +245,7 @@ class ResumeControllerTest extends RestDocsSupport {
                 "https://portfolio.example.com"
         );
 
-        when(resumeService.getBasicInfo(userId))
+        when(resumeService.getBasicInfo(memberId))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면

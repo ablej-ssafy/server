@@ -96,7 +96,7 @@ public class EducationalControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 교육_정보_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         EducationalForm educationalForm = EducationalForm.of(
                 1L,
                 "바밤대학교",
@@ -111,7 +111,7 @@ public class EducationalControllerTest extends RestDocsSupport {
         );
 
         EducationalResponse mockResponse = EducationalResponse.of(List.of(educationalForm));
-        when(educationalService.getAllEducationals(userId))
+        when(educationalService.getAllEducationals(memberId))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면

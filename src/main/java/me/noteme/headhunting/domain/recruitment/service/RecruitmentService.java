@@ -32,13 +32,13 @@ public class RecruitmentService {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
 
-    public List<RecommendResponse> analyzeResume(Long userId, MultipartFile resumePdf) {
+    public List<RecommendResponse> analyzeResume(Long memberId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
 
         // TODO: 비동기 처리
-        publisher.publishEvent(FileUploadEvent.of(userId, resumePdf, resumeText));
+        publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
-        Member member = memberRepository.findFetchById(userId)
+        Member member = memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         Job job = member.getInterestJobs().getFirst().getJob();
 

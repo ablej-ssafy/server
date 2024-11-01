@@ -33,8 +33,8 @@ public class EducationalService {
         educationalRepository.saveAll(educationals);
     }
 
-    public EducationalResponse getAllEducationals(Long userId) {
-        return EducationalResponse.of(educationalRepository.findAllByMemberId(userId).stream()
+    public EducationalResponse getAllEducationals(Long memberId) {
+        return EducationalResponse.of(educationalRepository.findAllByMemberId(memberId).stream()
                 .map(EducationalForm::fromEntity)
                 .toList()
         );

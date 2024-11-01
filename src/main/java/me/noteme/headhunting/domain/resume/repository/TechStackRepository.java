@@ -13,7 +13,7 @@ public interface TechStackRepository extends JpaRepository<TechStack, Long> {
         JOIN FETCH ts.stackSkills
         JOIN Resume r
         ON  ts.resume.id = r.id
-        WHERE r.member.id = :userId
+        WHERE r.member.id = :memberId
     """)
-    TechStack findByMemberId(@Param("userId") Long userId);
+    TechStack findByMemberId(@Param("memberId") Long memberId);
 }

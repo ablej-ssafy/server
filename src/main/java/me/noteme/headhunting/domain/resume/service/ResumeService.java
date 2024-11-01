@@ -37,17 +37,17 @@ public class ResumeService {
     private final StorageService storageService;
     private final EntityManager em;
 
-    public String download(Long userId, Long resumePdfId) {
+    public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         String key = resumePdf.getKey() + ".pdf";
 
-        return storageService.getFileUrl(userId, key);
+        return storageService.getFileUrl(memberId, key);
     }
 
     @Transactional
-    public void savePdf(Long userId, String fileName, String key) {
-        Member member = em.getReference(Member.class, userId);
+    public void savePdf(Long memberId, String fileName, String key) {
+        Member member = em.getReference(Member.class, memberId);
         ResumePdf resumePdf = ResumePdf.of(member, fileName, key);
 
         resumePdfRepository.save(resumePdf);
@@ -94,8 +94,8 @@ public class ResumeService {
         return pdfConverter.convertPdfToText(pdfFile);
     }
 
-    public ResumeBasicResponse getBasicInfo(Long userId) {
-        return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(userId));
+    public ResumeBasicResponse getBasicInfo(Long memberId) {
+        return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
     }
 
     public ResumeResponse getResume(Long memberId) {

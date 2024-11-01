@@ -42,9 +42,9 @@ public class ExperienceController {
     @GetMapping("")
     public SuccessResponse<ExperienceResponse> getExperiences(
             @RequestParam(name = "type", required = false) String type,
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        ExperienceResponse response = experienceService.getExperiences(userId, type);
+        ExperienceResponse response = experienceService.getExperiences(memberId, type);
 
         return SuccessResponse.of(response);
     }

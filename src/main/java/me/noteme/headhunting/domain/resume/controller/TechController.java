@@ -62,9 +62,9 @@ public class TechController {
 
     @GetMapping("/stack")
     public SuccessResponse<TechResponse> getTechStack(
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        TechResponse response = techService.getTechStack(userId);
+        TechResponse response = techService.getTechStack(memberId);
 
         return SuccessResponse.of(response);
     }

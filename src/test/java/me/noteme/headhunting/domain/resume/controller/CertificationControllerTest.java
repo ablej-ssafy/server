@@ -95,7 +95,7 @@ public class CertificationControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 전체_자격증_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         CertificationForm certificationForm = CertificationForm.of(
                 1L,
                 "정보처리기사",
@@ -108,7 +108,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         );
 
         CertificationResponse mockResponse = CertificationResponse.of(List.of(certificationForm));
-        when(certificationService.getCertifications(userId, null))
+        when(certificationService.getCertifications(memberId, null))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -141,7 +141,7 @@ public class CertificationControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 자격증_타입지정_정보_전체_조회() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         CertificationForm certificationForm = CertificationForm.of(
                 1L,
                 "정보처리기사",
@@ -154,7 +154,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         );
 
         CertificationResponse mockResponse = CertificationResponse.of(List.of(certificationForm));
-        when(certificationService.getCertifications(userId, CertificationType.LANGUAGE.toString()))
+        when(certificationService.getCertifications(memberId, CertificationType.LANGUAGE.toString()))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면

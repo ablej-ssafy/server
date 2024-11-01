@@ -23,11 +23,11 @@ public class ResumeController {
 
     @GetMapping("/download/{resumePdfId}")
     public SuccessResponse<String> download(
-            @LoginUser Long userId,
+            @LoginUser Long memberId,
             @PathVariable Long resumePdfId
     ) {
         return SuccessResponse.of(
-                resumeService.download(userId,resumePdfId)
+                resumeService.download(memberId, resumePdfId)
         );
     }
 
@@ -42,9 +42,9 @@ public class ResumeController {
 
     @GetMapping("/basic")
     public SuccessResponse<ResumeBasicResponse> getBasic(
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        ResumeBasicResponse response = resumeService.getBasicInfo(userId);
+        ResumeBasicResponse response = resumeService.getBasicInfo(memberId);
 
         return SuccessResponse.of(response);
     }

@@ -31,15 +31,15 @@ public class CertificationService {
         certificationRepository.saveAll(certifications);
     }
 
-    public CertificationResponse getCertifications(Long userId, String type) {
+    public CertificationResponse getCertifications(Long memberId, String type) {
         List<Certification> certifications;
         if (StringUtils.isEmpty(type)) {
-            certifications = certificationRepository.findAllByMemberId(userId);
+            certifications = certificationRepository.findAllByMemberId(memberId);
             return CertificationResponse.of(getCertificationForms(certifications));
         }
 
         CertificationType certificationType = CertificationType.from(type);
-        certifications = certificationRepository.findAllByMemberIdAndType(userId, certificationType);
+        certifications = certificationRepository.findAllByMemberIdAndType(memberId, certificationType);
         return CertificationResponse.of(getCertificationForms(certifications));
     }
 

@@ -14,19 +14,19 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
         FROM Experience e
         JOIN Resume r
         ON e.resume.id = r.id
-        WHERE r.member.id = :userId
+        WHERE r.member.id = :memberId
         ORDER BY e.id ASC
     """)
-    List<Experience> findAllByMemberId(@Param("userId") Long userId);
+    List<Experience> findAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
         SELECT e
         FROM Experience e
         JOIN Resume r
         ON e.resume.id = r.id
-        WHERE r.member.id = :userId
+        WHERE r.member.id = :memberId
         AND e.experienceType = :type
         ORDER BY e.id ASC
     """)
-    List<Experience> findAllByMemberIdAndType(@Param("userId") Long userId, @Param("type") ExperienceType type);
+    List<Experience> findAllByMemberIdAndType(@Param("memberId") Long memberId, @Param("type") ExperienceType type);
 }

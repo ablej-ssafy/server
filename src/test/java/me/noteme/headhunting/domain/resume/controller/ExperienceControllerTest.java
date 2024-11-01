@@ -95,7 +95,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 경험_정보_전체_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         ExperienceForm experienceForm = ExperienceForm.of(
                 1L,
                 ExperienceType.COMPANY,
@@ -109,7 +109,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
         );
 
         ExperienceResponse mockResponse = ExperienceResponse.of(List.of(experienceForm));
-        when(experienceService.getExperiences(userId, null))
+        when(experienceService.getExperiences(memberId, null))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -143,7 +143,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 경험_타입지정_정보_전체_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         ExperienceForm experienceForm = ExperienceForm.of(
                 1L,
                 ExperienceType.COMPANY,
@@ -157,7 +157,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
         );
 
         ExperienceResponse mockResponse = ExperienceResponse.of(List.of(experienceForm));
-        when(experienceService.getExperiences(userId, ExperienceType.PROJECT.toString()))
+        when(experienceService.getExperiences(memberId, ExperienceType.PROJECT.toString()))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면

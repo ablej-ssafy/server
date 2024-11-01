@@ -41,9 +41,9 @@ public class EducationalController {
 
     @GetMapping("")
     public SuccessResponse<EducationalResponse> getEducational(
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        EducationalResponse response = educationalService.getAllEducationals(userId);
+        EducationalResponse response = educationalService.getAllEducationals(memberId);
 
         return SuccessResponse.of(response);
     }

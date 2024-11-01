@@ -131,7 +131,7 @@ public class TechControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 이력서_기술_스택_조회_테스트() throws Exception {
         // * GIVEN: 테스트 요청 데이터 생성
-        Long userId = 1L;
+        Long memberId = 1L;
         TechResponse mockResponse = TechResponse.of(
                 1L,
                 1L,
@@ -145,7 +145,7 @@ public class TechControllerTest extends RestDocsSupport {
                 )
         );
 
-        when(techService.getTechStack(userId))
+        when(techService.getTechStack(memberId))
                 .thenReturn(mockResponse);
 
         // * WHEN: API 호출

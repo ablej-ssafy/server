@@ -41,14 +41,14 @@ public class ExperienceService {
         experienceRepository.saveAll(experiences);
     }
 
-    public ExperienceResponse getExperiences(Long userId, String type) {
+    public ExperienceResponse getExperiences(Long memberId, String type) {
         List<Experience> experiences;
         if (StringUtils.isEmpty(type)) {
-            return ExperienceResponse.of(getExperienceForms(experienceRepository.findAllByMemberId(userId)));
+            return ExperienceResponse.of(getExperienceForms(experienceRepository.findAllByMemberId(memberId)));
         }
 
         ExperienceType experienceType = ExperienceType.from(type);
-        experiences = experienceRepository.findAllByMemberIdAndType(userId, experienceType);
+        experiences = experienceRepository.findAllByMemberIdAndType(memberId, experienceType);
         return ExperienceResponse.of(getExperienceForms(experiences));
     }
 

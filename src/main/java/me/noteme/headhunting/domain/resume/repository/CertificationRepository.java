@@ -22,19 +22,19 @@ public interface CertificationRepository extends JpaRepository<Certification, Lo
         FROM Certification c
         JOIN Resume r
         ON r.id = c.resume.id
-        WHERE r.member.id = :userId
+        WHERE r.member.id = :memberId
         ORDER BY c.id ASC
     """)
-    List<Certification> findAllByMemberId(@Param("userId") Long userId);
+    List<Certification> findAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
         SELECT c
         FROM Certification c
         JOIN Resume r
         ON r.id = c.resume.id
-        WHERE r.member.id = :userId
+        WHERE r.member.id = :memberId
         AND c.certificationType = :type
         ORDER BY c.id ASC
     """)
-    List<Certification> findAllByMemberIdAndType(@Param("userId") Long userId, @Param("type") CertificationType type);
+    List<Certification> findAllByMemberIdAndType(@Param("memberId") Long memberId, @Param("type") CertificationType type);
 }
