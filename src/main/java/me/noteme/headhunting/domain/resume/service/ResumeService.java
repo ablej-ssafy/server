@@ -8,6 +8,7 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
 import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
 import me.noteme.headhunting.domain.job.entity.Job;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -50,6 +52,16 @@ public class ResumeService {
         resumePdfRepository.save(resumePdf);
     }
 
+    public List<ResumePdfResponse> getPdfList(Long memberId) {
+        List<ResumePdf> resumePdfList = resumePdfRepository.findAllByMemberId(memberId);
+
+        return resumePdfList.stream()
+                .map(o -> ResumePdfResponse.of(
+                                o.getId(),
+                                o.getFileName(),
+                                LocalDate.from(o.getCreatedAt())
+                )).toList();
+    }
 
     @Transactional
     public void saveResumeBasic(Long resumeId, Long jobId, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Long resumeBasicId) {
@@ -67,6 +79,7 @@ public class ResumeService {
         Resume resume = Resume.builder()
                 .member(getMemberById(memberId))
                 .build();
+
         resumeRepository.save(resume);
     }
 
@@ -90,6 +103,8 @@ public class ResumeService {
         }
         return pdfConverter.convertPdfToText(pdfFile);
     }
+
+
 
     public ResumeBasicResponse getBasicInfo(Long userId) {
         return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(userId));

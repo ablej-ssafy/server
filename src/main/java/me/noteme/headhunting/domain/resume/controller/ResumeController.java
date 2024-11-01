@@ -7,12 +7,15 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/resume")
@@ -21,22 +24,18 @@ public class ResumeController {
     private final ResumeService resumeService;
 
     @GetMapping("/download/{resumePdfId}")
-    public SuccessResponse<String> download(
-            @LoginUser Long userId,
-            @PathVariable Long resumePdfId
-    ) {
-        return SuccessResponse.of(
-                resumeService.download(userId,resumePdfId)
-        );
+    public SuccessResponse<String> download(@LoginUser Long userId, @PathVariable Long resumePdfId) {
+        return SuccessResponse.of(resumeService.download(userId, resumePdfId));
+    }
+
+    @GetMapping("/pdf")
+    public SuccessResponse<List<ResumePdfResponse>> getPdfList(@LoginUser Long memberId) {
+        return SuccessResponse.of(resumeService.getPdfList(memberId));
     }
 
     @GetMapping("/basic")
-    public SuccessResponse<ResumeBasicResponse> getBasic(
-            @LoginUser Long userId
-    ) {
-        ResumeBasicResponse response = resumeService.getBasicInfo(userId);
-
-        return SuccessResponse.of(response);
+    public SuccessResponse<ResumeBasicResponse> getBasic(@LoginUser Long userId) {
+        return SuccessResponse.of(resumeService.getBasicInfo(userId));
     }
 
     // TODO: 테스트 용도
