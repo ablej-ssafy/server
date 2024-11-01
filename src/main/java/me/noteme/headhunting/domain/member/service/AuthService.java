@@ -28,13 +28,13 @@ import java.util.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
+    private final MemberCacheRepository memberCacheRepository;
+    private final ApplicationEventPublisher publisher;
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
-    private final EntityManager em;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final ApplicationEventPublisher publisher;
-    private final MemberCacheRepository memberCacheRepository;
+    private final EntityManager em;
 
     /**
      * 회원 가입 로직
