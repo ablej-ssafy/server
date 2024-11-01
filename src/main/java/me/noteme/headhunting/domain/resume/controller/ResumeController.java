@@ -41,10 +41,7 @@ public class ResumeController {
     // TODO: 테스트 용도
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponse<Void> postResume() {
-        // TODO: 로그인 된 사용자 이력서 저장
-        long memberId = 1L;
-
+    public SuccessResponse<Void> postResume(@LoginUser Long memberId) {
         resumeService.resumeInit(memberId);
 
         return SuccessResponse.empty();
