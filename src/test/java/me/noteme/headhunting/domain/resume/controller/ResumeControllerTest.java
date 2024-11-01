@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.resume.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.common.advice.CustomControllerAdvice;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
@@ -48,6 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CustomControllerAdvice.class)
         }
 )
 class ResumeControllerTest extends RestDocsSupport {
@@ -441,5 +443,35 @@ class ResumeControllerTest extends RestDocsSupport {
                                         fieldWithPath("data").type(JsonFieldType.STRING).description("파일 URL")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("이력서_PDF_삭제_테스트")
+    @CustomMockUser
+    void 이력서_PDF_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long resumePdfId = 1L;
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                delete("/api/v1/resume/pdf/{resumePdfId}", resumePdfId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isNoContent())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서")
+                                .summary("이력서 PDF 삭제 API")
+                                .description("사용자의 특정 PDF 파일을 삭제합니다.")
+                                .pathParameters(
+                                        parameterWithName("resumePdfId").description("삭제할 이력서 PDF의 ID")
+                                )
+                                .build()
+                )));
+
+        // 서비스 메서드 호출 검증
+        verify(resumeService).delete(memberId, resumePdfId);
     }
 }
