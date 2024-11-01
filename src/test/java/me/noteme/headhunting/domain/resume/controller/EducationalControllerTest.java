@@ -70,8 +70,8 @@ public class EducationalControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("교육 필드 생성")
-                                .summary("교육 업데이트 API")
+                                .tag("이력서-교육")
+                                .summary("학교 정보 추가 API")
                                 .description("교육 정보를 업데이트합니다.")
                                 .requestFields(
                                         fieldWithPath("educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -123,8 +123,8 @@ public class EducationalControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("학교 정보 전체 조회")
-                                .summary("로그인 사용자 기반 학교 정보 조회 API")
+                                .tag("이력서-교육")
+                                .summary("학교 정보 조회 API")
                                 .description("로그인 한 사용자가 작성한 학교 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -161,8 +161,8 @@ public class EducationalControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("교육 타입 정보 조회")
-                                .summary("교육 타입 전체 조회 API")
+                                .tag("이력서-교육")
+                                .summary("교육 타입 확인 API")
                                 .description("사용 가능한 교육 타입 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data[].code").type(JsonFieldType.STRING).description("교육 타입 코드 (예: ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),

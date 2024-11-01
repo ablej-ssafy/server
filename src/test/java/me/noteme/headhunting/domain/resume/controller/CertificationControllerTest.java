@@ -71,8 +71,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격증 필드 생성")
-                                .summary("자격증 업데이트 API")
+                                .tag("이력서-자격증")
+                                .summary("자격 정보 업데이트 API")
                                 .description("자격증 정보를 업데이트합니다.")
                                 .requestFields(
                                         fieldWithPath("certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -120,8 +120,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격 정보 전체 조회")
-                                .summary("로그인 사용자 기반 자격 정보 조회 API")
+                                .tag("이력서-자격증")
+                                .summary("자격 전체 조회 API")
                                 .description("로그인 한 사용자가 작성한 자격 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -166,8 +166,8 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("자격(어학, 자격증) 정보 전체 조회")
-                                .summary("로그인 사용자 기반 어학 정보 조회 API")
+                                .tag("이력서-자격증")
+                                .summary("자격증 타입 조회 API")
                                 .description("로그인 한 사용자가 작성한 자격 정보(어학, 자격증)를 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("type").description("조회할 자격 유형을 작성합니다. (예: language, qualification")

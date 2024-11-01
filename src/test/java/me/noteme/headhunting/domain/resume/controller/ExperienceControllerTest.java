@@ -70,7 +70,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험 필드 생성")
+                                .tag("이력서-경험")
                                 .summary("경험 업데이트 API")
                                 .description("경험 정보를 업데이트합니다.")
                                 .requestFields(
@@ -121,8 +121,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험 정보 전체 조회")
-                                .summary("로그인 사용자 기반 경험 정보 조회 API")
+                                .tag("이력서-경험")
+                                .summary("경험 전체 조회 API")
                                 .description("로그인 한 사용자가 작성한 경험 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.experiences[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -169,8 +169,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험(회사, 프로젝트, 대내외활동) 정보 전체 조회")
-                                .summary("로그인 사용자 기반 경험 정보 조회 API")
+                                .tag("이력서-경험")
+                                .summary("경험 타입 지정 조회 API")
                                 .description("로그인 한 사용자가 작성한 경험 정보(회사, 프로젝트, 대내외활동)를 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("type").description("조회할 경험을 작성합니다. (예: company, activity, project")
@@ -208,8 +208,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험 타입 목록 조회")
-                                .summary("경험 타입 전체 조회 API")
+                                .tag("이력서-경험")
+                                .summary("경험 타입 목록 조회 API")
                                 .description("사용 가능한 경험 타입 목록을 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data[].code").type(JsonFieldType.STRING).description("경험 타입 코드 (예: COMPANY, PROJECT, ACTIVITY)"),

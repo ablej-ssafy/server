@@ -121,8 +121,8 @@ class ResumeControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("이력서 전체 정보 조회")
-                                .summary("로그인 사용자 기반 이력서 정보 조회 API")
+                                .tag("이력서")
+                                .summary("이력서 조회 API")
                                 .description("로그인한 사용자의 전체 이력서 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.basic.resumeId").type(JsonFieldType.NUMBER).description("이력서 ID"),
@@ -202,6 +202,7 @@ class ResumeControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("이력서_생성_테스트")
+    @CustomMockUser
     void 이력서_생성_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         long memberId = 1L;
@@ -215,8 +216,8 @@ class ResumeControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("이력서 생성")
-                                .summary("이력서 생성 API")
+                                .tag("이력서")
+                                .summary("이력서 초기 생성 API")
                                 .description("로그인된 사용자의 새로운 이력서를 생성합니다.")
                                 .responseFields(empty())
                                 .build()
@@ -257,8 +258,8 @@ class ResumeControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("이력서 기본 정보 조회")
-                                .summary("로그인 사용자 기반 이력서 기본 정보 조회 API")
+                                .tag("이력서-기본")
+                                .summary("기본 정보 조회 API")
                                 .description("로그인한 사용자의 이력서 기본 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -303,8 +304,8 @@ class ResumeControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("이력서 기본 정보 생성")
-                                .summary("이력서 기본 정보 업데이트 API")
+                                .tag("이력서-기본")
+                                .summary("기본 정보 업데이트 API")
                                 .description("이력서 기본 정보를 업데이트합니다.")
                                 .requestFields(
                                         fieldWithPath("resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
