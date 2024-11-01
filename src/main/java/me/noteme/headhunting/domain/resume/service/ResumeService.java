@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.service.OpenAiService;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
@@ -32,6 +33,8 @@ public class ResumeService {
     private final PDFToTextConverter pdfConverter;
     private final StorageService storageService;
     private final EntityManager em;
+
+    private final OpenAiService openAiService;
 
     public String download(Long userId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
@@ -88,5 +91,9 @@ public class ResumeService {
             throw new CustomException(ErrorCode.BAD_REQUEST, "PDF 파일이 아닙니다.");
         }
         return pdfConverter.convertPdfToText(pdfFile);
+    }
+
+    public String test(String question) {
+        return openAiService.test(question);
     }
 }

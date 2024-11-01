@@ -83,4 +83,9 @@ public class ResumeController {
     public SuccessResponse<String> pdfToText(@RequestPart(name = "file") MultipartFile pdfFile) {
         return SuccessResponse.of(resumeService.getText(pdfFile));
     }
+
+    @GetMapping("/test")
+    public SuccessResponse<String> test(@RequestBody String resume) {
+        return SuccessResponse.of(resumeService.test(resume));
+    }
 }
