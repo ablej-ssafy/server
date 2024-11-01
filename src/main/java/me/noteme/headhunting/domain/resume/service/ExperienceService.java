@@ -9,6 +9,7 @@ import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.ExperienceRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class ExperienceService {
 
     public ExperienceResponse getExperiences(Long userId, String type) {
         List<Experience> experiences;
-        if (type == null || type.isEmpty()) {
+        if (StringUtils.isEmpty(type)) {
             return ExperienceResponse.of(getExperienceForms(experienceRepository.findAllByMemberId(userId)));
         }
 

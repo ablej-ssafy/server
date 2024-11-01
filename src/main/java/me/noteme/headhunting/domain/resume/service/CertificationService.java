@@ -8,10 +8,10 @@ import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.CertificationRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,7 +33,7 @@ public class CertificationService {
 
     public CertificationResponse getCertifications(Long userId, String type) {
         List<Certification> certifications;
-        if (type == null || type.isEmpty()) {
+        if (StringUtils.isEmpty(type)) {
             certifications = certificationRepository.findAllByMemberId(userId);
             return CertificationResponse.of(getCertificationForms(certifications));
         }
