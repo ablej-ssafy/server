@@ -5,6 +5,7 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeResponse;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
+    private final StorageService storageService;
 
     @GetMapping("/download/{resumePdfId}")
     public SuccessResponse<String> download(@LoginUser Long userId, @PathVariable Long resumePdfId) {
@@ -87,6 +89,16 @@ public class ResumeController {
         );
 
         return SuccessResponse.empty();
+    }
+
+    @PostMapping("/basic/profile")
+    public SuccessResponse<String> uploadProfile(
+            @LoginUser Long memberId,
+            @RequestParam("file") MultipartFile profile
+    ) {
+        storageService.uploadFile(memberId, profile.getOriginalFilename(), profile);
+
+        return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
     }
 
     /**
