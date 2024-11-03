@@ -76,7 +76,7 @@ public class MinioStorageService implements StorageService {
     public String getFileUrl(Long memberId, String fileName) {
         try {
             if (!fileName.toLowerCase().endsWith(".pdf")) {
-                return String.format("%s/%s/%s", minioEndpoint, imagesBucketName, fileName);
+                return String.format("%s/%s/%s/%s", minioEndpoint, imagesBucketName, memberId, fileName);
             }
 
             return minioClient.getPresignedObjectUrl(
