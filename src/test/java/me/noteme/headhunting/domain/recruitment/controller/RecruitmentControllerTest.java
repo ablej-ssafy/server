@@ -6,7 +6,6 @@ import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
 import me.noteme.headhunting.domain.recruitment.service.RecruitmentService;
-import me.noteme.headhunting.domain.resume.controller.ResumeController;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,12 +16,9 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;

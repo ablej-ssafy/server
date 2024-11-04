@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("인증 컨트롤러 테스트")
@@ -92,10 +91,10 @@ class AuthControllerTest extends RestDocsSupport {
     void 회원가입_입력_값_에러_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         SignUpRequest request = new SignUpRequest();
-        request.setEmail("testuser");
-        request.setPassword("pword");
+        request.setEmail("testuser@naver.com");
+        request.setPassword("q4!!");
         request.setName("테스트 유저");
-        request.setCareerYear(35);
+        request.setCareerYear(20);
         request.setJobIds(new ArrayList<>());
 
         // * WHEN: 이걸 실행하면
