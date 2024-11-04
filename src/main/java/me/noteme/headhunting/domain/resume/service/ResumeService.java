@@ -58,10 +58,13 @@ public class ResumeService {
 
     @Transactional
     public void delete(Long memberId, Long resumePdfId) {
-        resumePdfRepository.findByIdAndMemberId(resumePdfId, memberId)
-                .orElseThrow(()->new CustomException(ErrorCode.ACCESS_DENIED));
+        ResumePdf resumePdf = resumePdfRepository.findByIdAndMemberId(resumePdfId, memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
         resumePdfRepository.deleteById(resumePdfId);
+        String key = String.format("%s/%s",memberId, resumePdf.getKey());
+        storageService.delete(key);
+        storageService.delete(key + ".pdf");
     }
 
     public List<ResumePdfResponse> getPdfList(Long memberId) {
@@ -69,9 +72,9 @@ public class ResumeService {
 
         return resumePdfList.stream()
                 .map(o -> ResumePdfResponse.of(
-                                o.getId(),
-                                o.getFileName(),
-                                LocalDate.from(o.getCreatedAt())
+                        o.getId(),
+                        o.getFileName(),
+                        LocalDate.from(o.getCreatedAt())
                 )).toList();
     }
 

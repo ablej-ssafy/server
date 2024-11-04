@@ -38,10 +38,8 @@ public class ResumeController {
 
     @DeleteMapping("/pdf/{resumePdfId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public SuccessResponse<Void> deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
+    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
         resumeService.delete(memberId, resumePdfId);
-
-        return SuccessResponse.empty();
     }
 
     @GetMapping("/pdf")
