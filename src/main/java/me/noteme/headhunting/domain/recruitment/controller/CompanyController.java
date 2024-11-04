@@ -19,14 +19,10 @@ public class CompanyController {
 
     @GetMapping
     public SuccessResponse<PagedModel<CompanyResponse>> searchCompanies(
-            @RequestParam(name = "type", required = false) String type,
+            @RequestParam(name = "type", required = false, defaultValue = "all") String type,
             @RequestParam(name = "q", required = false) String query,
             @PageableDefault(size = 20) Pageable pageable
     ) {
-        if (type == null) {
-            type = "all";
-        }
-
         return SuccessResponse.of(
                 new PagedModel<>(companyService.searchCompanies(type, query, pageable))
         );

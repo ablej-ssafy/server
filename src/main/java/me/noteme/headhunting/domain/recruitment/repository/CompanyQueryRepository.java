@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface CompanyQueryRepository {
     Page<Company> searchCompanies(String type, String query, Pageable pageable);
+
     Optional<Company> findCompanyById(Long companyId);
 }

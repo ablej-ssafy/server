@@ -17,7 +17,6 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Recruitment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

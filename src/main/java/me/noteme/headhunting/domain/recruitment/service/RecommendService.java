@@ -35,7 +35,6 @@ public class RecommendService {
     public List<RecommendResponse> analyzeResume(Long memberId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
 
-        // TODO: 비동기 처리
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
         Member member = memberRepository.findFetchById(memberId)

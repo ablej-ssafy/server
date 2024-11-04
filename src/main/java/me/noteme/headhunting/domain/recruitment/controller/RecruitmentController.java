@@ -41,7 +41,7 @@ public class RecruitmentController {
     @GetMapping("/category/{categoryId}")
     public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> getRecruitmentByCategoryId(
             @PathVariable("categoryId") Long categoryId,
-            Pageable pageable
+            @PageableDefault(size = 20) Pageable pageable
     ) {
         return SuccessResponse.of(
                 new PagedModel<>(recruitmentService.getRecruitmentsByCategoryId(categoryId, pageable))

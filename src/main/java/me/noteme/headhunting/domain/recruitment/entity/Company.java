@@ -19,6 +19,7 @@ public class Company {
     private Long id;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Recruitment> recruitments = new ArrayList<>();
 
     private String name;
