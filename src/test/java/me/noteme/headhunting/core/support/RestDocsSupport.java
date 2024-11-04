@@ -93,5 +93,14 @@ public abstract class RestDocsSupport {
                 fieldWithPath("errors").type(JsonFieldType.ARRAY).description("에러 목록"),
         }), Stream.of(descriptor)).toArray(FieldDescriptor[]::new);
     }
+
+    protected FieldDescriptor[] page(FieldDescriptor... descriptor) {
+        return Stream.concat(Arrays.stream(new FieldDescriptor[]{
+                fieldWithPath("data.page.size").type(JsonFieldType.NUMBER).description("결과 개수 크기"),
+                fieldWithPath("data.page.number").type(JsonFieldType.NUMBER).description("현재 입력받은 페이지"),
+                fieldWithPath("data.page.totalElements").type(JsonFieldType.NUMBER).description("결과 전체 사이즈"),
+                fieldWithPath("data.page.totalPages").type(JsonFieldType.NUMBER).description("결과 전체 페이지 수")
+        }), Stream.of(descriptor)).toArray(FieldDescriptor[]::new);
+    }
 }
 
