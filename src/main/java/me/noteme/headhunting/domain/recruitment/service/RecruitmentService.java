@@ -4,73 +4,40 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.common.listener.event.FileUploadEvent;
-import me.noteme.headhunting.domain.job.entity.Job;
-import me.noteme.headhunting.domain.member.entity.Member;
-import me.noteme.headhunting.domain.member.repository.MemberRepository;
-import me.noteme.headhunting.domain.recruitment.feign.AIRequestClient;
-import me.noteme.headhunting.domain.recruitment.feign.request.CompanyInfoRequest;
-import me.noteme.headhunting.domain.recruitment.feign.request.JobRecommendRequest;
-import me.noteme.headhunting.domain.recruitment.feign.request.PersonalKeywordsRequest;
-import me.noteme.headhunting.domain.recruitment.feign.response.AbleJResponse;
-import me.noteme.headhunting.domain.recruitment.feign.response.CompanyInfoResponse;
-import me.noteme.headhunting.domain.recruitment.feign.response.PersonalKeywordsResponse;
-import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse;
-import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
-import org.springframework.context.ApplicationEventPublisher;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
+import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
+import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RecruitmentService {
-    private final AIRequestClient aiRequestClient;
-    private final PDFToTextConverter pdfToTextConverter;
-    private final MemberRepository memberRepository;
-    private final ApplicationEventPublisher publisher;
+    private final RecruitmentRepository recruitmentRepository;
 
-    public List<RecommendResponse> analyzeResume(Long memberId, MultipartFile resumePdf) {
-        String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
-
-        // TODO: 비동기 처리
-        publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
-
-        Member member = memberRepository.findFetchById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        Job job = member.getInterestJobs().getFirst().getJob();
-
-        JobRecommendRequest request = JobRecommendRequest.of(
-                resumeText, member.getCareer(), job.getId(), job.getJobTitle()
+    public RecruitmentResponse getRecruitmentById(Long recruitmentId) {
+        Recruitment recruitment = recruitmentRepository.findRecruitmentById(recruitmentId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
         );
 
-        AbleJResponse<List<RecommendResponse>> resumeRecommend = aiRequestClient.getResumeRecommend(request);
-        if (!resumeRecommend.isSuccess()) {
-            throw new CustomException(ErrorCode.AI_SERVER_ERROR, resumeRecommend.getError());
-        }
-
-        return resumeRecommend.getData();
+        return RecruitmentResponse.fromEntity(recruitment);
     }
 
-    public List<String> getResumeKeywords(int jobId, int jobSubId, String resume) {
-        PersonalKeywordsRequest request = new PersonalKeywordsRequest();
-        request.setJobId(jobId);
-        request.setJobSubId(jobSubId);
-        request.setResume(resume);
-
-        PersonalKeywordsResponse personalKeywords = aiRequestClient.getPersonalKeywords(request);
-        return personalKeywords.getMessageAsList();
+    public Page<RecruitmentSummaryResponse> getRecruitmentsByCategoryId(Long categoryId, Pageable pageable) {
+        Page<Recruitment> recruitments = recruitmentRepository.findRecruitmentsByCategoryId(categoryId, pageable);
+        return recruitments.map(RecruitmentSummaryResponse::fromEntity);
     }
 
-    public String getCompanyAnalyze(String companyName) {
-        CompanyInfoRequest request = new CompanyInfoRequest();
-        request.setCompanyName(companyName);
-        CompanyInfoResponse companyInfo = aiRequestClient.getCompanyInfo(request);
-        if (companyInfo == null || !companyInfo.isSuccess()) {
-            throw new CustomException(ErrorCode.AI_SERVER_ERROR);
-        }
-        return companyInfo.getCompanyReport();
+    public Page<RecruitmentSummaryResponse> searchRecruitments(String query, Pageable pageable) {
+        Page<Recruitment> recruitments = recruitmentRepository.searchRecruitments(query, pageable);
+        return recruitments.map(RecruitmentSummaryResponse::fromEntity);
     }
 }

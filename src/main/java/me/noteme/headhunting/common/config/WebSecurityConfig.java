@@ -45,7 +45,8 @@ public class WebSecurityConfig {
                                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                                 .successHandler(successHandler)
                 ).authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1/auth/**","/api/v1/jobs").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers("/api/v1/auth/**","/api/v1/jobs", "/api/v1/recruitment/**", "/api/v1/company/**").permitAll()
                         .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().permitAll()
                 )
