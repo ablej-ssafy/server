@@ -56,14 +56,25 @@ public class ResumeService {
         resumePdfRepository.save(resumePdf);
     }
 
+    @Transactional
+    public void delete(Long memberId, Long resumePdfId) {
+        ResumePdf resumePdf = resumePdfRepository.findByIdAndMemberId(resumePdfId, memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
+
+        resumePdfRepository.deleteById(resumePdfId);
+        String key = String.format("%s/%s",memberId, resumePdf.getKey());
+        storageService.delete(key);
+        storageService.delete(key + ".pdf");
+    }
+
     public List<ResumePdfResponse> getPdfList(Long memberId) {
         List<ResumePdf> resumePdfList = resumePdfRepository.findAllByMemberId(memberId);
 
         return resumePdfList.stream()
                 .map(o -> ResumePdfResponse.of(
-                                o.getId(),
-                                o.getFileName(),
-                                LocalDate.from(o.getCreatedAt())
+                        o.getId(),
+                        o.getFileName(),
+                        LocalDate.from(o.getCreatedAt())
                 )).toList();
     }
 
@@ -148,4 +159,6 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
+
+
 }
