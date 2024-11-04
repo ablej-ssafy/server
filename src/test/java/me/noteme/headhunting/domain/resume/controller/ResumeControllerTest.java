@@ -2,6 +2,7 @@ package me.noteme.headhunting.domain.resume.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
+import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
@@ -13,7 +14,6 @@ import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
-import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
@@ -53,6 +53,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ResumeControllerTest extends RestDocsSupport {
     @MockBean
     private ResumeService resumeService;
+
+    @MockBean
+    private StorageService storageService;
 
     @Autowired
     private ResourceLoader loader;
