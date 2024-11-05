@@ -20,8 +20,7 @@ public class RecruitmentSummaryResponse {
         return RecruitmentSummaryResponse.of(
                 recruitment.getId(),
                 recruitment.getName(),
-//                recruitment.getCompany().getThumbnailImage(),
-                "쓰지 말라고 했지",
+                recruitment.getCompany().getThumbnailImage(),
                 recruitment.getCompany().getId(),
                 recruitment.getCompany().getName(),
                 recruitment.getCompany().getLocation(),

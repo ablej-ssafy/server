@@ -21,8 +21,7 @@ public class CompanyResponse {
         return CompanyResponse.of(
                 company.getId(),
                 company.getName(),
-//                company.getThumbnailImage(),
-                "쓰지 말라고 했지",
+                company.getThumbnailImage(),
                 company.getAddress(),
                 company.getRoadAddress(),
                 company.getLatitude(),
