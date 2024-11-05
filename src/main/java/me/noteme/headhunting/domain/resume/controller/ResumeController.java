@@ -31,14 +31,14 @@ public class ResumeController {
     public SuccessResponse<String> download(@LoginUser Long userId, @PathVariable Long resumePdfId) {
         return SuccessResponse.of(resumeService.download(userId, resumePdfId));
     }
-  
+
     @GetMapping("")
     public SuccessResponse<ResumeResponse> getResumeInfo(@LoginUser Long memberId) {
         return SuccessResponse.of(resumeService.getResume(memberId));
     }
 
     @PostMapping("/pdf")
-    public SuccessResponse<List<RecruitmentSummaryResponse>> uploadResumePdf(@LoginUser Long memberId,@RequestPart("file") MultipartFile resumePdf) {
+    public SuccessResponse<List<RecruitmentSummaryResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
         return SuccessResponse.of(resumeService.upload(memberId, resumePdf));
     }
 
@@ -49,7 +49,7 @@ public class ResumeController {
 
     @DeleteMapping("/pdf/{resumePdfId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
+    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId) {
         resumeService.delete(memberId, resumePdfId);
     }
 

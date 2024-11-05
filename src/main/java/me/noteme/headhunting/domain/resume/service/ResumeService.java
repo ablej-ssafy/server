@@ -68,12 +68,9 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         JobCategory jobCategory = member.getInterestJobs().getFirst().getJobCategory();
 
-        log.debug("{}",jobCategory.getId());
-        Page<Recruitment> list = recruitmentRepository.findRecruitmentsByCategoryId(
-                jobCategory.getId(),
-                Pageable.ofSize(3));
-        log.debug("{}",list);
-        return list
+        return recruitmentRepository.findRecruitmentsByCategoryId(
+                        jobCategory.getId(),
+                        Pageable.ofSize(3))
                 .map(RecruitmentSummaryResponse::fromEntity)
                 .toList();
     }
@@ -85,8 +82,6 @@ public class ResumeService {
 
         resumePdfRepository.save(resumePdf);
     }
-
-
 
     @Transactional
     public void delete(Long memberId, Long resumePdfId) {
