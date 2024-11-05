@@ -31,7 +31,7 @@ public class ResumeBasicResponse {
                 basic.getEmail(),
                 basic.getBirth(),
                 basic.getPhone(),
-                basic.getJob().getJobTitle(),
+                basic.getJob().getName(),
                 basic.getIntroduce(),
                 basic.getPortfolioUrl()
         );

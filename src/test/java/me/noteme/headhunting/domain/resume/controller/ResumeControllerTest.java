@@ -5,6 +5,7 @@ import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
@@ -32,6 +33,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -245,7 +247,7 @@ class ResumeControllerTest extends RestDocsSupport {
         ).toList();
 
         when(resumeService.getPdfList(memberId)).thenReturn(
-            response
+                response
         );
 
         // * WHEN: 이걸 실행하면

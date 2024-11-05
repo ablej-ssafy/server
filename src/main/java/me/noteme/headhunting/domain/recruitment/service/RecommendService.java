@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
-import me.noteme.headhunting.domain.job.entity.Job;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.feign.AIRequestClient;
 import me.noteme.headhunting.domain.recruitment.feign.request.CompanyInfoRequest;
 import me.noteme.headhunting.domain.recruitment.feign.request.JobRecommendRequest;
@@ -21,7 +21,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -38,13 +37,13 @@ public class RecommendService {
 
         Member member = memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        Job job = member.getInterestJobs().getFirst().getJob();
+        JobCategory job = member.getInterestJobs().getFirst().getJobCategory();
 
         JobRecommendRequest request = JobRecommendRequest.of(
                 resumeText,
                 member.getCareer(),
                 job.getId(),
-                job.getJobTitle(),
+                job.getName(),
                 5
         );
 

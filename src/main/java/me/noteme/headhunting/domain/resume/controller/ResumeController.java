@@ -6,6 +6,7 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeResponse;
@@ -30,21 +31,26 @@ public class ResumeController {
     public SuccessResponse<String> download(@LoginUser Long userId, @PathVariable Long resumePdfId) {
         return SuccessResponse.of(resumeService.download(userId, resumePdfId));
     }
-  
+
     @GetMapping("")
     public SuccessResponse<ResumeResponse> getResumeInfo(@LoginUser Long memberId) {
         return SuccessResponse.of(resumeService.getResume(memberId));
     }
 
-    @DeleteMapping("/pdf/{resumePdfId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
-        resumeService.delete(memberId, resumePdfId);
+    @PostMapping("/pdf")
+    public SuccessResponse<List<RecruitmentSummaryResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
+        return SuccessResponse.of(resumeService.upload(memberId, resumePdf));
     }
 
     @GetMapping("/pdf")
     public SuccessResponse<List<ResumePdfResponse>> getPdfList(@LoginUser Long memberId) {
         return SuccessResponse.of(resumeService.getPdfList(memberId));
+    }
+
+    @DeleteMapping("/pdf/{resumePdfId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId) {
+        resumeService.delete(memberId, resumePdfId);
     }
 
     @GetMapping("/basic")

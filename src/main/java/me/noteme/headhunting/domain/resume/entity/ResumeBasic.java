@@ -2,8 +2,7 @@ package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import me.noteme.headhunting.domain.job.entity.Job;
-import me.noteme.headhunting.domain.member.entity.Member;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 
 import java.time.LocalDate;
 
@@ -25,7 +24,7 @@ public class ResumeBasic {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
-    private Job job;
+    private JobCategory job;
 
     /**
      * 이력서 제목
@@ -70,7 +69,7 @@ public class ResumeBasic {
     @Column(name = "portfolio_url")
     private String portfolioUrl;
 
-    public static ResumeBasic of(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, Job job, String profileImage) {
+    public static ResumeBasic of(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, JobCategory jobCategory, String profileImage) {
         return ResumeBasic.builder()
                 .id(id)
                 .title(title)
@@ -81,7 +80,7 @@ public class ResumeBasic {
                 .introduce(introduce)
                 .portfolioUrl(portfolioUrl)
                 .resume(resume)
-                .job(job)
+                .job(jobCategory)
                 .profileImage(profileImage)
                 .build();
     }
