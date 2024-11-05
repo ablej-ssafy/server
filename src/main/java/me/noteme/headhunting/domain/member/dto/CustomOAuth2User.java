@@ -18,7 +18,7 @@ public record CustomOAuth2User(Member member) implements OAuth2User, UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-//        collection.add((GrantedAuthority) () -> member.getUserRole().name());
+        collection.add((GrantedAuthority) () -> member.getRoleType().name());
         return collection;
     }
 
