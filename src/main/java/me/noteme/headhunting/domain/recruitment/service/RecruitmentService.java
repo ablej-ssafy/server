@@ -41,7 +41,7 @@ public class RecruitmentService {
 
     public List<JobCategoryResponse> getJobCategories() {
         return jobCategoryRepository.findAll().stream()
-                .map(jobCategory -> JobCategoryResponse.of(jobCategory.getId(), jobCategory.getName()))
+                .map(JobCategoryResponse::fromEntity)
                 .toList();
     }
 }
