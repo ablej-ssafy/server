@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final ApplicationEventPublisher publisher;
     private final MemberRepository memberRepository;
-
     private final PasswordEncoder passwordEncoder;
+
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
