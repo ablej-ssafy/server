@@ -27,9 +27,7 @@ public class RecommendController {
             @LoginUser Long memberId,
             @RequestPart("file") MultipartFile file
     ) {
-        return SuccessResponse.of(
-                recommendService.analyzeResume(memberId, file)
-        );
+        return SuccessResponse.of(recommendService.analyzeResume(memberId, file));
     }
 
     @Deprecated

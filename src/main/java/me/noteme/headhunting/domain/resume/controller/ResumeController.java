@@ -33,9 +33,7 @@ public class ResumeController {
   
     @GetMapping("")
     public SuccessResponse<ResumeResponse> getResumeInfo(@LoginUser Long memberId) {
-        ResumeResponse response = resumeService.getResume(memberId);
-
-        return SuccessResponse.of(response);
+        return SuccessResponse.of(resumeService.getResume(memberId));
     }
 
     @DeleteMapping("/pdf/{resumePdfId}")
@@ -57,10 +55,7 @@ public class ResumeController {
     // TODO: 테스트 용도
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponse<Void> postResume() {
-        // TODO: 로그인 된 사용자 이력서 저장
-        long memberId = 1L;
-
+    public SuccessResponse<Void> postResume(@LoginUser Long memberId) {
         resumeService.resumeInit(memberId);
 
         return SuccessResponse.empty();
@@ -79,7 +74,6 @@ public class ResumeController {
             throw new CustomException(ErrorCode.BAD_REQUEST, errors);
         }
 
-        // TODO: Profile 업로드 로직 분리
         resumeService.saveResumeBasic(
                 request.getResumeId(),
                 request.getJobId(),
@@ -105,17 +99,5 @@ public class ResumeController {
         storageService.uploadFile(memberId, profile.getOriginalFilename(), profile);
 
         return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
-    }
-
-    /**
-     * PDF 파일을 텍스트로 변환합니다.
-     *
-     * @param pdfFile PDF 파일
-     * @return 변환된 텍스트
-     */
-    @Deprecated
-    @PostMapping("/convert")
-    public SuccessResponse<String> pdfToText(@RequestPart(name = "file") MultipartFile pdfFile) {
-        return SuccessResponse.of(resumeService.getText(pdfFile));
     }
 }
