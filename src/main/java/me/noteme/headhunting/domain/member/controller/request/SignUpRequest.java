@@ -1,7 +1,6 @@
 package me.noteme.headhunting.domain.member.controller.request;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -26,5 +25,6 @@ public class SignUpRequest {
     @Range(min = 0, max = 30, message = "경력은 0년 이상 30년 이하로 입력해주세요.")
     private int careerYear;
 
+    @Size(min = 1, message = "선호 업무를 골라주세요")
     private List<Long> jobIds = new ArrayList<>();
 }

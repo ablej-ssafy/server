@@ -70,7 +70,7 @@ public class TechControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("기술 스택 생성")
+                                .tag("이력서-기술")
                                 .summary("기술 스택 업데이트 API")
                                 .description("기술 스택 정보를 업데이트합니다.")
                                 .requestFields(
@@ -110,8 +110,8 @@ public class TechControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("기술 스킬 생성")
-                                .summary("기술 스킬 생성 API")
+                                .tag("이력서-기술")
+                                .summary("기술 아이콘 업데이트 API")
                                 .description("기술 스킬 정보를 추가합니다.")
                                 .requestFields(
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("기술 스킬 이름"),
@@ -131,7 +131,7 @@ public class TechControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 이력서_기술_스택_조회_테스트() throws Exception {
         // * GIVEN: 테스트 요청 데이터 생성
-        Long userId = 1L;
+        Long memberId = 1L;
         TechResponse mockResponse = TechResponse.of(
                 1L,
                 1L,
@@ -145,7 +145,7 @@ public class TechControllerTest extends RestDocsSupport {
                 )
         );
 
-        when(techService.getTechStack(userId))
+        when(techService.getTechStack(memberId))
                 .thenReturn(mockResponse);
 
         // * WHEN: API 호출
@@ -157,8 +157,8 @@ public class TechControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("기술 스택 조회")
-                                .summary("로그인 사용자 기반 기술 스택 조회 API")
+                                .tag("이력서-기술")
+                                .summary("기술 스택 조회 API")
                                 .description("로그인한 사용자의 기술 스택 작성 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -194,8 +194,8 @@ public class TechControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("기술 목록 조회")
-                                .summary("모든 기술 목록 조회 API")
+                                .tag("이력서-기술")
+                                .summary("기술 아이콘 리스트 조회 API")
                                 .description("전체 기술 목록을 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data[].skillId").type(JsonFieldType.NUMBER).description("기술 PK"),

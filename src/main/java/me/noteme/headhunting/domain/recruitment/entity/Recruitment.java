@@ -3,8 +3,11 @@ package me.noteme.headhunting.domain.recruitment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -23,13 +26,20 @@ public class Recruitment {
     @Column(name = "wanted_id")
     private Long wantedId;
 
+    @Column(nullable = false, length = 100)
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "recruitment_category_id", foreignKey = @ForeignKey(name = "fk_company_recruitment_category"))
     private JobCategory category;
 
     @OneToMany(mappedBy = "recruitment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
-    private List<RecruitmentCategory> childCategories = new ArrayList<>();
+    private Set<RecruitmentCategory> childCategories = new HashSet<>();
+
+    @OneToMany(mappedBy = "recruitment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private Set<RecruitmentImage> images = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "fk_recruitment_company"))
@@ -55,6 +65,9 @@ public class Recruitment {
 
     @Column(name = "hire_round", columnDefinition = "TEXT")
     private String hireRound;
+
+    @Column(name = "due_time")
+    private LocalDate dueTime;
 
     @Column(name = "annual_to")
     @Builder.Default

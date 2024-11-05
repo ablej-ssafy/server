@@ -36,33 +36,33 @@ public class MinioStorageService implements StorageService {
     private String resumeBucketName;
 
     @Override
-    public void uploadFile(Long userId, String fileName, MultipartFile file) {
+    public void uploadFile(Long memberId, String fileName, MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             String contentType = file.getContentType();
             String bucketName = fileName.toLowerCase().endsWith(".pdf") ? resumeBucketName : imagesBucketName;
 
-            upload(userId, fileName, inputStream, contentType, bucketName, file.getSize());
+            upload(memberId, fileName, inputStream, contentType, bucketName, file.getSize());
         } catch (IOException e) {
             throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 
     @Override
-    public void uploadFile(Long userId, String fileName, String data) {
+    public void uploadFile(Long memberId, String fileName, String data) {
         byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
         try (InputStream inputStream = new ByteArrayInputStream(dataBytes)) {
-            upload(userId, fileName, inputStream, "text/plain", resumeBucketName, dataBytes.length);
+            upload(memberId, fileName, inputStream, "text/plain", resumeBucketName, dataBytes.length);
         } catch (IOException e) {
             throw new CustomException(ErrorCode.FILE_ERROR);
         }
     }
 
-    private void upload(Long userId, String fileName, InputStream inputStream, String contentType, String bucketName, long size) {
+    private void upload(Long memberId, String fileName, InputStream inputStream, String contentType, String bucketName, long size) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(path(userId, fileName))
+                            .object(path(memberId, fileName))
                             .stream(inputStream, size, -1)
                             .contentType(contentType)
                             .build()
@@ -73,16 +73,16 @@ public class MinioStorageService implements StorageService {
     }
 
     @Override
-    public String getFileUrl(Long userId, String fileName) {
+    public String getFileUrl(Long memberId, String fileName) {
         try {
             if (!fileName.toLowerCase().endsWith(".pdf")) {
-                return String.format("%s/%s/%s", minioEndpoint, imagesBucketName, fileName);
+                return String.format("%s/%s/%s/%s", minioEndpoint, imagesBucketName, memberId, fileName);
             }
 
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .bucket(resumeBucketName)
-                            .object(path(userId, fileName))
+                            .object(path(memberId, fileName))
                             .method(Method.GET)
                             .expiry(2, TimeUnit.HOURS)
                             .build()
@@ -122,8 +122,8 @@ public class MinioStorageService implements StorageService {
         }
     }
 
-    private String path(Long userId, String fileName) {
-        return String.format("%s/%s", userId, fileName);
+    private String path(Long memberId, String fileName) {
+        return String.format("%s/%s", memberId, fileName);
     }
 
     private String getBucketName(String path) {

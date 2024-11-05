@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
 import me.noteme.headhunting.domain.job.entity.InterestJob;
-import me.noteme.headhunting.domain.resume.entity.Resume;
 
 import java.util.ArrayList;
 import java.util.List;

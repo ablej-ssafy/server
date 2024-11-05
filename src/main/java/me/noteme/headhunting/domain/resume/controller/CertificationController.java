@@ -39,10 +39,15 @@ public class CertificationController {
     @GetMapping("")
     public SuccessResponse<CertificationResponse> getCertifications(
             @RequestParam(name = "type", required = false) String type,
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        CertificationResponse response = certificationService.getCertifications(userId, type);
+        return SuccessResponse.of(certificationService.getCertifications(memberId, type));
+    }
 
-        return SuccessResponse.of(response);
+    @DeleteMapping("/{certificationId}")
+    public SuccessResponse<Void> deleteCertification(@PathVariable("certificationId") Long certificationId) {
+        certificationService.deleteById(certificationId);
+
+        return SuccessResponse.empty();
     }
 }

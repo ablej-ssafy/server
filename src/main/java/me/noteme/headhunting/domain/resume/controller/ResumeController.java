@@ -5,8 +5,10 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumeResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
+    private final StorageService storageService;
 
     @GetMapping("/download/{resumePdfId}")
     public SuccessResponse<String> download(@LoginUser Long userId, @PathVariable Long resumePdfId) {
         return SuccessResponse.of(resumeService.download(userId, resumePdfId));
+    }
+  
+    @GetMapping("")
+    public SuccessResponse<ResumeResponse> getResumeInfo(@LoginUser Long memberId) {
+        ResumeResponse response = resumeService.getResume(memberId);
+
+        return SuccessResponse.of(response);
+    }
+
+    @DeleteMapping("/pdf/{resumePdfId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
+        resumeService.delete(memberId, resumePdfId);
     }
 
     @GetMapping("/pdf")
@@ -34,8 +50,8 @@ public class ResumeController {
     }
 
     @GetMapping("/basic")
-    public SuccessResponse<ResumeBasicResponse> getBasic(@LoginUser Long userId) {
-        return SuccessResponse.of(resumeService.getBasicInfo(userId));
+    public SuccessResponse<ResumeBasicResponse> getBasic(@LoginUser Long memberId) {
+        return SuccessResponse.of(resumeService.getBasicInfo(memberId));
     }
 
     // TODO: 테스트 용도
@@ -76,6 +92,16 @@ public class ResumeController {
         );
 
         return SuccessResponse.empty();
+    }
+
+    @PostMapping("/basic/profile")
+    public SuccessResponse<String> uploadProfile(
+            @LoginUser Long memberId,
+            @RequestParam("file") MultipartFile profile
+    ) {
+        storageService.uploadFile(memberId, profile.getOriginalFilename(), profile);
+
+        return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
     }
 
     /**

@@ -27,10 +27,8 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,7 +68,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험 필드 생성")
+                                .tag("이력서-경험")
                                 .summary("경험 업데이트 API")
                                 .description("경험 정보를 업데이트합니다.")
                                 .requestFields(
@@ -95,7 +93,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 경험_정보_전체_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         ExperienceForm experienceForm = ExperienceForm.of(
                 1L,
                 ExperienceType.COMPANY,
@@ -109,7 +107,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
         );
 
         ExperienceResponse mockResponse = ExperienceResponse.of(List.of(experienceForm));
-        when(experienceService.getExperiences(userId, null))
+        when(experienceService.getExperiences(memberId, null))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -121,8 +119,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험 정보 전체 조회")
-                                .summary("로그인 사용자 기반 경험 정보 조회 API")
+                                .tag("이력서-경험")
+                                .summary("경험 전체 조회 API")
                                 .description("로그인 한 사용자가 작성한 경험 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.experiences[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -143,7 +141,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 경험_타입지정_정보_전체_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         ExperienceForm experienceForm = ExperienceForm.of(
                 1L,
                 ExperienceType.COMPANY,
@@ -157,7 +155,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
         );
 
         ExperienceResponse mockResponse = ExperienceResponse.of(List.of(experienceForm));
-        when(experienceService.getExperiences(userId, ExperienceType.PROJECT.toString()))
+        when(experienceService.getExperiences(memberId, ExperienceType.PROJECT.toString()))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -169,8 +167,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험(회사, 프로젝트, 대내외활동) 정보 전체 조회")
-                                .summary("로그인 사용자 기반 경험 정보 조회 API")
+                                .tag("이력서-경험")
+                                .summary("경험 타입 지정 조회 API")
                                 .description("로그인 한 사용자가 작성한 경험 정보(회사, 프로젝트, 대내외활동)를 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("type").description("조회할 경험을 작성합니다. (예: company, activity, project")
@@ -190,8 +188,8 @@ public class ExperienceControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("경험 타입 목록 조회 테스트")
-    void getExperienceTypesTest() throws Exception {
+    @DisplayName("경험_타입_목록_조회_테스트")
+    void 경험_타입_목록_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         List<EnumTypeResponse> mockResponse = List.of(
                 EnumTypeResponse.of("COMPANY", "회사"),
@@ -208,13 +206,37 @@ public class ExperienceControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("경험 타입 목록 조회")
-                                .summary("경험 타입 전체 조회 API")
+                                .tag("이력서-경험")
+                                .summary("경험 타입 목록 조회 API")
                                 .description("사용 가능한 경험 타입 목록을 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data[].code").type(JsonFieldType.STRING).description("경험 타입 코드 (예: COMPANY, PROJECT, ACTIVITY)"),
                                         fieldWithPath("data[].name").type(JsonFieldType.STRING).description("경험 타입 이름 (예: 회사, 프로젝트, 대내외활동)")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("경험_정보_삭제_테스트")
+    void 경험_정보_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long experienceId = 1L;
+        doNothing().when(experienceService).deleteById(experienceId);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                delete("/api/v1/experience/{experienceId}", experienceId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-경험")
+                                .summary("경험 삭제 API")
+                                .description("경험 정보를 삭제합니다.")
+                                .build()
+                )));
+        verify(experienceService).deleteById(experienceId);
     }
 }

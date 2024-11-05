@@ -9,6 +9,7 @@ import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.ExperienceRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,15 +41,20 @@ public class ExperienceService {
         experienceRepository.saveAll(experiences);
     }
 
-    public ExperienceResponse getExperiences(Long userId, String type) {
+    public ExperienceResponse getExperiences(Long memberId, String type) {
         List<Experience> experiences;
-        if (type == null || type.isEmpty()) {
-            return ExperienceResponse.of(getExperienceForms(experienceRepository.findAllByMemberId(userId)));
+        if (StringUtils.isEmpty(type)) {
+            return ExperienceResponse.of(getExperienceForms(experienceRepository.findAllByMemberId(memberId)));
         }
 
         ExperienceType experienceType = ExperienceType.from(type);
-        experiences = experienceRepository.findAllByMemberIdAndType(userId, experienceType);
+        experiences = experienceRepository.findAllByMemberIdAndType(memberId, experienceType);
         return ExperienceResponse.of(getExperienceForms(experiences));
+    }
+
+    @Transactional
+    public void deleteById(Long experienceId) {
+        experienceRepository.deleteById(experienceId);
     }
 
     public List<EnumTypeResponse> getExperienceTypes() {

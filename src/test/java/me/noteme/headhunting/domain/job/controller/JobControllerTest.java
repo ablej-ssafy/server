@@ -1,11 +1,11 @@
 package me.noteme.headhunting.domain.job.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import me.noteme.headhunting.common.advice.CustomControllerAdvice;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.job.dto.JobResponse;
 import me.noteme.headhunting.domain.job.service.JobService;
-import me.noteme.headhunting.domain.recruitment.controller.RecruitmentController;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -33,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CustomControllerAdvice.class)
         }
 )
 class JobControllerTest extends RestDocsSupport {

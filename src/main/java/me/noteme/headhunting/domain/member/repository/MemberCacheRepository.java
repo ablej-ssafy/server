@@ -30,20 +30,20 @@ public class MemberCacheRepository {
         return valueOps.get(CacheKey.confirmKey(confirmKey));
     }
 
-    public void saveAuthenticationKey(Long userId, String refreshToken) {
-        String key = CacheKey.authenticationKey(userId.toString());
+    public void saveAuthenticationKey(Long memberId, String refreshToken) {
+        String key = CacheKey.authenticationKey(memberId.toString());
         valueOps.set(key, refreshToken, Duration.ofMillis(refreshExpire));
     }
 
-    public Optional<String> findAuthenticationKey(Long userId) {
+    public Optional<String> findAuthenticationKey(Long memberId) {
         return Optional.ofNullable(
-                valueOps.get(CacheKey.authenticationKey(userId.toString()))
+                valueOps.get(CacheKey.authenticationKey(memberId.toString()))
         );
     }
 
-    public void deleteAuthenticationKey(Long userId) {
+    public void deleteAuthenticationKey(Long memberId) {
         valueOps.getOperations().delete(
-                CacheKey.authenticationKey(userId.toString())
+                CacheKey.authenticationKey(memberId.toString())
         );
     }
 }

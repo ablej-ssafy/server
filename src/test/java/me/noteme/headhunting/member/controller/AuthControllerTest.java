@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("인증 컨트롤러 테스트")
@@ -92,10 +91,10 @@ class AuthControllerTest extends RestDocsSupport {
     void 회원가입_입력_값_에러_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         SignUpRequest request = new SignUpRequest();
-        request.setEmail("testuser");
-        request.setPassword("pword");
+        request.setEmail("testuser@naver.com");
+        request.setPassword("q4!!");
         request.setName("테스트 유저");
-        request.setCareerYear(35);
+        request.setCareerYear(20);
         request.setJobIds(new ArrayList<>());
 
         // * WHEN: 이걸 실행하면
@@ -167,7 +166,7 @@ class AuthControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 로그아웃_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         String refreshToken = "refreshToken";
 
         RefreshRequest request = new RefreshRequest();
@@ -196,7 +195,7 @@ class AuthControllerTest extends RestDocsSupport {
                                 .build()
                 )));
 
-        verify(authService).signOut(userId, refreshToken);
+        verify(authService).signOut(memberId, refreshToken);
     }
 
     @Test
@@ -204,14 +203,14 @@ class AuthControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 토큰_재발급_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         String refreshToken = "refreshToken";
 
         RefreshRequest request = new RefreshRequest();
         request.setRefreshToken(refreshToken);
 
         JwtToken response = new JwtToken("newAccessToken", "newRefreshToken");
-        when(authService.refresh(userId, refreshToken)).thenReturn(response);
+        when(authService.refresh(memberId, refreshToken)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/refresh")

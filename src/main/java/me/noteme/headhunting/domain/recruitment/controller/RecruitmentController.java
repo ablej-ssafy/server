@@ -1,19 +1,15 @@
 package me.noteme.headhunting.domain.recruitment.controller;
 
 import lombok.RequiredArgsConstructor;
-import me.noteme.headhunting.common.annotation.LoginUser;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.common.service.StorageService;
-import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
-import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
-import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.service.RecruitmentService;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,42 +19,32 @@ import java.util.List;
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
-    @PostMapping("/recommend")
-    public SuccessResponse<List<RecommendResponse>> analyzeResume(
-            @LoginUser Long userId,
-            MultipartFile file
+    @GetMapping
+    public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> searchRecruitments(
+            @RequestParam(value = "q", required = false) String query,
+            @PageableDefault(size = 20) Pageable pageable
     ) {
         return SuccessResponse.of(
-                recruitmentService.analyzeResume(userId, file)
+                new PagedModel<>(recruitmentService.searchRecruitments(query, pageable))
         );
     }
 
-    @Deprecated
-    @PostMapping("/resume/keywords")
-    public SuccessResponse<List<String>> getResumeKeywords(
-            @Validated @RequestBody ResumeKeywordsRequest request,
-            Errors errors
+    @GetMapping("/{recruitmentId}")
+    public SuccessResponse<RecruitmentResponse> getRecruitmentById(
+            @PathVariable("recruitmentId") Long recruitmentId
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         return SuccessResponse.of(
-                recruitmentService.getResumeKeywords(request.getJobId(), request.getJobSubId(), request.getResume())
+                recruitmentService.getRecruitmentById(recruitmentId)
         );
     }
 
-    @Deprecated
-    @PostMapping("/company/analyze")
-    public SuccessResponse<String> getCompanyAnalyze(
-            @Validated @RequestBody CompanyAnalyzeRequest request,
-            Errors errors
+    @GetMapping("/category/{categoryId}")
+    public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> getRecruitmentByCategoryId(
+            @PathVariable("categoryId") Long categoryId,
+            @PageableDefault(size = 20) Pageable pageable
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
-        return SuccessResponse.of(recruitmentService.getCompanyAnalyze(request.getCompanyName()));
+        return SuccessResponse.of(
+                new PagedModel<>(recruitmentService.getRecruitmentsByCategoryId(categoryId, pageable))
+        );
     }
 }
-

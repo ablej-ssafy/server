@@ -8,10 +8,10 @@ import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.CertificationRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -31,16 +31,21 @@ public class CertificationService {
         certificationRepository.saveAll(certifications);
     }
 
-    public CertificationResponse getCertifications(Long userId, String type) {
+    public CertificationResponse getCertifications(Long memberId, String type) {
         List<Certification> certifications;
-        if (type == null || type.isEmpty()) {
-            certifications = certificationRepository.findAllByMemberId(userId);
+        if (StringUtils.isEmpty(type)) {
+            certifications = certificationRepository.findAllByMemberId(memberId);
             return CertificationResponse.of(getCertificationForms(certifications));
         }
 
         CertificationType certificationType = CertificationType.from(type);
-        certifications = certificationRepository.findAllByMemberIdAndType(userId, certificationType);
+        certifications = certificationRepository.findAllByMemberIdAndType(memberId, certificationType);
         return CertificationResponse.of(getCertificationForms(certifications));
+    }
+
+    @Transactional
+    public void deleteById(Long certificationId) {
+        certificationRepository.deleteById(certificationId);
     }
 
     private List<CertificationForm> getCertificationForms(List<Certification> certifications) {

@@ -42,17 +42,20 @@ public class ExperienceController {
     @GetMapping("")
     public SuccessResponse<ExperienceResponse> getExperiences(
             @RequestParam(name = "type", required = false) String type,
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        ExperienceResponse response = experienceService.getExperiences(userId, type);
+        return SuccessResponse.of(experienceService.getExperiences(memberId, type));
+    }
 
-        return SuccessResponse.of(response);
+    @DeleteMapping("/{experienceId}")
+    public SuccessResponse<Void> deleteExperience(@PathVariable("experienceId") Long experienceId) {
+        experienceService.deleteById(experienceId);
+
+        return SuccessResponse.empty();
     }
 
     @GetMapping("/type")
     public SuccessResponse<List<EnumTypeResponse>> getExperienceTypes() {
-        List<EnumTypeResponse> response = experienceService.getExperienceTypes();
-
-        return SuccessResponse.of(response);
+        return SuccessResponse.of(experienceService.getExperienceTypes());
     }
 }

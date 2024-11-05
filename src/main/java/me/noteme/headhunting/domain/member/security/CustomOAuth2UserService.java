@@ -8,12 +8,12 @@ import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.entity.ProviderType;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final ApplicationEventPublisher publisher;
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
 
+    private final PasswordEncoder passwordEncoder;
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
