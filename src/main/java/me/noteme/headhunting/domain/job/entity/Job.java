@@ -25,7 +25,4 @@ public class Job {
     @OneToMany(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<InterestJob> interestJobs = new ArrayList<>();
-
-    @OneToOne(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private ResumeBasic resumeBasic;
 }
