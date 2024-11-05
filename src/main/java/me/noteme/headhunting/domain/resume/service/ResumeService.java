@@ -5,8 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
+import me.noteme.headhunting.domain.member.repository.MemberRepository;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
+import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
@@ -16,10 +20,10 @@ import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
 import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
-import me.noteme.headhunting.domain.job.entity.Job;
 import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,17 +38,30 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ResumeService {
     private final ResumeBasicRepository resumeBasicRepository;
+    private final RecruitmentRepository recruitmentRepository;
+    private final MemberRepository memberRepository;
     private final ResumePdfRepository resumePdfRepository;
+    private final PDFToTextConverter pdfToTextConverter;
+    private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
-    private final PDFToTextConverter pdfConverter;
     private final StorageService storageService;
     private final EntityManager em;
 
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        
+
         return storageService.getFileUrl(memberId, resumePdf.getPdfKey());
+    }
+
+    public void upload(Long memberId, MultipartFile resumePdf) {
+        String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
+
+        publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
+
+        Member member = memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        member.getInterestJobs().getFirst().getJobCategory();
     }
 
     @Transactional
@@ -54,6 +71,8 @@ public class ResumeService {
 
         resumePdfRepository.save(resumePdf);
     }
+
+
 
     @Transactional
     public void delete(Long memberId, Long resumePdfId) {
@@ -80,7 +99,7 @@ public class ResumeService {
 
     @Transactional
     public void saveResumeBasic(Long resumeId, Long jobId, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Long resumeBasicId) {
-        Job job = getJobById(jobId);
+        JobCategory job = getJobById(jobId);
         Resume resume = getResumeById(resumeId);
 
         ResumeBasic resumeBasic = ResumeBasic
@@ -98,8 +117,8 @@ public class ResumeService {
         resumeRepository.save(resume);
     }
 
-    private Job getJobById(Long jobId) {
-        return em.getReference(Job.class, jobId);
+    private JobCategory getJobById(Long jobId) {
+        return em.getReference(JobCategory.class, jobId);
     }
 
     private Resume getResumeById(Long resumeId) {
@@ -150,6 +169,5 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
-
 
 }

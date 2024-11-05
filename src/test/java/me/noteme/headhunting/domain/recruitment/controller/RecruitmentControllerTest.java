@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.support.RestDocsSupport;
+import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.MockRecruitment;
@@ -195,6 +196,38 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.content[].location").type(JsonFieldType.STRING).description("기업 위치 지역 (서울)"),
                                         fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)")
                                 )))
+                                .build()
+                )));
+    }
+
+    @Test
+    @DisplayName("직무_목록_전체_조회_테스트")
+    void 직무_목록_전체_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        AtomicLong id = new AtomicLong(1);
+        List<JobCategoryResponse> response = Stream.of("백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자").map(
+                title -> JobCategoryResponse.of(id.getAndIncrement(), title)
+        ).toList();
+
+        when(recruitmentService.getJobCategories()).thenReturn(response);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/recruitment/category")
+                        .contentType("application/json")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("직무")
+                                .summary("관심 직무 전체 조회 API")
+                                .description("관심 직무 전체 목록을 조회합니다.")
+                                .responseFields(response(
+                                        fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("직무 ID"),
+                                        fieldWithPath("data[].title").type(JsonFieldType.STRING).description("직무 제목")
+                                ))
                                 .build()
                 )));
     }

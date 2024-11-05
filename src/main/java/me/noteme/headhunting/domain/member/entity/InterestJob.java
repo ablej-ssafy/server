@@ -1,8 +1,8 @@
-package me.noteme.headhunting.domain.job.entity;
+package me.noteme.headhunting.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import me.noteme.headhunting.domain.member.entity.Member;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 
 @Entity
 @Table(name = "interest_job")
@@ -18,15 +18,15 @@ public class InterestJob {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
-    private Job job;
+    private JobCategory jobCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public static InterestJob of (Job job, Member member) {
+    public static InterestJob of (JobCategory job, Member member) {
         InterestJob interestJob = new InterestJob();
-        interestJob.job = job;
+        interestJob.jobCategory = job;
         interestJob.member = member;
         return interestJob;
     }

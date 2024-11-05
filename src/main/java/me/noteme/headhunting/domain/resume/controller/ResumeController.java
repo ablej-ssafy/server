@@ -36,15 +36,21 @@ public class ResumeController {
         return SuccessResponse.of(resumeService.getResume(memberId));
     }
 
-    @DeleteMapping("/pdf/{resumePdfId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
-        resumeService.delete(memberId, resumePdfId);
+    @PostMapping("/pdf")
+    public SuccessResponse<Void> uploadResumePdf(@LoginUser Long memberId, MultipartFile resumePdf) {
+        resumeService.upload(memberId, resumePdf);
+        return SuccessResponse.empty();
     }
 
     @GetMapping("/pdf")
     public SuccessResponse<List<ResumePdfResponse>> getPdfList(@LoginUser Long memberId) {
         return SuccessResponse.of(resumeService.getPdfList(memberId));
+    }
+
+    @DeleteMapping("/pdf/{resumePdfId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteResumePdf(@LoginUser Long memberId, @PathVariable Long resumePdfId){
+        resumeService.delete(memberId, resumePdfId);
     }
 
     @GetMapping("/basic")

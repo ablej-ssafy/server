@@ -1,22 +1,19 @@
 package me.noteme.headhunting.domain.member.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
-import me.noteme.headhunting.domain.job.entity.InterestJob;
-import me.noteme.headhunting.domain.job.entity.Job;
-import me.noteme.headhunting.domain.job.repository.JobRepository;
+import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
-import me.noteme.headhunting.common.service.EmailService;
-import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
+import me.noteme.headhunting.domain.recruitment.repository.JobCategoryRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +29,7 @@ import java.util.*;
 public class AuthService {
     private final MemberCacheRepository memberCacheRepository;
     private final MemberRepository memberRepository;
-    private final JobRepository jobRepository;
+    private final JobCategoryRepository jobRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenProvider tokenProvider;
@@ -53,7 +50,7 @@ public class AuthService {
             throw new CustomException(ErrorCode.BAD_REQUEST, "이미 존재하는 사용자입니다.");
         }
 
-        List<Job> jobs = jobRepository.findAllById(jobIds);
+        List<JobCategory> jobs = jobRepository.findAllById(jobIds);
         if (jobs.size() != jobIds.size()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "잘못된 직무 값입니다.");
         }
