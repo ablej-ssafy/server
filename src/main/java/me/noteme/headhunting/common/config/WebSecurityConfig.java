@@ -25,6 +25,13 @@ public class WebSecurityConfig {
     private final CustomSuccessHandler successHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAuthenticationDeniedHandler authenticationDeniedHandler;
+    private final String[] permitAllPaths = {
+            "/favicon.ico",
+            "/api/v1/auth/**",
+            "/api/v1/recruitment/**",
+            "/api/v1/company/**",
+            "/api/v1/search/**"
+    };
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity security) throws Exception {
@@ -45,8 +52,7 @@ public class WebSecurityConfig {
                                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                                 .successHandler(successHandler)
                 ).authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/recruitment/**", "/api/v1/company/**").permitAll()
+                        .requestMatchers(permitAllPaths).permitAll()
                         .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().permitAll()
                 )

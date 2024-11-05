@@ -17,17 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
     private final CompanyService companyService;
 
-    @GetMapping
-    public SuccessResponse<PagedModel<CompanyResponse>> searchCompanies(
-            @RequestParam(name = "type", required = false, defaultValue = "all") String type,
-            @RequestParam(name = "q", required = false) String query,
-            @PageableDefault(size = 20) Pageable pageable
-    ) {
-        return SuccessResponse.of(
-                new PagedModel<>(companyService.searchCompanies(type, query, pageable))
-        );
-    }
-
     @GetMapping("/{companyId}")
     public SuccessResponse<CompanyWithRecruitmentResponse> getCompanyById(
             @PathVariable(name = "companyId") Long companyId

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -35,11 +36,6 @@ public class RecruitmentService {
 
     public Page<RecruitmentSummaryResponse> getRecruitmentsByCategoryId(Long categoryId, Pageable pageable) {
         Page<Recruitment> recruitments = recruitmentRepository.findRecruitmentsByCategoryId(categoryId, pageable);
-        return recruitments.map(RecruitmentSummaryResponse::fromEntity);
-    }
-
-    public Page<RecruitmentSummaryResponse> searchRecruitments(String query, Pageable pageable) {
-        Page<Recruitment> recruitments = recruitmentRepository.searchRecruitments(query, pageable);
         return recruitments.map(RecruitmentSummaryResponse::fromEntity);
     }
 
