@@ -51,62 +51,6 @@ class CompanyControllerTest extends RestDocsSupport {
     private CompanyService companyService;
 
     @Test
-    @DisplayName("회사_이름_기반_검색_테스트")
-    void 회사_이름_기반_검색_테스트() throws Exception {
-        // * GIVEN: 이런게 주어졌을 때
-        AtomicLong id = new AtomicLong(1);
-        int size = 20;
-        Pageable pageable = Pageable.ofSize(size);
-        List<CompanyResponse> companies = Stream.of("회사1", "회사2", "회사3").map(name -> {
-            Company company = MockCompany.create(id.getAndIncrement(), name);
-            return CompanyResponse.fromEntity(company);
-        }).toList();
-        Page<CompanyResponse> page = new PageImpl<>(companies, pageable, size);
-
-        when(companyService.searchCompanies(
-                argThat(s -> s.equals("name")),
-                argThat(s -> s.equals("회사")),
-                any(Pageable.class)
-        )).thenReturn(page);
-
-        // * WHEN: 이걸 실행하면
-        var actions = this.mockMvc.perform(
-                get("/api/v1/company")
-                        .param("type", "name")
-                        .param("q", "회사")
-                        .param("page", "0")
-                        .param("size", String.valueOf(size))
-        );
-
-        // * THEN: 이런 결과가 나와야 한다
-        actions.andExpect(status().isOk())
-                .andDo(this.restDocs.document(resource(
-                        ResourceSnippetParameters.builder()
-                                .tag("회사")
-                                .summary("회사 이름 기반 검색 API")
-                                .description("회사 이름을 기반으로 검색하여 회사 목록을 반환합니다.")
-                                .queryParameters(
-                                        parameterWithName("type").description("검색 타입 [name: 회사명, location: 지역, strict: 구역, address: 주소]"),
-                                        parameterWithName("q").description("검색어"),
-                                        parameterWithName("page").description("페이지 번호"),
-                                        parameterWithName("size").description("페이지 크기")
-                                ).responseFields(response(page(
-                                        fieldWithPath("data.content[].companyId").type(JsonFieldType.NUMBER).description("회사 ID"),
-                                        fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("회사명"),
-                                        fieldWithPath("data.content[].thumbnail").type(JsonFieldType.STRING).description("썸네일 이미지"),
-                                        fieldWithPath("data.content[].address").type(JsonFieldType.STRING).description("주소"),
-                                        fieldWithPath("data.content[].roadAddress").type(JsonFieldType.STRING).description("도로명 주소"),
-                                        fieldWithPath("data.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                        fieldWithPath("data.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                        fieldWithPath("data.content[].location").type(JsonFieldType.STRING).description("지역"),
-                                        fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("구역")
-                                )))
-                                .build()
-                )));
-
-    }
-
-    @Test
     @DisplayName("회사_ID_기반으로_회사_정보_조회_테스트")
     void 회사_ID_기반으로_회사_정보_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때

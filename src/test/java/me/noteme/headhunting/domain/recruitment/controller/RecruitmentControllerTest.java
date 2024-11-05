@@ -101,56 +101,6 @@ class RecruitmentControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("채용공고_이름_검색_조회_테스트")
-    void 채용공고_이름_검색_조회_테스트() throws Exception {
-        // * GIVEN: 이런게 주어졌을 때
-        String query = "에이";
-        int size = 20;
-        Pageable pageable = Pageable.ofSize(size);
-        AtomicLong id = new AtomicLong(1);
-        List<RecruitmentSummaryResponse> recruitments = Stream.of("에이블제이 백엔드", "호두에이아이랩", "[인텔리전스랩스] 넥슨크리에이터즈팀 백엔드 개발자 (Java)", "카펜스트리트(에이콘3D)").map(name -> {
-            Recruitment recruitment = MockRecruitment.create(id.getAndIncrement(), name);
-            return RecruitmentSummaryResponse.fromEntity(recruitment);
-        }).toList();
-
-        Page<RecruitmentSummaryResponse> response = new PageImpl<>(recruitments, pageable, size);
-
-        when(recruitmentService.searchRecruitments(anyString(), any(Pageable.class))).thenReturn(response);
-
-        // * WHEN: 이걸 실행하면
-        ResultActions actions = this.mockMvc.perform(
-            get("/api/v1/recruitment")
-                .queryParam("q", query)
-                .queryParam("page", "0")
-                .queryParam("size", "20")
-        );
-
-        // * THEN: 이런 결과가 나와야 한다
-        actions.andExpect(status().isOk())
-                .andDo(this.restDocs.document(resource(
-                        ResourceSnippetParameters.builder()
-                                .tag("채용 공고")
-                                .summary("채용 공고 검색 조회 API")
-                                .description("검색어를 기반으로 채용 공고를 검색합니다.")
-                                .queryParameters(
-                                        parameterWithName("q").type(SimpleType.STRING).description("검색어"),
-                                        parameterWithName("page").type(SimpleType.NUMBER).defaultValue(0).description("페이지 번호"),
-                                        parameterWithName("size").type(SimpleType.NUMBER).defaultValue(20).description("페이지 크기")
-                                ).responseFields(response(page(
-                                        fieldWithPath("data.content[].recruitmentId").type(JsonFieldType.NUMBER).description("채용 공고 ID"),
-                                        fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("채용 공고명"),
-                                        fieldWithPath("data.content[].category").type(JsonFieldType.STRING).description("직업 카테고리 이름"),
-                                        fieldWithPath("data.content[].companyId").type(JsonFieldType.NUMBER).description("기업 ID"),
-                                        fieldWithPath("data.content[].companyName").type(JsonFieldType.STRING).description("기업명"),
-                                        fieldWithPath("data.content[].thumbnail").type(JsonFieldType.STRING).description("기업 소개용 썸네일"),
-                                        fieldWithPath("data.content[].location").type(JsonFieldType.STRING).description("기업 위치 지역 (서울)"),
-                                        fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)")
-                                )))
-                                .build()
-                )));
-    }
-
-    @Test
     @DisplayName("카테고리_ID_기반_조회_테스트")
     void 카테고리_ID_기반_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때

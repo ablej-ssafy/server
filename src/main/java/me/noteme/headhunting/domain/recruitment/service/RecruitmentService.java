@@ -35,9 +35,4 @@ public class RecruitmentService {
         Page<Recruitment> recruitments = recruitmentRepository.findRecruitmentsByCategoryId(categoryId, pageable);
         return recruitments.map(RecruitmentSummaryResponse::fromEntity);
     }
-
-    public Page<RecruitmentSummaryResponse> searchRecruitments(String query, Pageable pageable) {
-        Page<Recruitment> recruitments = recruitmentRepository.searchRecruitments(query, pageable);
-        return recruitments.map(RecruitmentSummaryResponse::fromEntity);
-    }
 }
