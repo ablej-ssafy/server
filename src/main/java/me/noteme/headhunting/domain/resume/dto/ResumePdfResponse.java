@@ -10,5 +10,6 @@ import java.time.LocalDate;
 public class ResumePdfResponse {
     private Long id;
     private String fileName;
+    private String url;
     private LocalDate createdAt;
 }

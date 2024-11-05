@@ -32,4 +32,8 @@ public class ResumePdf extends BaseEntity {
         resumePdf.key = key;
         return resumePdf;
     }
+
+    public String getPdfKey() {
+        return key + ".pdf";
+    }
 }

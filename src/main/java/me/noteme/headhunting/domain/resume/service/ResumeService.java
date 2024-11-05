@@ -43,9 +43,8 @@ public class ResumeService {
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        String key = resumePdf.getKey() + ".pdf";
-
-        return storageService.getFileUrl(memberId, key);
+        
+        return storageService.getFileUrl(memberId, resumePdf.getPdfKey());
     }
 
     @Transactional
@@ -74,6 +73,7 @@ public class ResumeService {
                 .map(o -> ResumePdfResponse.of(
                         o.getId(),
                         o.getFileName(),
+                        storageService.getFileUrl(memberId, o.getPdfKey()),
                         LocalDate.from(o.getCreatedAt())
                 )).toList();
     }
