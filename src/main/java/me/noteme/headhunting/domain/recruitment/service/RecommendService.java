@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -35,22 +36,37 @@ public class RecommendService {
     public List<RecommendResponse> analyzeResume(Long memberId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
 
-        publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
-
         Member member = memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        Job job = member.getInterestJobs().getFirst().getJob();
+//        Job job = member.getInterestJobs().getFirst().getJob();
+//
+//        JobRecommendRequest request = JobRecommendRequest.of(
+//                resumeText,
+//                member.getCareer(),
+//                job.getId(),
+//                job.getJobTitle(),
+//                5
+//        );
+//
+//        AbleJResponse<List<RecommendResponse>> resumeRecommend = aiRequestClient.getResumeRecommend(request);
+//        if (!resumeRecommend.isSuccess()) {
+//            throw new CustomException(ErrorCode.AI_SERVER_ERROR, resumeRecommend.getError());
+//        }
 
-        JobRecommendRequest request = JobRecommendRequest.of(
-                resumeText, member.getCareer(), job.getId(), job.getJobTitle()
-        );
-
-        AbleJResponse<List<RecommendResponse>> resumeRecommend = aiRequestClient.getResumeRecommend(request);
-        if (!resumeRecommend.isSuccess()) {
-            throw new CustomException(ErrorCode.AI_SERVER_ERROR, resumeRecommend.getError());
-        }
-
-        return resumeRecommend.getData();
+        publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
+        List<RecommendResponse> list = new ArrayList<>();
+        list.add(RecommendResponse.of(87,
+                "mock",
+                "mock",
+                "mock",
+                "mock",
+                "mock",
+                "mock",
+                1,
+                0.123
+                ));
+        return list;
+//        return resumeRecommend.getData();
     }
 
     public List<String> getResumeKeywords(int jobId, int jobSubId, String resume) {
