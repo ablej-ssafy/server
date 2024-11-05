@@ -110,15 +110,6 @@ public class ResumeService {
         return em.getReference(Member.class, memberId);
     }
 
-    // TODO: 테스트 용도 추후 삭제
-    public String getText(MultipartFile pdfFile) {
-        String pdfFileName = pdfFile.getOriginalFilename();
-        if (pdfFileName == null || !pdfFileName.toLowerCase().endsWith(".pdf") || !"application/pdf".equals(pdfFile.getContentType())) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "PDF 파일이 아닙니다.");
-        }
-        return pdfConverter.convertPdfToText(pdfFile);
-    }
-
     public ResumeBasicResponse getBasicInfo(Long memberId) {
         return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
     }

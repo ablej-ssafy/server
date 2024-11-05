@@ -33,9 +33,7 @@ public class RecruitmentController {
     public SuccessResponse<RecruitmentResponse> getRecruitmentById(
             @PathVariable("recruitmentId") Long recruitmentId
     ) {
-        return SuccessResponse.of(
-                recruitmentService.getRecruitmentById(recruitmentId)
-        );
+        return SuccessResponse.of(recruitmentService.getRecruitmentById(recruitmentId));
     }
 
     @GetMapping("/category/{categoryId}")

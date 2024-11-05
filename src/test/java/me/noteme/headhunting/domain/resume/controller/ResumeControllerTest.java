@@ -383,36 +383,6 @@ class ResumeControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("이력서_PDF_문자열_변환_테스트")
-    void 이력서_PDF_문자열_변환_테스트() throws Exception {
-        // * GIVEN: 이런게 주어졌을 때
-        String fileName = "resume.pdf";
-        Resource source = loader.getResource("classpath:/media/" + fileName);
-        MockMultipartFile file = new MockMultipartFile("file", fileName, "application/pdf", source.getInputStream());
-
-        when(resumeService.getText(file))
-                .thenReturn("추출한 텍스트");
-
-        // * WHEN: 이걸 실행하면
-        ResultActions actions = this.mockMvc.perform(multipart("/api/v1/resume/convert")
-                        .file(file)
-                        .contentType("multipart/form-data")
-        );
-
-        // * THEN: 이런 결과가 나와야 한다
-        actions.andExpect(status().isOk())
-                .andDo(restDocs.document(resource(
-                        ResourceSnippetParameters.builder()
-                                .tag("이력서 관리")
-                                .summary("이력서 PDF 문자열 변환 API")
-                                .description("PDF 파일을 텍스트로 변환합니다.")
-                                .responseFields(response(
-                                        fieldWithPath("data").type(JsonFieldType.STRING).description("변환된 텍스트")
-                                )).build()
-                )));
-    }
-
-    @Test
     @DisplayName("이력서_PDF_다운로드_링크_테스트")
     @CustomMockUser
     void 이력서_PDF_다운로드_링크_테스트() throws Exception {
