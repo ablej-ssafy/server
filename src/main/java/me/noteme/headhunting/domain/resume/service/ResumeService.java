@@ -9,7 +9,9 @@ import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
+import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
@@ -24,6 +26,8 @@ import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,14 +58,24 @@ public class ResumeService {
         return storageService.getFileUrl(memberId, resumePdf.getPdfKey());
     }
 
-    public void upload(Long memberId, MultipartFile resumePdf) {
+    @Transactional
+    public List<RecruitmentSummaryResponse> upload(Long memberId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
 
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
         Member member = memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        member.getInterestJobs().getFirst().getJobCategory();
+        JobCategory jobCategory = member.getInterestJobs().getFirst().getJobCategory();
+
+        log.debug("{}",jobCategory.getId());
+        Page<Recruitment> list = recruitmentRepository.findRecruitmentsByCategoryId(
+                jobCategory.getId(),
+                Pageable.ofSize(3));
+        log.debug("{}",list);
+        return list
+                .map(RecruitmentSummaryResponse::fromEntity)
+                .toList();
     }
 
     @Transactional
