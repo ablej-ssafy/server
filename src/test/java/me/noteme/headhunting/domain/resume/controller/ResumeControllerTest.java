@@ -241,7 +241,7 @@ class ResumeControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
         List<ResumePdfResponse> response = Stream.of(1, 2, 3).map(index ->
-                ResumePdfResponse.of((long) index, "파일 이름", LocalDate.of(2024, 10, 1))
+                ResumePdfResponse.of((long) index, "파일 이름", "파일 주소", LocalDate.of(2024, 10, 1))
         ).toList();
 
         when(resumeService.getPdfList(memberId)).thenReturn(
@@ -264,6 +264,7 @@ class ResumeControllerTest extends RestDocsSupport {
                                         fieldWithPath("data").type(JsonFieldType.ARRAY).description("이력서 PDF 목록"),
                                         fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("이력서 PDF ID"),
                                         fieldWithPath("data[].fileName").type(JsonFieldType.STRING).description("이력서 PDF 파일 이름"),
+                                        fieldWithPath("data[].url").type(JsonFieldType.STRING).description("이력서 PDF 파일 주소"),
                                         fieldWithPath("data[].createdAt").type(JsonFieldType.STRING).description("생성 날짜(yyy-MM-dd 형식)")
                                 )).build()
                 )));
