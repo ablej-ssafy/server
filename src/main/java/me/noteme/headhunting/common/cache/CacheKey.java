@@ -8,4 +8,12 @@ public class CacheKey {
     public static String authenticationKey(String key) {
         return "authentication:" + key;
     }
+
+    public static String searchKey() {
+        return "searchKeywords";
+    }
+
+    public static String searchUserKey(Long userId) {
+        return "searchKeywords:user:" + userId;
+    }
 }

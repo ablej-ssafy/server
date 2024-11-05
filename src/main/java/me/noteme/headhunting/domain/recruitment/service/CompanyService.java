@@ -21,11 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CompanyService {
     private final CompanyRepository companyRepository;
 
-    public Page<CompanyResponse> searchCompanies(String type, String query, Pageable pageable) {
-        Page<Company> companies = companyRepository.searchCompanies(type, query, pageable);
-        return companies.map(CompanyResponse::fromEntity);
-    }
-
     public CompanyWithRecruitmentResponse getCompanyById(Long companyId) {
         Company company = companyRepository.findCompanyById(companyId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)

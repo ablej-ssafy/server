@@ -1,0 +1,55 @@
+package me.noteme.headhunting.domain.recruitment.controller;
+
+import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.annotation.LoginUser;
+import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.domain.recruitment.dto.CompanyResponse;
+import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
+import me.noteme.headhunting.domain.recruitment.dto.SearchResponse;
+import me.noteme.headhunting.domain.recruitment.service.SearchService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/search")
+public class SearchController {
+    private final SearchService searchService;
+
+    @GetMapping
+    public SuccessResponse<SearchResponse> search(@LoginUser Long userId) {
+        return SuccessResponse.of(
+                searchService.rankKeywords(userId)
+        );
+    }
+
+    @GetMapping("/company")
+    public SuccessResponse<PagedModel<CompanyResponse>> searchCompanies(
+            @LoginUser Long userId,
+            @RequestParam(name = "type", required = false, defaultValue = "all") String type,
+            @RequestParam(name = "q", required = false) String query,
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return SuccessResponse.of(
+                new PagedModel<>(searchService.searchCompanies(userId, type, query, pageable))
+        );
+    }
+
+    @GetMapping("/recruitment")
+    public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> searchRecruitments(
+            @LoginUser Long userId,
+            @RequestParam(value = "q", required = false) String query,
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return SuccessResponse.of(
+                new PagedModel<>(searchService.searchRecruitments(userId, query, pageable))
+        );
+    }
+}

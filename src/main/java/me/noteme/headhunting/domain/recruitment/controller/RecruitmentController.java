@@ -19,16 +19,6 @@ import java.util.List;
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
-    @GetMapping
-    public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> searchRecruitments(
-            @RequestParam(value = "q", required = false) String query,
-            @PageableDefault(size = 20) Pageable pageable
-    ) {
-        return SuccessResponse.of(
-                new PagedModel<>(recruitmentService.searchRecruitments(query, pageable))
-        );
-    }
-
     @GetMapping("/{recruitmentId}")
     public SuccessResponse<RecruitmentResponse> getRecruitmentById(@PathVariable("recruitmentId") Long recruitmentId) {
         return SuccessResponse.of(recruitmentService.getRecruitmentById(recruitmentId));
