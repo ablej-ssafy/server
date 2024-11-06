@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -32,17 +33,22 @@ public class RecruitmentService {
     private final JobCategoryRepository jobCategoryRepository;
     private final EntityManager em;
 
-    public RecruitmentResponse getRecruitmentById(Long recruitmentId) {
+    public RecruitmentResponse getRecruitmentById(Long memberId, Long recruitmentId) {
         Recruitment recruitment = recruitmentRepository.findRecruitmentById(recruitmentId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
         );
 
-        return RecruitmentResponse.fromEntity(recruitment);
+        boolean scrapped = scrapRepository.isScrapped(memberId, recruitmentId);
+
+        return RecruitmentResponse.fromEntity(recruitment, scrapped);
     }
 
-    public Page<RecruitmentSummaryResponse> getRecruitmentsByCategoryId(Long categoryId, Pageable pageable) {
+    public Page<RecruitmentSummaryResponse> getRecruitmentsByCategoryId(Long memberId, Long categoryId, Pageable pageable) {
         Page<Recruitment> recruitments = recruitmentRepository.findRecruitmentsByCategoryId(categoryId, pageable);
-        return recruitments.map(RecruitmentSummaryResponse::fromEntity);
+        Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
+        return recruitments.map(
+                recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId()))
+        );
     }
 
     public List<JobCategoryResponse> getJobCategories() {

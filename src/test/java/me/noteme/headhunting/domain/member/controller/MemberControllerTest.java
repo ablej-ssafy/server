@@ -121,7 +121,8 @@ public class MemberControllerTest extends RestDocsSupport {
                                         fieldWithPath("data[].companyName").type(JsonFieldType.STRING).description("채용 공고 회사명"),
                                         fieldWithPath("data[].location").type(JsonFieldType.STRING).description("채용 공고 공고 회사 지역"),
                                         fieldWithPath("data[].strict").type(JsonFieldType.STRING).description("채용 공고 공고 회사 구역"),
-                                        fieldWithPath("data[].category").type(JsonFieldType.STRING).description("채용 공고 카테고리")
+                                        fieldWithPath("data[].category").type(JsonFieldType.STRING).description("채용 공고 카테고리"),
+                                        fieldWithPath("data[].scrapped").type(JsonFieldType.BOOLEAN).description("스크랩 여부")
                                 ))
                                 .build()
                 )));

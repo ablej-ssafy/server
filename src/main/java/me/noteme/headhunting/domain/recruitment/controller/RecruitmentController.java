@@ -22,17 +22,21 @@ public class RecruitmentController {
     private final RecruitmentService recruitmentService;
 
     @GetMapping("/{recruitmentId}")
-    public SuccessResponse<RecruitmentResponse> getRecruitmentById(@PathVariable("recruitmentId") Long recruitmentId) {
-        return SuccessResponse.of(recruitmentService.getRecruitmentById(recruitmentId));
+    public SuccessResponse<RecruitmentResponse> getRecruitmentById(
+            @LoginUser Long memberId,
+            @PathVariable("recruitmentId") Long recruitmentId
+    ) {
+        return SuccessResponse.of(recruitmentService.getRecruitmentById(memberId, recruitmentId));
     }
 
     @GetMapping("/category/{categoryId}")
     public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> getRecruitmentByCategoryId(
+            @LoginUser Long memberId,
             @PathVariable("categoryId") Long categoryId,
             @PageableDefault(size = 20) Pageable pageable
     ) {
         return SuccessResponse.of(
-                new PagedModel<>(recruitmentService.getRecruitmentsByCategoryId(categoryId, pageable))
+                new PagedModel<>(recruitmentService.getRecruitmentsByCategoryId(memberId, categoryId, pageable))
         );
     }
 

@@ -18,10 +18,10 @@ public class Scrap {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_scrap_member_id"))
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "recruitment_id")
+    @JoinColumn(name = "recruitment_id", foreignKey = @ForeignKey(name = "fk_scrap_recruitment_id"))
     private Recruitment recruitment;
 }

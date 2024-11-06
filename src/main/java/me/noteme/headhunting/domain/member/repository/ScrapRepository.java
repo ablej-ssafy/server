@@ -8,12 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     @Query("""
         SELECT s.recruitment
         FROM Scrap s
-        JOIN FETCH s.recruitment
         WHERE s.member.id = :memberId
     """)
     List<Recruitment> findAllByMemberId(@Param("memberId") Long memberId);
@@ -31,4 +31,11 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
         WHERE s.member.id = :memberId AND s.recruitment.id = :recruitmentId
     """)
     Optional<Scrap> findScrap(@Param("memberId") Long memberId, @Param("recruitmentId") Long recruitmentId);
+
+    @Query("""
+        SELECT s.recruitment.id
+        FROM Scrap s
+        WHERE s.member.id = :memberId AND s.recruitment.id IN :recruitmentIds
+    """)
+    Set<Long> isScrapped(@Param("memberId") Long memberId, @Param("recruitmentIds") List<Long> recruitmentIds);
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import me.noteme.headhunting.domain.recruitment.entity.Company;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor(staticName = "of")
@@ -33,6 +34,23 @@ public class CompanyWithRecruitmentResponse {
                 company.getStrict(),
                 company.getRecruitments().stream()
                         .map(CompanyRecruitmentResponse::fromEntity)
+                        .toList()
+        );
+    }
+
+    public static CompanyWithRecruitmentResponse fromEntity(Company company, Set<Long> scrapped) {
+        return CompanyWithRecruitmentResponse.of(
+                company.getId(),
+                company.getName(),
+                company.getThumbnailImage(),
+                company.getAddress(),
+                company.getRoadAddress(),
+                company.getLatitude(),
+                company.getLongitude(),
+                company.getLocation(),
+                company.getStrict(),
+                company.getRecruitments().stream()
+                        .map(recruitment -> CompanyRecruitmentResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId())))
                         .toList()
         );
     }

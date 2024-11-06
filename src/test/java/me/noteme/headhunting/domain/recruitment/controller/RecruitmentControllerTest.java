@@ -48,15 +48,18 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("채용공고_조회_테스트")
+    @CustomMockUser
     void 채용공고_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Recruitment recruitment = MockRecruitment.create(1L);
+        Long memberId = 1L;
+        Long recruitmentId = 1L;
+        Recruitment recruitment = MockRecruitment.create(recruitmentId);
         RecruitmentResponse response = RecruitmentResponse.fromEntity(recruitment);
-        when(recruitmentService.getRecruitmentById(1L)).thenReturn(response);
+        when(recruitmentService.getRecruitmentById(memberId, recruitmentId)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-            get("/api/v1/recruitment/{recruitmentId}", 1L)
+            get("/api/v1/recruitment/{recruitmentId}", recruitmentId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -93,7 +96,8 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.hireRound").type(JsonFieldType.STRING).optional().description("채용 프로세스"),
                                         fieldWithPath("data.dueTime").type(JsonFieldType.STRING).optional().description("마감일"),
                                         fieldWithPath("data.annualTo").type(JsonFieldType.NUMBER).description("연차 상한"),
-                                        fieldWithPath("data.annualFrom").type(JsonFieldType.NUMBER).description("연차 하한")
+                                        fieldWithPath("data.annualFrom").type(JsonFieldType.NUMBER).description("연차 하한"),
+                                        fieldWithPath("data.scrapped").type(JsonFieldType.BOOLEAN).description("스크랩 여부 (비로그인 시 false)")
                                 ))
                                 .build()
                 )));
@@ -101,8 +105,10 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("카테고리_ID_기반_조회_테스트")
+    @CustomMockUser
     void 카테고리_ID_기반_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
         Long categoryId = 1L;
         int size = 20;
         Pageable pageable = Pageable.ofSize(size);
@@ -113,7 +119,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
             return RecruitmentSummaryResponse.fromEntity(recruitment);
         }).toList();
         Page<RecruitmentSummaryResponse> response = new PageImpl<>(recruitments, pageable, size);
-        when(recruitmentService.getRecruitmentsByCategoryId(categoryId, pageable)).thenReturn(response);
+        when(recruitmentService.getRecruitmentsByCategoryId(memberId, categoryId, pageable)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
@@ -142,7 +148,8 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.content[].companyName").type(JsonFieldType.STRING).description("기업명"),
                                         fieldWithPath("data.content[].thumbnail").type(JsonFieldType.STRING).description("기업 소개용 썸네일"),
                                         fieldWithPath("data.content[].location").type(JsonFieldType.STRING).description("기업 위치 지역 (서울)"),
-                                        fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)")
+                                        fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)"),
+                                        fieldWithPath("data.content[].scrapped").type(JsonFieldType.BOOLEAN).description("스크랩 여부 (비로그인 시 false)")
                                 )))
                                 .build()
                 )));
