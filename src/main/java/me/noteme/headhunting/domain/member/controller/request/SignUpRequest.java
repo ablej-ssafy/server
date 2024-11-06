@@ -25,6 +25,6 @@ public class SignUpRequest {
     @Range(min = 0, max = 30, message = "경력은 0년 이상 30년 이하로 입력해주세요.")
     private int careerYear;
 
-    @Size(min = 1, message = "선호 업무를 골라주세요")
+    @Size(min = 3, message = "선호 업무를 최대 3개이상 골라주세요")
     private List<Long> jobIds = new ArrayList<>();
 }

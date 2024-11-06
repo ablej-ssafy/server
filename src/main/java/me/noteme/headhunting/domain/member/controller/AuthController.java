@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.annotation.LoginUser;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.utils.CookieUtils;
 import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
@@ -18,7 +16,6 @@ import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.service.AuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,15 +38,9 @@ public class AuthController {
     @PostMapping("/sign-in")
     public SuccessResponse<JwtToken> signIn(
             HttpServletResponse response,
-            @Validated @RequestBody SignInRequest request,
-            Errors errors
+            @Validated @RequestBody SignInRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
-
         JwtToken token = authService.signIn(request.getEmail(), request.getPassword());
-
         addToken(response, token);
 
         return SuccessResponse.of(token);
@@ -57,14 +48,7 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponse<Void> signUp(
-            @Validated @RequestBody SignUpRequest request,
-            Errors errors
-    ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
+    public SuccessResponse<Void> signUp(@Validated @RequestBody SignUpRequest request) {
         authService.signUp(
                 request.getEmail(),
                 request.getPassword(),
@@ -80,12 +64,8 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response,
             @LoginUser Long memberId,
-            @Validated @RequestBody RefreshRequest refreshRequest,
-            Errors errors
+            @Validated @RequestBody RefreshRequest refreshRequest
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
         String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
 
         authService.signOut(memberId, refreshToken);
@@ -99,12 +79,8 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response,
             @LoginUser Long memberId,
-            @Validated @RequestBody RefreshRequest refreshRequest,
-            Errors errors
+            @Validated @RequestBody RefreshRequest refreshRequest
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
         String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
 
         JwtToken token = authService.refresh(memberId, refreshToken);
@@ -120,15 +96,9 @@ public class AuthController {
     }
 
     @PostMapping("/resend")
-    public SuccessResponse<Void> resendEmail(
-            @Validated @RequestBody EmailRequest request,
-            Errors errors
-    ){
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
-
+    public SuccessResponse<Void> resendEmail(@Validated @RequestBody EmailRequest request) {
         authService.resendEmail(request.getEmail());
+
         return SuccessResponse.empty();
     }
 

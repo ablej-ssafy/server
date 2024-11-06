@@ -2,14 +2,11 @@ package me.noteme.headhunting.domain.recruitment.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
 import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.service.RecommendService;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,13 +30,8 @@ public class RecommendController {
     @Deprecated
     @PostMapping("/resume/keywords")
     public SuccessResponse<List<String>> getResumeKeywords(
-            @Validated @RequestBody ResumeKeywordsRequest request,
-            Errors errors
+            @Validated @RequestBody ResumeKeywordsRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         return SuccessResponse.of(
                 recommendService.getResumeKeywords(request.getJobId(), request.getJobSubId(), request.getResume())
         );
@@ -48,13 +40,8 @@ public class RecommendController {
     @Deprecated
     @PostMapping("/company/analyze")
     public SuccessResponse<String> getCompanyAnalyze(
-            @Validated @RequestBody CompanyAnalyzeRequest request,
-            Errors errors
+            @Validated @RequestBody CompanyAnalyzeRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         return SuccessResponse.of(recommendService.getCompanyAnalyze(request.getCompanyName()));
     }
 }

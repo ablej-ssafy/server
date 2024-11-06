@@ -11,7 +11,9 @@ import me.noteme.headhunting.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,6 +37,18 @@ public class CustomControllerAdvice {
         return ErrorResponse.of(new CustomException(ErrorCode.SERVER_ERROR));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        Sentry.captureException(exception);
+        sendNotification(exception, request);
+
+        BindingResult bindingResult = exception.getBindingResult();
+        CustomException customException = new CustomException(ErrorCode.BAD_REQUEST, bindingResult);
+
+        return ErrorResponse.of(customException);
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse NoResourceFoundException(NoResourceFoundException exception, HttpServletRequest request) {
@@ -44,8 +58,8 @@ public class CustomControllerAdvice {
         return ErrorResponse.of(new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class, MissingServletRequestParameterException.class, HttpMessageNotReadableException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(Exception exception, HttpServletRequest request) {
         Sentry.captureException(exception);
         sendNotification(exception, request);
@@ -63,7 +77,11 @@ public class CustomControllerAdvice {
     }
 
     private void sendNotification(Exception e, HttpServletRequest request) {
-        log.error("", e);
+        if(e instanceof CustomException) {
+            log.error("errorMsg: {}", e.getMessage());
+        }else{
+            log.error("error: ", e);
+        }
         notificationService.sendNotification(e, request.getRequestURI(), getParams(request));
     }
 
