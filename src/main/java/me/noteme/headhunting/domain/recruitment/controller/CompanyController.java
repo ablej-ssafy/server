@@ -2,13 +2,8 @@ package me.noteme.headhunting.domain.recruitment.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.domain.recruitment.dto.CompanyRecruitmentResponse;
-import me.noteme.headhunting.domain.recruitment.dto.CompanyResponse;
 import me.noteme.headhunting.domain.recruitment.dto.CompanyWithRecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.service.CompanyService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedModel;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

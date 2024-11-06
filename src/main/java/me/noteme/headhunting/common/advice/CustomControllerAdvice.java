@@ -58,8 +58,8 @@ public class CustomControllerAdvice {
         return ErrorResponse.of(new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class, MissingServletRequestParameterException.class, HttpMessageNotReadableException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(Exception exception, HttpServletRequest request) {
         Sentry.captureException(exception);
         sendNotification(exception, request);

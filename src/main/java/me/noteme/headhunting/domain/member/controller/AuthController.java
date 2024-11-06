@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.annotation.LoginUser;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.utils.CookieUtils;
 import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
@@ -18,7 +16,6 @@ import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.service.AuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
