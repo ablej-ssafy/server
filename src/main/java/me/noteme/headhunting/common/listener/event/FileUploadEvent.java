@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @AllArgsConstructor(staticName = "of")
 public class FileUploadEvent {
-    private Long userId;
+    private Long memberId;
     private MultipartFile file;
     private String fileText;
 }

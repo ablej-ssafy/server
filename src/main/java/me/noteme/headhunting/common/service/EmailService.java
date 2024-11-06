@@ -37,7 +37,6 @@ public class EmailService {
         sendEmail(to, CONFIRM_TITLE, CONFIRM_VIEW_NAME, context);
     }
 
-    // TODO: 추후 비동기 처리
     private void sendEmail(String to, String subject, String viewName, Context context) {
         MimeMessage message = mailSender.createMimeMessage();
 

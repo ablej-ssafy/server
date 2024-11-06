@@ -22,10 +22,10 @@ public class FileEventListener {
         String extension = fileName[fileName.length - 1];
 
         String key = KeyUtils.generateKey();
-        storageService.uploadFile(event.getUserId(), createFilename(key, extension), event.getFile());
-        storageService.uploadFile(event.getUserId(), key, event.getFileText());
+        storageService.uploadFile(event.getMemberId(), createFilename(key, extension), event.getFile());
+        storageService.uploadFile(event.getMemberId(), key, event.getFileText());
 
-        resumeService.savePdf(event.getUserId(), fileName[0], key);
+        resumeService.savePdf(event.getMemberId(), fileName[0], key);
     }
 
     private String createFilename(String key, String extension) {

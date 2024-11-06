@@ -3,10 +3,8 @@ package me.noteme.headhunting.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
-import me.noteme.headhunting.domain.job.entity.Job;
 import me.noteme.headhunting.domain.member.entity.Member;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

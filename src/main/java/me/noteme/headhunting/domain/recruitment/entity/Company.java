@@ -3,6 +3,9 @@ package me.noteme.headhunting.domain.recruitment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "company")
 @Getter
@@ -14,6 +17,10 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_id")
     private Long id;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Recruitment> recruitments = new ArrayList<>();
 
     private String name;
 

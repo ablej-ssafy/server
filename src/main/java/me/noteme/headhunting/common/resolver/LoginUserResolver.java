@@ -27,8 +27,8 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
-                String userId = ((UserDetails) principal).getUsername();
-                return Long.parseLong(userId);
+                String memberId = ((UserDetails) principal).getUsername();
+                return Long.parseLong(memberId);
             }
         }
         return null;

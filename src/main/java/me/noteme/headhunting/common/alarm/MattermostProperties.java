@@ -1,0 +1,30 @@
+package me.noteme.headhunting.common.alarm;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Component
+@Data
+@Primary
+@ConfigurationProperties("notification.mattermost")
+public class MattermostProperties {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    private String channel;
+    private String pretext;
+    private String color = "#ff5d52";
+    private String authorName;
+    private String authorIcon;
+    private String title;
+    private String text = "";
+    private String footer = LocalDateTime.now().format(FORMATTER);
+
+    public void updateFooter() {
+        this.footer = LocalDateTime.now().format(FORMATTER);
+    }
+}

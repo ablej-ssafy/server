@@ -46,11 +46,11 @@ public class JwtTokenProvider {
     /**
      * 신규 JWT 토큰(accessToken, refreshToken) 생성
      *
-     * @param userId    사용자 ID
+     * @param memberId    사용자 ID
      * @param authorities 사용자 권한
      * @return {@link JwtToken} 발급된 JWT 토큰
      */
-    public JwtToken generate(Long userId, Collection<? extends GrantedAuthority> authorities) {
+    public JwtToken generate(Long memberId, Collection<? extends GrantedAuthority> authorities) {
         String authority = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -63,7 +63,7 @@ public class JwtTokenProvider {
         String accessToken = Jwts.builder()
                 .header().add("typ", "JWT").add("alg", "HS256")
                 .and()
-                .subject(userId.toString())
+                .subject(memberId.toString())
                 .claim("authorities", authority)
                 .issuedAt(new Date(now))
                 .expiration(accessTokenExpire)
@@ -71,7 +71,7 @@ public class JwtTokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .subject(userId.toString())
+                .subject(memberId.toString())
                 .claim("authorities", authority)
                 .issuedAt(new Date(now))
                 .expiration(refreshTokenExpire)

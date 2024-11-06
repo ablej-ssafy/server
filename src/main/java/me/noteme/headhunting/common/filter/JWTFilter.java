@@ -34,9 +34,13 @@ public class JWTFilter extends OncePerRequestFilter {
 //            filterChain.doFilter(request, response);
 //            return;
 //        }
+//
+//        if (requestURI.startsWith("/api/v1/recruitment")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         String accessToken = resolveToken(request);
-        log.debug("accessToken: {}", accessToken);
         try {
             if (accessToken != null) {
                 Authentication authentication = jwtTokenProvider.parseAuthentication(accessToken);
@@ -45,7 +49,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 throw new CustomException(ErrorCode.AUTHENTICATION_FAILED);
             }
         } catch (Exception e) {
-            log.error("errors: {}", e.getMessage());
+//            log.error("errors: {}", e.getMessage());
             SecurityContextHolder.clearContext();
             request.setAttribute("error-message", e.getMessage());
         }

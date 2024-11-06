@@ -2,16 +2,11 @@ package me.noteme.headhunting.domain.resume.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationRequest;
 import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
-import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.service.CertificationService;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,13 +19,8 @@ public class CertificationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postCertification(
-            @Validated @RequestBody CertificationRequest request,
-            Errors errors
+            @Validated @RequestBody CertificationRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         certificationService.saveAllCertifications(
                 request.getCertifications()
         );
@@ -41,10 +31,15 @@ public class CertificationController {
     @GetMapping("")
     public SuccessResponse<CertificationResponse> getCertifications(
             @RequestParam(name = "type", required = false) String type,
-            @LoginUser Long userId
+            @LoginUser Long memberId
     ) {
-        CertificationResponse response = certificationService.getCertifications(userId, type);
+        return SuccessResponse.of(certificationService.getCertifications(memberId, type));
+    }
 
-        return SuccessResponse.of(response);
+    @DeleteMapping("/{certificationId}")
+    public SuccessResponse<Void> deleteCertification(@PathVariable("certificationId") Long certificationId) {
+        certificationService.deleteById(certificationId);
+
+        return SuccessResponse.empty();
     }
 }

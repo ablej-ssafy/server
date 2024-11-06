@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
-import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
+import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
 import me.noteme.headhunting.domain.resume.entity.Educational;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
@@ -25,15 +25,6 @@ public class EducationalService {
     private final EntityManager em;
 
     @Transactional
-    public void saveEducational(Long resumeId, String name, String major, EducationalType category, String grade, GradeType gradeType, String description, LocalDate startAt, LocalDate endAt, Long educationalId) {
-        Resume resume = getResumeById(resumeId);
-
-        Educational educational = Educational.of(educationalId, name, major, category, grade, gradeType, description, startAt, endAt, resume);
-
-        educationalRepository.save(educational);
-    }
-
-    @Transactional
     public void saveAllEducationals(List<EducationalForm> educationalForms) {
         List<Educational> educationals = educationalForms.stream()
                 .map(form -> form.toEntity(getResumeById(form.getResumeId())))
@@ -42,17 +33,22 @@ public class EducationalService {
         educationalRepository.saveAll(educationals);
     }
 
-    public EducationalResponse getAllEducationals(Long userId) {
-        return EducationalResponse.of(educationalRepository.findAllByMemberId(userId).stream()
+    public EducationalResponse getAllEducationals(Long memberId) {
+        return EducationalResponse.of(educationalRepository.findAllByMemberId(memberId).stream()
                 .map(EducationalForm::fromEntity)
                 .toList()
         );
     }
 
-    public List<EducationalTypeResponse> getEducationTypes() {
+    public List<EnumTypeResponse> getEducationTypes() {
         return Arrays.stream(EducationalType.values())
-                .map(type -> EducationalTypeResponse.of(type.name(), type.getName()))
+                .map(type -> EnumTypeResponse.of(type.name(), type.getName()))
                 .toList();
+    }
+
+    @Transactional
+    public void deleteById(Long educationId) {
+        educationalRepository.deleteById(educationId);
     }
 
     private Resume getResumeById(Long resumeId) {

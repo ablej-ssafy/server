@@ -2,15 +2,12 @@ package me.noteme.headhunting.domain.resume.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
-import me.noteme.headhunting.common.exception.CustomException;
-import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
 import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
-import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
+import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
 import me.noteme.headhunting.domain.resume.service.EducationalService;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +22,8 @@ public class EducationalController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postEducational(
-            @Validated @RequestBody EducationalRequest request,
-            Errors errors
+            @Validated @RequestBody EducationalRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         educationalService.saveAllEducationals(
                 request.getEducationals()
         );
@@ -40,18 +32,19 @@ public class EducationalController {
     }
 
     @GetMapping("")
-    public SuccessResponse<EducationalResponse> getEducational(
-            @LoginUser Long userId
-    ) {
-        EducationalResponse response = educationalService.getAllEducationals(userId);
-
-        return SuccessResponse.of(response);
+    public SuccessResponse<EducationalResponse> getEducational(@LoginUser Long memberId) {
+        return SuccessResponse.of(educationalService.getAllEducationals(memberId));
     }
 
     @GetMapping("/type")
-    public SuccessResponse<List<EducationalTypeResponse>> getEducationalType() {
-        List<EducationalTypeResponse> response = educationalService.getEducationTypes();
+    public SuccessResponse<List<EnumTypeResponse>> getEducationalType() {
+        return SuccessResponse.of(educationalService.getEducationTypes());
+    }
 
-        return SuccessResponse.of(response);
+    @DeleteMapping("/{educationalId}")
+    public SuccessResponse<Void> deleteEducational(@PathVariable("educationalId") Long educationalId) {
+        educationalService.deleteById(educationalId);
+
+        return SuccessResponse.empty();
     }
 }

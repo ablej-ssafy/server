@@ -2,16 +2,18 @@ package me.noteme.headhunting.domain.member.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
 import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.entity.ProviderType;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.boot.context.event.SpringApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-    private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher publisher;
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -56,7 +59,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         });
 
         if (isNewUser.get()) {
-            // TODO: Send email to user
+            publisher.publishEvent(ConfirmEmailEvent.of(username, response.getName()));
         }
 
         return new CustomOAuth2User(member);

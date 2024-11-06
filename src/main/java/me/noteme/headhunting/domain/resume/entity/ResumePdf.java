@@ -11,7 +11,6 @@ import me.noteme.headhunting.domain.member.entity.Member;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResumePdf extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resume_id")
@@ -32,5 +31,9 @@ public class ResumePdf extends BaseEntity {
         resumePdf.fileName = fileName;
         resumePdf.key = key;
         return resumePdf;
+    }
+
+    public String getPdfKey() {
+        return key + ".pdf";
     }
 }

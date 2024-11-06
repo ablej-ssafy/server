@@ -7,7 +7,7 @@ import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
 import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
-import me.noteme.headhunting.domain.resume.dto.EducationalTypeResponse;
+import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
 import me.noteme.headhunting.domain.resume.service.EducationalService;
@@ -27,10 +27,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,8 +68,8 @@ public class EducationalControllerTest extends RestDocsSupport {
         actions.andExpect(status().isCreated())
                 .andDo(restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("교육 필드 생성")
-                                .summary("교육 업데이트 API")
+                                .tag("이력서-교육")
+                                .summary("학교 정보 추가 API")
                                 .description("교육 정보를 업데이트합니다.")
                                 .requestFields(
                                         fieldWithPath("educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -96,7 +94,7 @@ public class EducationalControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 교육_정보_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        Long userId = 1L;
+        Long memberId = 1L;
         EducationalForm educationalForm = EducationalForm.of(
                 1L,
                 "바밤대학교",
@@ -111,7 +109,7 @@ public class EducationalControllerTest extends RestDocsSupport {
         );
 
         EducationalResponse mockResponse = EducationalResponse.of(List.of(educationalForm));
-        when(educationalService.getAllEducationals(userId))
+        when(educationalService.getAllEducationals(memberId))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -123,8 +121,8 @@ public class EducationalControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("학교 정보 전체 조회")
-                                .summary("로그인 사용자 기반 학교 정보 조회 API")
+                                .tag("이력서-교육")
+                                .summary("학교 정보 조회 API")
                                 .description("로그인 한 사용자가 작성한 학교 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data.educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
@@ -145,11 +143,11 @@ public class EducationalControllerTest extends RestDocsSupport {
     @DisplayName("교육_타입_정보_조회_테스트")
     void 교육_타입_정보_조회_테스트() throws Exception {
         // * GIVEN: 교육 타입 목록이 주어졌을 때
-        List<EducationalTypeResponse> mockResponse = List.of(
-                EducationalTypeResponse.of("ASSOCIATE_DEGREE", "전문대"),
-                EducationalTypeResponse.of("BACHELOR", "대학"),
-                EducationalTypeResponse.of("MASTER", "석사"),
-                EducationalTypeResponse.of("DOCTOR", "박사")
+        List<EnumTypeResponse> mockResponse = List.of(
+                EnumTypeResponse.of("ASSOCIATE_DEGREE", "전문대"),
+                EnumTypeResponse.of("BACHELOR", "대학"),
+                EnumTypeResponse.of("MASTER", "석사"),
+                EnumTypeResponse.of("DOCTOR", "박사")
         );
 
         when(educationalService.getEducationTypes()).thenReturn(mockResponse);
@@ -161,13 +159,37 @@ public class EducationalControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("교육 타입 정보 조회")
-                                .summary("교육 타입 전체 조회 API")
+                                .tag("이력서-교육")
+                                .summary("교육 타입 확인 API")
                                 .description("사용 가능한 교육 타입 정보를 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data[].code").type(JsonFieldType.STRING).description("교육 타입 코드 (예: ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),
                                         fieldWithPath("data[].name").type(JsonFieldType.STRING).description("교육 타입 이름 (예: 전문대, 대학, 석사, 박사)")
                                 )).build()
                 )));
+    }
+
+    @Test
+    @DisplayName("교육_정보_삭제_테스트")
+    void 교육_정보_삭제_테스트() throws Exception {
+        // * GIVEN: 교육 타입 목록이 주어졌을 때
+        Long educationalId = 1L;
+        doNothing().when(educationalService).deleteById(educationalId);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(
+                delete("/api/v1/educational/{educationalId}", educationalId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-교육")
+                                .summary("교육 삭제 API")
+                                .description("교육 정보를 삭제합니다.")
+                                .build()
+                )));
+        verify(educationalService).deleteById(educationalId);
     }
 }

@@ -17,10 +17,27 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           fetch-depth: 0
 
+      - name: Checkout server repository
+        uses: actions/checkout@v3
+        with:
+          repository: ablej-ssafy/server
+          path: temp_server
+          fetch-depth: 0
+
+      - name: Get server last commit author
+        id: get-author
+        working-directory: temp_server
+        run: echo "author=$(git log -1 --pretty=format:'%an')" >> $GITHUB_OUTPUT
+
+      - name: Get server last commit author email
+        id: get-author-email
+        working-directory: temp_server
+        run: echo "email=$(git log -1 --pretty=format:'%ae')" >> $GITHUB_OUTPUT
+
       - name: Configure Git
         run: |
-          git config --global user.name "sunsuking"
-          git config --global user.email "sunsuking@gmail.com"
+          git config --global user.name "${{ steps.get-author.outputs.author }}"
+          git config --global user.email "${{ steps.get-author-email.outputs.email }}"
 
       - name: Add server as subtree
         run: |

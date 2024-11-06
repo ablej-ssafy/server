@@ -1,6 +1,7 @@
 package me.noteme.headhunting.core.support;
 
 import com.google.gson.Gson;
+import me.noteme.headhunting.common.alarm.service.MattermostNotificationService;
 import me.noteme.headhunting.core.config.GsonConfig;
 import me.noteme.headhunting.core.config.RestDocsConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -40,6 +42,9 @@ public abstract class RestDocsSupport {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @MockBean
+    protected MattermostNotificationService mattermostNotificationService;
 
     @BeforeEach
     public void setUp(WebApplicationContext applicationContext, RestDocumentationContextProvider provider) {
@@ -86,6 +91,15 @@ public abstract class RestDocsSupport {
                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("상태 코드"),
                 fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
                 fieldWithPath("errors").type(JsonFieldType.ARRAY).description("에러 목록"),
+        }), Stream.of(descriptor)).toArray(FieldDescriptor[]::new);
+    }
+
+    protected FieldDescriptor[] page(FieldDescriptor... descriptor) {
+        return Stream.concat(Arrays.stream(new FieldDescriptor[]{
+                fieldWithPath("data.page.size").type(JsonFieldType.NUMBER).description("결과 개수 크기"),
+                fieldWithPath("data.page.number").type(JsonFieldType.NUMBER).description("현재 입력받은 페이지"),
+                fieldWithPath("data.page.totalElements").type(JsonFieldType.NUMBER).description("결과 전체 사이즈"),
+                fieldWithPath("data.page.totalPages").type(JsonFieldType.NUMBER).description("결과 전체 페이지 수")
         }), Stream.of(descriptor)).toArray(FieldDescriptor[]::new);
     }
 }
