@@ -26,12 +26,8 @@ public class TechController {
     @PostMapping("/stack")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postTechStack(
-            @Validated @RequestBody TechStackRequest request,
-            Errors errors) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
+            @Validated @RequestBody TechStackRequest request
+    ) {
         techService.saveTechStack(
                 request.getResumeId(),
                 request.getReferenceUrls(),
@@ -45,13 +41,8 @@ public class TechController {
     @PostMapping("/skill")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postTechSkill(
-            @Validated @RequestBody TechSkillRequest request,
-            Errors errors
+            @Validated @RequestBody TechSkillRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         techService.saveTechSkill(
                 request.getName(),
                 request.getIconUrl()

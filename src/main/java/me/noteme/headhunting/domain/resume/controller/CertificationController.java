@@ -22,13 +22,8 @@ public class CertificationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postCertification(
-            @Validated @RequestBody CertificationRequest request,
-            Errors errors
+            @Validated @RequestBody CertificationRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         certificationService.saveAllCertifications(
                 request.getCertifications()
         );

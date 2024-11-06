@@ -25,13 +25,8 @@ public class ExperienceController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postExperience(
-            @Validated @RequestBody ExperienceRequest request,
-            Errors errors
+            @Validated @RequestBody ExperienceRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         experienceService.saveAllExperience(
                 request.getExperiences()
         );

@@ -73,13 +73,8 @@ public class ResumeController {
     @PostMapping("/basic")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResumeBase(
-            @Validated @RequestBody ResumeBasicRequest request,
-            Errors errors
+            @Validated @RequestBody ResumeBasicRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         resumeService.saveResumeBasic(
                 request.getResumeId(),
                 request.getJobId(),
