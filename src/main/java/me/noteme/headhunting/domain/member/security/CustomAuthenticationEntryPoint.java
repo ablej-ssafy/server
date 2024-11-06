@@ -11,13 +11,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        if (request.getAttribute("error-message") == null) {
+        if (Objects.isNull(request.getAttribute("error-message"))) {
             request.setAttribute("error-message", ErrorCode.AUTHENTICATION_FAILED.getMessage());
         }
         ErrorResponse errorResponse = ErrorResponse.of(new CustomException(ErrorCode.AUTHENTICATION_FAILED));

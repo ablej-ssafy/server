@@ -14,6 +14,8 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     @Query("""
         SELECT s.recruitment
         FROM Scrap s
+        LEFT JOIN FETCH s.recruitment.company
+        LEFT JOIN FETCH s.recruitment.category
         WHERE s.member.id = :memberId
     """)
     List<Recruitment> findAllByMemberId(@Param("memberId") Long memberId);

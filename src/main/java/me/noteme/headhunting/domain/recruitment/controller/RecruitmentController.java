@@ -11,6 +11,7 @@ import me.noteme.headhunting.domain.recruitment.service.RecruitmentService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public class RecruitmentController {
     }
 
     @DeleteMapping("/{recruitmentId}/scrap")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelScrapRecruitment(
             @LoginUser Long memberId,
             @PathVariable("recruitmentId") Long recruitmentId

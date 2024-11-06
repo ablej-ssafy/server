@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,6 +41,7 @@ public class SearchService {
         searchCacheRepository.addKeyword(memberId, query);
         Page<Recruitment> recruitments = recruitmentRepository.searchRecruitments(query, pageable);
         Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
+
         return recruitments.map(
                 recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId()))
         );
@@ -53,7 +55,7 @@ public class SearchService {
                 keyword -> KeywordResponse.of(rank.getAndIncrement(), keyword)
         ).toList());
 
-        if (memberId == null) {
+        if (Objects.isNull(memberId)) {
             response.setRecentKeywords(List.of());
             return response;
         }
