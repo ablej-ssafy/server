@@ -33,13 +33,8 @@ public class RecommendController {
     @Deprecated
     @PostMapping("/resume/keywords")
     public SuccessResponse<List<String>> getResumeKeywords(
-            @Validated @RequestBody ResumeKeywordsRequest request,
-            Errors errors
+            @Validated @RequestBody ResumeKeywordsRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         return SuccessResponse.of(
                 recommendService.getResumeKeywords(request.getJobId(), request.getJobSubId(), request.getResume())
         );
@@ -48,13 +43,8 @@ public class RecommendController {
     @Deprecated
     @PostMapping("/company/analyze")
     public SuccessResponse<String> getCompanyAnalyze(
-            @Validated @RequestBody CompanyAnalyzeRequest request,
-            Errors errors
+            @Validated @RequestBody CompanyAnalyzeRequest request
     ) {
-        if (errors.hasErrors()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, errors);
-        }
-
         return SuccessResponse.of(recommendService.getCompanyAnalyze(request.getCompanyName()));
     }
 }
