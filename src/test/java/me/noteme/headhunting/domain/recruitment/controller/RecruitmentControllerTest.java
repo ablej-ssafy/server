@@ -228,7 +228,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
         );
 
         // * THEN: 이런 결과가 나와야 한다
-        actions.andExpect(status().isOk())
+        actions.andExpect(status().isNoContent())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
                                 .tag("채용 공고")

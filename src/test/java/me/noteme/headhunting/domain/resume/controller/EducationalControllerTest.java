@@ -182,7 +182,7 @@ public class EducationalControllerTest extends RestDocsSupport {
         );
 
         // * THEN: 이런 결과가 나와야 한다
-        actions.andExpect(status().isOk())
+        actions.andExpect(status().isNoContent())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
                                 .tag("이력서-교육")
