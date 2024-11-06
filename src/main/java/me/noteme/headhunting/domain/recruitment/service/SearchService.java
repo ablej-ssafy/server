@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -48,23 +45,47 @@ public class SearchService {
     }
 
     public SearchResponse rankKeywords(Long memberId) {
-        AtomicInteger rank = new AtomicInteger(1);
         SearchResponse response = new SearchResponse();
 
-        response.setRanks(searchCacheRepository.getTopKeywords().stream().map(
-                keyword -> KeywordResponse.of(rank.getAndIncrement(), keyword)
-        ).toList());
-
-        if (Objects.isNull(memberId)) {
-            response.setRecentKeywords(List.of());
-            return response;
-        }
-
-        AtomicInteger recent = new AtomicInteger(1);
-        response.setRecentKeywords(searchCacheRepository.getKeywords(memberId).stream().map(
-                keyword -> KeywordResponse.of(recent.getAndIncrement(), keyword)
-        ).toList());
+        response.setRanks(getKeywordResponses());
+        response.setRecentKeywords(
+                Objects.isNull(memberId) ? List.of() : getRecentKeywords(memberId)
+        );
 
         return response;
+    }
+
+    private List<KeywordResponse> getRecentKeywords(Long memberId) {
+        Set<String> keywords = searchCacheRepository.getKeywords(memberId);
+//        1.
+//        AtomicInteger recent = new AtomicInteger(1);
+//        return keywords.stream().map(
+//                keyword -> KeywordResponse.of(recent.getAndIncrement(), keyword)
+//        ).toList();
+
+        // 2.
+        List<KeywordResponse> recentKeywords = new ArrayList<>();
+        int recent = 1;
+        for(String keyword : keywords) {
+            recentKeywords.add(KeywordResponse.of(recent++, keyword));
+        }
+        return recentKeywords;
+    }
+
+    private List<KeywordResponse> getKeywordResponses() {
+        Set<String> topKeywords = searchCacheRepository.getTopKeywords();
+//        1.
+//        AtomicInteger rank = new AtomicInteger(1);
+//        return topKeywords.stream().map(
+//                keyword -> KeywordResponse.of(rank.getAndIncrement(), keyword)
+//        ).toList();
+
+        // 2.
+        List<KeywordResponse> keywordResponses = new ArrayList<>();
+        int rank = 1;
+        for(String keyword : topKeywords) {
+            keywordResponses.add(KeywordResponse.of(rank++, keyword));
+        }
+        return keywordResponses;
     }
 }
