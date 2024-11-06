@@ -1,5 +1,7 @@
 package me.noteme.headhunting.domain.recruitment.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static me.noteme.headhunting.domain.member.entity.QMember.member;
+import static me.noteme.headhunting.domain.member.entity.QScrap.scrap;
 import static me.noteme.headhunting.domain.recruitment.entity.QRecruitment.recruitment;
 
 @Repository

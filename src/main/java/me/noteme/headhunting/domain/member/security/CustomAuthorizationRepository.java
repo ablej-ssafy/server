@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
+
 @Component
 public class CustomAuthorizationRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
     private static final int COOKIE_EXPIRE_TIME = 60 * 60;
@@ -23,7 +25,7 @@ public class CustomAuthorizationRepository implements AuthorizationRequestReposi
 
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
-        if (authorizationRequest == null) {
+        if (Objects.isNull(authorizationRequest)) {
             CookieUtils.removeCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE);
             CookieUtils.removeCookie(response, REDIRECT_URI_PARAM_COOKIE);
             return;

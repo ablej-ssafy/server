@@ -42,9 +42,8 @@ public class EducationalController {
     }
 
     @DeleteMapping("/{educationalId}")
-    public SuccessResponse<Void> deleteEducational(@PathVariable("educationalId") Long educationalId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEducational(@PathVariable("educationalId") Long educationalId) {
         educationalService.deleteById(educationalId);
-
-        return SuccessResponse.empty();
     }
 }

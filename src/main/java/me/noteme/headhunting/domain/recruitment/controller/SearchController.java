@@ -32,24 +32,24 @@ public class SearchController {
 
     @GetMapping("/company")
     public SuccessResponse<PagedModel<CompanyResponse>> searchCompanies(
-            @LoginUser Long userId,
+            @LoginUser Long memberId,
             @RequestParam(name = "type", required = false, defaultValue = "all") String type,
             @RequestParam(name = "q", required = false) String query,
             @PageableDefault(size = 20) Pageable pageable
     ) {
         return SuccessResponse.of(
-                new PagedModel<>(searchService.searchCompanies(userId, type, query, pageable))
+                new PagedModel<>(searchService.searchCompanies(memberId, type, query, pageable))
         );
     }
 
     @GetMapping("/recruitment")
     public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> searchRecruitments(
-            @LoginUser Long userId,
+            @LoginUser Long memberId,
             @RequestParam(value = "q", required = false) String query,
             @PageableDefault(size = 20) Pageable pageable
     ) {
         return SuccessResponse.of(
-                new PagedModel<>(searchService.searchRecruitments(userId, query, pageable))
+                new PagedModel<>(searchService.searchRecruitments(memberId, query, pageable))
         );
     }
 }
