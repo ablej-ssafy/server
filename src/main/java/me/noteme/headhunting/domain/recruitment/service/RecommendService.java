@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -70,7 +71,7 @@ public class RecommendService {
         CompanyInfoRequest request = new CompanyInfoRequest();
         request.setCompanyName(companyName);
         CompanyInfoResponse companyInfo = aiRequestClient.getCompanyInfo(request);
-        if (companyInfo == null || !companyInfo.isSuccess()) {
+        if (Objects.isNull(companyInfo) || !companyInfo.isSuccess()) {
             throw new CustomException(ErrorCode.AI_SERVER_ERROR);
         }
         return companyInfo.getCompanyReport();

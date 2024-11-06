@@ -60,7 +60,7 @@ class CompanyControllerTest extends RestDocsSupport {
         List<Recruitment> recruitments = Stream.of("채용1", "채용2", "채용3").map(name -> MockRecruitment.create(id.getAndIncrement(), name)).toList();
         when(company.getRecruitments()).thenReturn(recruitments);
         CompanyWithRecruitmentResponse response = CompanyWithRecruitmentResponse.fromEntity(company);
-        when(companyService.getCompanyById(companyId)).thenReturn(response);
+        when(companyService.getCompanyById(null , companyId)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         var actions = this.mockMvc.perform(
@@ -91,7 +91,8 @@ class CompanyControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.recruitments[].thumbnail").type(JsonFieldType.STRING).description("썸네일 이미지"),
                                         fieldWithPath("data.recruitments[].annualTo").type(JsonFieldType.NUMBER).description("연차 상한"),
                                         fieldWithPath("data.recruitments[].annualFrom").type(JsonFieldType.NUMBER).description("연차 하한"),
-                                        fieldWithPath("data.recruitments[].dueTime").type(JsonFieldType.STRING).optional().description("마감일")
+                                        fieldWithPath("data.recruitments[].dueTime").type(JsonFieldType.STRING).optional().description("마감일"),
+                                        fieldWithPath("data.recruitments[].scrapped").type(JsonFieldType.BOOLEAN).optional().description("스크랩 여부 (비로그인 시 false)")
                                 )).build()
                 )));
     }

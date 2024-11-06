@@ -231,7 +231,8 @@ class SearchControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.content[].companyName").type(JsonFieldType.STRING).description("기업명"),
                                         fieldWithPath("data.content[].thumbnail").type(JsonFieldType.STRING).description("기업 소개용 썸네일"),
                                         fieldWithPath("data.content[].location").type(JsonFieldType.STRING).description("기업 위치 지역 (서울)"),
-                                        fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)")
+                                        fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)"),
+                                        fieldWithPath("data.content[].scrapped").type(JsonFieldType.BOOLEAN).description("스크랩 여부 (비로그인 시 false)")
                                 )))
                                 .build()
                 )));
