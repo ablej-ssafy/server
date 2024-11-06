@@ -1,6 +1,8 @@
 package me.noteme.headhunting.domain.recruitment.controller;
 
+import io.sentry.protocol.User;
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
@@ -37,5 +39,22 @@ public class RecruitmentController {
     @GetMapping("/category")
     public SuccessResponse<List<JobCategoryResponse>> getJobCategories(){
         return SuccessResponse.of(recruitmentService.getJobCategories());
+    }
+
+    @PostMapping("/{recruitmentId}/scrap")
+    public SuccessResponse<Void> scrapRecruitment(
+            @LoginUser Long memberId,
+            @PathVariable("recruitmentId") Long recruitmentId
+    ) {
+        recruitmentService.scrapRecruitment(memberId, recruitmentId);
+        return SuccessResponse.empty();
+    }
+
+    @DeleteMapping("/{recruitmentId}/scrap")
+    public void cancelScrapRecruitment(
+            @LoginUser Long memberId,
+            @PathVariable("recruitmentId") Long recruitmentId
+    ) {
+        recruitmentService.unScrapRecruitment(memberId, recruitmentId);
     }
 }

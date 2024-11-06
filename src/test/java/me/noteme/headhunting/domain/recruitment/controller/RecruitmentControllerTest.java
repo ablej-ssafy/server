@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.recruitment.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
+import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -175,6 +176,60 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                         fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("직무 ID"),
                                         fieldWithPath("data[].title").type(JsonFieldType.STRING).description("직무 제목")
                                 ))
+                                .build()
+                )));
+    }
+
+    @Test
+    @DisplayName("채용공고_스크랩_생성_테스트")
+    @CustomMockUser
+    void 채용공고_스크랩_생성_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long recruitmentId = 1L;
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                post("/api/v1/recruitment/{recruitmentId}/scrap", recruitmentId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("채용 공고")
+                                .summary("채용 공고 스크랩 생성 API")
+                                .description("로그인한 사용자가 채용 공고를 스크랩합니다.")
+                                .pathParameters(
+                                        parameterWithName("recruitmentId").type(SimpleType.NUMBER).description("스크랩할 채용 공고 ID")
+                                ).responseFields(empty())
+                                .build()
+                )));
+    }
+
+    @Test
+    @DisplayName("채용공고_스크랩_삭제_테스트")
+    @CustomMockUser
+    void 채용공고_스크랩_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long recruitmentId = 1L;
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                delete("/api/v1/recruitment/{recruitmentId}/scrap", recruitmentId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("채용 공고")
+                                .summary("채용 공고 스크랩 삭제 API")
+                                .description("로그인한 사용자가 채용 공고 스크랩을 삭제합니다.")
+                                .pathParameters(
+                                        parameterWithName("recruitmentId").type(SimpleType.NUMBER).description("삭제할 채용 공고 ID")
+                                )
                                 .build()
                 )));
     }
