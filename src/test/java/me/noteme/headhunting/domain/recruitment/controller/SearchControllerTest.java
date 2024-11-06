@@ -168,10 +168,10 @@ class SearchControllerTest extends RestDocsSupport {
                                 .summary("회사 이름 기반 검색 API")
                                 .description("회사 이름을 기반으로 검색하여 회사 목록을 반환합니다.")
                                 .queryParameters(
-                                        parameterWithName("type").description("검색 타입 [name: 회사명, location: 지역, strict: 구역, address: 주소]"),
-                                        parameterWithName("q").description("검색어"),
-                                        parameterWithName("page").defaultValue(0).description("페이지 번호"),
-                                        parameterWithName("size").defaultValue(0).description("페이지 크기")
+                                        parameterWithName("type").type(SimpleType.STRING).description("검색 타입 [name: 회사명, location: 지역, strict: 구역, address: 주소]"),
+                                        parameterWithName("q").type(SimpleType.STRING).description("검색어"),
+                                        parameterWithName("page").type(SimpleType.NUMBER).defaultValue(0).description("페이지 번호"),
+                                        parameterWithName("size").type(SimpleType.NUMBER).defaultValue(20).description("페이지 크기")
                                 ).responseFields(response(page(
                                         fieldWithPath("data.content[].companyId").type(JsonFieldType.NUMBER).description("회사 ID"),
                                         fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("회사명"),
