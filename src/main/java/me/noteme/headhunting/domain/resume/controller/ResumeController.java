@@ -99,8 +99,9 @@ public class ResumeController {
         return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
     }
 
-    @GetMapping("/test")
+    // TODO : 이력서 자동완성 TEST
+    @GetMapping("/auto")
     public SuccessResponse<String> test(@RequestBody String resume) {
-        return SuccessResponse.of(resumeService.test(resume));
+        return SuccessResponse.of(resumeService.auto(resume));
     }
 }
