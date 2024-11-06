@@ -12,7 +12,6 @@ public class MattermostNotificationService {
     private final AlarmSender matterMostSender;
 
     public void sendNotification(Exception e, String uri, String params) {
-        log.info("#### SEND Notification");
         matterMostSender.sendMessage(e, uri, params);
     }
 }
