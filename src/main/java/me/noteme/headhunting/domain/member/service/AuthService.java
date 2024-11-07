@@ -110,7 +110,7 @@ public class AuthService {
         Member member = getMember(email);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.BAD_REQUEST, "유효하지 않은 비밀번호 입니다.");
         }
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
