@@ -28,6 +28,10 @@ public class MemberService {
         Member member = memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
 
+        if (!member.isEmailVerified()) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED, "이메일 인증을 완료해주세요");
+        }
+
         List<InterestJob> interestJobs = member.getInterestJobs();
         List<JobCategoryResponse> jobCategoryResponses = interestJobs.stream()
                 .map(InterestJob::getJobCategory)
