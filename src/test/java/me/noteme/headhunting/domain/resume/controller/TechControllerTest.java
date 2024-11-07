@@ -44,15 +44,13 @@ public class TechControllerTest extends RestDocsSupport {
     @MockBean
     private TechService techService;
 
-    @Autowired
-    private ResourceLoader loader;
-
     @Test
     @DisplayName("기술_스택_업데이트_테스트")
+    @CustomMockUser
     void 기술_스택_업데이트_테스트() throws Exception {
         // * GIVEN: 테스트 요청 데이터 생성
+        Long memberId = 1L;
         TechStackRequest request = new TechStackRequest();
-        request.setResumeId(1L);
         request.setReferenceUrls(List.of(
                 ReferenceUrlRequest.of(1L, "https://example.com/project1"),
                 ReferenceUrlRequest.of(2L, "https://example.com/project2")
@@ -74,7 +72,6 @@ public class TechControllerTest extends RestDocsSupport {
                                 .summary("기술 스택 업데이트 API")
                                 .description("기술 스택 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("referenceUrls").type(JsonFieldType.ARRAY).optional().description("참조 URL 목록"),
                                         fieldWithPath("referenceUrls[].id").type(JsonFieldType.NUMBER).description("참조 URL PK"),
                                         fieldWithPath("referenceUrls[].url").type(JsonFieldType.STRING).description("참조 URL"),
@@ -85,7 +82,7 @@ public class TechControllerTest extends RestDocsSupport {
                 )));
 
         verify(techService).saveTechStack(
-                request.getResumeId(),
+                memberId,
                 request.getReferenceUrls(),
                 request.getTechSkills(),
                 request.getTechStackId()
@@ -134,7 +131,6 @@ public class TechControllerTest extends RestDocsSupport {
         Long memberId = 1L;
         TechResponse mockResponse = TechResponse.of(
                 1L,
-                1L,
                 List.of(
                         TechSkillResponse.of(1L, "Java", "java-icon.png"),
                         TechSkillResponse.of(2L, "Spring", "spring-icon.png")
@@ -161,7 +157,6 @@ public class TechControllerTest extends RestDocsSupport {
                                 .summary("기술 스택 조회 API")
                                 .description("로그인한 사용자의 기술 스택 작성 정보를 조회합니다.")
                                 .responseFields(response(
-                                        fieldWithPath("data.resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("data.techId").type(JsonFieldType.NUMBER).description("기술 스택 PK"),
                                         fieldWithPath("data.techSkills[].skillId").type(JsonFieldType.NUMBER).description("기술 PK"),
                                         fieldWithPath("data.techSkills[].skillName").type(JsonFieldType.STRING).description("기술 이름"),

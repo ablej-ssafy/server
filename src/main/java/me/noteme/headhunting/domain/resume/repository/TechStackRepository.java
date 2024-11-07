@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface TechStackRepository extends JpaRepository<TechStack, Long> {
     @Query("""
         SELECT ts
@@ -15,5 +17,5 @@ public interface TechStackRepository extends JpaRepository<TechStack, Long> {
         ON  ts.resume.id = r.id
         WHERE r.member.id = :memberId
     """)
-    TechStack findByMemberId(@Param("memberId") Long memberId);
+    Optional<TechStack> findByMemberId(@Param("memberId") Long memberId);
 }

@@ -1,11 +1,11 @@
 package me.noteme.headhunting.domain.member.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
+import me.noteme.headhunting.common.listener.event.ResumeInitEvent;
 import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
@@ -14,6 +14,8 @@ import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.repository.JobCategoryRepository;
+import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,8 +36,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenProvider tokenProvider;
 
-    private final EntityManager em;
     private final ApplicationEventPublisher publisher;
+    private final ResumeRepository resumeRepository;
 
     /**
      * 회원 가입 로직
@@ -70,8 +72,14 @@ public class AuthService {
             member.addInterestJob(interestJob);
         });
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
+        resumeRepository.save(
+                Resume.builder()
+                        .member(savedMember)
+                        .build()
+        );
+//        publisher.publishEvent(ResumeInitEvent.of(savedMember.getId()));
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 

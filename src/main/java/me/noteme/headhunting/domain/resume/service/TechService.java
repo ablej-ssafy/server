@@ -2,10 +2,13 @@ package me.noteme.headhunting.domain.resume.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.exception.CustomException;
+import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlRequest;
 import me.noteme.headhunting.domain.resume.dto.TechResponse;
 import me.noteme.headhunting.domain.resume.dto.TechSkillResponse;
 import me.noteme.headhunting.domain.resume.entity.*;
+import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import me.noteme.headhunting.domain.resume.repository.TechSkillRepository;
 import me.noteme.headhunting.domain.resume.repository.TechStackRepository;
 import org.springframework.stereotype.Service;
@@ -19,11 +22,11 @@ import java.util.List;
 public class TechService {
     private final TechSkillRepository techSkillRepository;
     private final TechStackRepository techStackRepository;
-    private final EntityManager em;
+    private final ResumeRepository resumeRepository;
 
     @Transactional
-    public void saveTechStack(Long resumeId, List<ReferenceUrlRequest> urls, List<Long> techSkills, Long techStackId) {
-        Resume resume = em.getReference(Resume.class, resumeId);
+    public void saveTechStack(Long memberId, List<ReferenceUrlRequest> urls, List<Long> techSkills, Long techStackId) {
+        Resume resume = getResumeByMemberId(memberId);
 
         TechStack techStack = TechStack.builder()
                 .id(techStackId)
@@ -66,9 +69,9 @@ public class TechService {
     }
 
     public TechResponse getTechStack(Long memberId) {
-        TechStack techStack = techStackRepository.findByMemberId(memberId);
-
-        return TechResponse.fromEntity(techStack);
+        return techStackRepository.findByMemberId(memberId)
+                .map(TechResponse::fromEntity)
+                .orElse(null);
     }
 
     public List<TechSkillResponse> getAllTechSkills() {
@@ -79,5 +82,10 @@ public class TechService {
                         skill.getIconUrl()
                 ))
                 .toList();
+    }
+
+    private Resume getResumeByMemberId(Long memberId) {
+        return resumeRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
     }
 }

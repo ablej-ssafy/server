@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.resume.controller;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationRequest;
 import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
 import me.noteme.headhunting.domain.resume.service.CertificationService;
@@ -19,13 +20,24 @@ public class CertificationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postCertification(
+            @LoginUser Long memberId,
             @Validated @RequestBody CertificationRequest request
     ) {
         certificationService.saveAllCertifications(
+                memberId,
                 request.getCertifications()
         );
 
         return SuccessResponse.empty();
+    }
+
+    @PostMapping("/add/type/{type}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SuccessResponse<CertificationForm> createEmptyCertification(
+            @LoginUser Long memberId,
+            @PathVariable("type") String type
+    ) {
+        return SuccessResponse.of(certificationService.createEmptyCertification(memberId, type));
     }
 
     @GetMapping("")
