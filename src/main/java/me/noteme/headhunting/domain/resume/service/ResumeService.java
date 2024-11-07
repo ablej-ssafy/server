@@ -98,7 +98,7 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
         resumePdfRepository.deleteById(resumePdfId);
-        String key = String.format("%s/%s",memberId, resumePdf.getKey());
+        String key = String.format("%s/%s", memberId, resumePdf.getKey());
         storageService.delete(key);
         storageService.delete(key + ".pdf");
     }
@@ -173,7 +173,7 @@ public class ResumeService {
         TechStack techStack = resumeRepository.findTechByMemberId(memberId);
         TechResponse tech = TechResponse.fromEntity(techStack);
 
-        return ResumeResponse.of(basic, educationals, companies, activities, projects, languages, qualifications, tech);
+        return ResumeResponse.of(basic, educationals, companies, activities, projects, qualifications, languages, tech);
     }
 
     private <T, R, E extends Enum<E>> List<R> filterByEnum(
