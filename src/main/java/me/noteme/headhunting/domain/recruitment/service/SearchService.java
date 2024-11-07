@@ -45,45 +45,30 @@ public class SearchService {
     }
 
     public SearchResponse rankKeywords(Long memberId) {
-        SearchResponse response = new SearchResponse();
+        List<KeywordResponse> topKeywordResponses = getTopKeywordResponses();
+        List<KeywordResponse> recentKeywords =
+                Objects.isNull(memberId) ? List.of() : getRecentKeywords(memberId);
 
-        response.setRanks(getKeywordResponses());
-        response.setRecentKeywords(
-                Objects.isNull(memberId) ? List.of() : getRecentKeywords(memberId)
-        );
-
-        return response;
+        return SearchResponse.of(topKeywordResponses, recentKeywords);
     }
 
     private List<KeywordResponse> getRecentKeywords(Long memberId) {
         Set<String> keywords = searchCacheRepository.getKeywords(memberId);
-//        1.
-//        AtomicInteger recent = new AtomicInteger(1);
-//        return keywords.stream().map(
-//                keyword -> KeywordResponse.of(recent.getAndIncrement(), keyword)
-//        ).toList();
 
-        // 2.
         List<KeywordResponse> recentKeywords = new ArrayList<>();
         int recent = 1;
-        for(String keyword : keywords) {
+        for (String keyword : keywords) {
             recentKeywords.add(KeywordResponse.of(recent++, keyword));
         }
         return recentKeywords;
     }
 
-    private List<KeywordResponse> getKeywordResponses() {
+    private List<KeywordResponse> getTopKeywordResponses() {
         Set<String> topKeywords = searchCacheRepository.getTopKeywords();
-//        1.
-//        AtomicInteger rank = new AtomicInteger(1);
-//        return topKeywords.stream().map(
-//                keyword -> KeywordResponse.of(rank.getAndIncrement(), keyword)
-//        ).toList();
 
-        // 2.
         List<KeywordResponse> keywordResponses = new ArrayList<>();
         int rank = 1;
-        for(String keyword : topKeywords) {
+        for (String keyword : topKeywords) {
             keywordResponses.add(KeywordResponse.of(rank++, keyword));
         }
         return keywordResponses;
