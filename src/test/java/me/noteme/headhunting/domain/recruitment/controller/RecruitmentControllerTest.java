@@ -5,7 +5,7 @@ import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
+import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.MockRecruitment;
@@ -74,9 +74,9 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                 ).responseFields(response(
                                         fieldWithPath("data.recruitmentId").type(JsonFieldType.NUMBER).description("채용 공고 ID"),
                                         fieldWithPath("data.name").type(JsonFieldType.STRING).description("채용 공고명"),
-                                        fieldWithPath("data.category.categoryId").type(JsonFieldType.NUMBER).description("직업 카테고리 ID"),
+                                        fieldWithPath("data.category.id").type(JsonFieldType.NUMBER).description("직업 카테고리 ID"),
                                         fieldWithPath("data.category.name").type(JsonFieldType.STRING).description("직업 카테고리 이름"),
-                                        fieldWithPath("data.childCategories[].categoryId").type(JsonFieldType.NUMBER).description("하위 직업 카테고리 ID"),
+                                        fieldWithPath("data.childCategories[].id").type(JsonFieldType.NUMBER).description("하위 직업 카테고리 ID"),
                                         fieldWithPath("data.childCategories[].name").type(JsonFieldType.STRING).description("하위 직업 카테고리 이름"),
                                         fieldWithPath("data.images").type(JsonFieldType.ARRAY).description("채용 공고 이미지 URL 목록"),
                                         fieldWithPath("data.company.companyId").type(JsonFieldType.NUMBER).description("기업 ID"),
@@ -160,8 +160,8 @@ class RecruitmentControllerTest extends RestDocsSupport {
     void 직무_목록_전체_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         AtomicLong id = new AtomicLong(1);
-        List<JobCategoryResponse> response = Stream.of("백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자").map(
-                title -> JobCategoryResponse.of(id.getAndIncrement(), title)
+        List<CategoryResponse> response = Stream.of("백엔드 개발자", "프론트엔드 개발자", "풀스택 개발자").map(
+                title -> CategoryResponse.of(id.getAndIncrement(), title)
         ).toList();
 
         when(recruitmentService.getJobCategories()).thenReturn(response);
@@ -181,7 +181,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                 .description("관심 직무 전체 목록을 조회합니다.")
                                 .responseFields(response(
                                         fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("직무 ID"),
-                                        fieldWithPath("data[].title").type(JsonFieldType.STRING).description("직무 제목")
+                                        fieldWithPath("data[].name").type(JsonFieldType.STRING).description("직무 제목")
                                 ))
                                 .build()
                 )));

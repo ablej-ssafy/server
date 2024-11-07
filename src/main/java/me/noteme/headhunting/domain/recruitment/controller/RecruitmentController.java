@@ -1,10 +1,9 @@
 package me.noteme.headhunting.domain.recruitment.controller;
 
-import io.sentry.protocol.User;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
-import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
+import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.service.RecruitmentService;
@@ -42,7 +41,7 @@ public class RecruitmentController {
     }
 
     @GetMapping("/category")
-    public SuccessResponse<List<JobCategoryResponse>> getJobCategories(){
+    public SuccessResponse<List<CategoryResponse>> getJobCategories(){
         return SuccessResponse.of(recruitmentService.getJobCategories());
     }
 

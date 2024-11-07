@@ -95,7 +95,7 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
         resumePdfRepository.deleteById(resumePdfId);
-        String key = String.format("%s/%s",memberId, resumePdf.getKey());
+        String key = String.format("%s/%s", memberId, resumePdf.getKey());
         storageService.delete(key);
         storageService.delete(key + ".pdf");
     }
@@ -160,7 +160,7 @@ public class ResumeService {
                 .map(TechResponse::fromEntity)
                 .orElse(null);
 
-        return ResumeResponse.of(basic, educationals, companies, activities, projects, languages, qualifications, tech);
+        return ResumeResponse.of(basic, educationals, companies, activities, projects, qualifications, languages, tech);
     }
 
     private Resume getResumeByMemberId(Long memberId) {
@@ -183,4 +183,5 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
+
 }

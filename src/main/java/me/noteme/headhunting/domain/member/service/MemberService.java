@@ -9,7 +9,7 @@ import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.repository.ScrapRepository;
-import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
+import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +33,9 @@ public class MemberService {
         }
 
         List<InterestJob> interestJobs = member.getInterestJobs();
-        List<JobCategoryResponse> jobCategoryResponses = interestJobs.stream()
+        List<CategoryResponse> categories = interestJobs.stream()
                 .map(InterestJob::getJobCategory)
-                .map(JobCategoryResponse::fromEntity)
+                .map(CategoryResponse::fromEntity)
                 .toList();
 
         return LoginMemberResponse.of(
@@ -43,7 +43,7 @@ public class MemberService {
                 member.getNickname(),
                 member.getUsername(),
                 member.getCareer(),
-                jobCategoryResponses
+                categories
         );
     }
 

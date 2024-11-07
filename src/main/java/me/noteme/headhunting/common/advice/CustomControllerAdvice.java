@@ -78,11 +78,7 @@ public class CustomControllerAdvice {
     }
 
     private void sendNotification(Exception e, HttpServletRequest request) {
-        if(e instanceof CustomException) {
-            log.error("errorMsg: {}", e.getMessage());
-        }else{
-            log.error("error: ", e);
-        }
+        log.error("error: ", e);
         notificationService.sendNotification(e, request.getRequestURI(), getParams(request));
     }
 

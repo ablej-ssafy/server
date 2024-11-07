@@ -2,7 +2,7 @@ package me.noteme.headhunting.domain.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
+import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ public class LoginMemberResponse {
     private String name;
     private String email;
     private int career;
-    private List<JobCategoryResponse> jobCategoryResponses;
+    private List<CategoryResponse> categories;
 }

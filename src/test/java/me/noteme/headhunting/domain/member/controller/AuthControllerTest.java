@@ -194,7 +194,7 @@ class AuthControllerTest extends RestDocsSupport {
                                 .build()
                 )));
 
-        verify(authService).signOut(memberId, refreshToken);
+        verify(authService).signOut(refreshToken);
     }
 
     @Test
@@ -209,7 +209,7 @@ class AuthControllerTest extends RestDocsSupport {
         request.setRefreshToken(refreshToken);
 
         JwtToken response = new JwtToken("newAccessToken", "newRefreshToken");
-        when(authService.refresh(memberId, refreshToken)).thenReturn(response);
+        when(authService.refresh(refreshToken)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/refresh")
