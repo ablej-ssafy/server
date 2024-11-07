@@ -19,12 +19,12 @@ import java.util.List;
 public class RecommendController {
     private final RecommendService recommendService;
 
-    @PostMapping
+    @GetMapping("/{resumePdfId}")
     public SuccessResponse<List<RecommendResponse>> analyzeResume(
             @LoginUser Long memberId,
-            @RequestPart("file") MultipartFile file
+            @PathVariable("resumePdfId") Long resumePdfId
     ) {
-        return SuccessResponse.of(recommendService.analyzeResume(memberId, file));
+        return SuccessResponse.of(recommendService.analyzeResume(memberId, resumePdfId));
     }
 
     @Deprecated
