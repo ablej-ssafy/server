@@ -9,7 +9,6 @@ import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse
 import me.noteme.headhunting.domain.recruitment.service.RecommendService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

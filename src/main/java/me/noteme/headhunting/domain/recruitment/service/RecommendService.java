@@ -65,18 +65,14 @@ public class RecommendService {
     }
 
     public List<String> getResumeKeywords(int jobId, int jobSubId, String resume) {
-        PersonalKeywordsRequest request = new PersonalKeywordsRequest();
-        request.setJobId(jobId);
-        request.setJobSubId(jobSubId);
-        request.setResume(resume);
+        PersonalKeywordsRequest request = PersonalKeywordsRequest.of(jobId, jobSubId, resume);
 
         PersonalKeywordsResponse personalKeywords = aiRequestClient.getPersonalKeywords(request);
         return personalKeywords.getMessageAsList();
     }
 
     public String getCompanyAnalyze(String companyName) {
-        CompanyInfoRequest request = new CompanyInfoRequest();
-        request.setCompanyName(companyName);
+        CompanyInfoRequest request = CompanyInfoRequest.of(companyName);
         CompanyInfoResponse companyInfo = aiRequestClient.getCompanyInfo(request);
         if (Objects.isNull(companyInfo) || !companyInfo.isSuccess()) {
             throw new CustomException(ErrorCode.AI_SERVER_ERROR);
