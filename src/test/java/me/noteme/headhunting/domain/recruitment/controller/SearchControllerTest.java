@@ -67,9 +67,7 @@ class SearchControllerTest extends RestDocsSupport {
                 keyword -> KeywordResponse.of(recent.getAndIncrement(), keyword)
         ).toList();
 
-        SearchResponse response = new SearchResponse();
-        response.setRanks(ranks);
-        response.setRecentKeywords(recentKeywords);
+        SearchResponse response = SearchResponse.of(ranks, recentKeywords);
 
         when(searchService.rankKeywords(userId)).thenReturn(response);
 
@@ -104,9 +102,7 @@ class SearchControllerTest extends RestDocsSupport {
         List<KeywordResponse> ranks = Stream.of("쿠팡", "배민", "카카오", "네이버", "등등").map(
                 keyword -> KeywordResponse.of(rank.getAndIncrement(), keyword)
         ).toList();
-        SearchResponse response = new SearchResponse();
-        response.setRanks(ranks);
-        response.setRecentKeywords(List.of());
+        SearchResponse response = SearchResponse.of(ranks, List.of());
 
         when(searchService.rankKeywords(null)).thenReturn(response);
 

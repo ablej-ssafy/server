@@ -18,6 +18,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Enumeration;
@@ -58,7 +59,7 @@ public class CustomControllerAdvice {
         return ErrorResponse.of(new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
-    @ExceptionHandler({HttpRequestMethodNotSupportedException.class, MissingServletRequestParameterException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class, MissingServletRequestParameterException.class, HttpMessageNotReadableException.class, MultipartException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(Exception exception, HttpServletRequest request) {
         Sentry.captureException(exception);

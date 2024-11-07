@@ -7,10 +7,13 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
+import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
+import me.noteme.headhunting.domain.recruitment.repository.RecruitmentCategoryRepository;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
@@ -39,6 +42,7 @@ import java.util.function.Function;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ResumeService {
+    private final RecruitmentCategoryRepository recruitmentCategoryRepository;
     private final ResumeBasicRepository resumeBasicRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final MemberRepository memberRepository;
@@ -64,11 +68,17 @@ public class ResumeService {
 
         Member member = memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        JobCategory jobCategory = member.getInterestJobs().getFirst().getJobCategory();
+        List<Long> jobCategoryIds = member.getInterestJobs().stream()
+                .map(interestJob -> interestJob.getJobCategory().getId())
+                .toList();
 
-        return recruitmentRepository.findRecruitmentsByCategoryId(
-                        jobCategory.getId(),
+        List<Long> recruitmentIds = recruitmentCategoryRepository.
+                findRecruitmentIdsByCategoryIds(
+                        jobCategoryIds,
                         Pageable.ofSize(3))
+                .getContent();
+
+        return recruitmentRepository.findRecruitmentsById(recruitmentIds).stream()
                 .map(RecruitmentSummaryResponse::fromEntity)
                 .toList();
     }
