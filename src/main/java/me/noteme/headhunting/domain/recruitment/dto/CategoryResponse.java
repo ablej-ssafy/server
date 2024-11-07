@@ -8,7 +8,7 @@ import me.noteme.headhunting.domain.recruitment.entity.RecruitmentCategory;
 @Data
 @AllArgsConstructor(staticName = "of")
 public class CategoryResponse {
-    private Long categoryId;
+    private Long id;
     private String name;
 
     public static CategoryResponse fromEntity(JobCategory category) {

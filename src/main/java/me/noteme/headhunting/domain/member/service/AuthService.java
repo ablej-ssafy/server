@@ -118,21 +118,23 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
 
-    public void signOut(Long memberId, String refreshToken) {
-        validateToken(memberId, refreshToken);
-        memberCacheRepository.saveAuthenticationKey(memberId, refreshToken);
+    public void signOut(String refreshToken) {
+        validateToken(refreshToken);
+        memberCacheRepository.saveBlackListKey(refreshToken);
     }
 
-    public JwtToken refresh(Long memberId, String refreshToken) {
-        validateToken(memberId, refreshToken);
-        return jwtTokenProvider.refreshToken(refreshToken);
+    public JwtToken refresh(String refreshToken) {
+        validateToken(refreshToken);
+        JwtToken jwtToken = jwtTokenProvider.refreshToken(refreshToken);
+
+        memberCacheRepository.saveBlackListKey(refreshToken);
+
+        return jwtToken;
     }
 
-    private void validateToken(Long memberId, String refreshToken) {
-        memberCacheRepository.findAuthenticationKey(memberId).ifPresent(key -> {
-            if (key.equals(refreshToken)) {
-                throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "이미 로그아웃된 사용자 입니다.");
-            }
-        });
+    private void validateToken(String refreshToken) {
+        if(memberCacheRepository.findAuthenticationKey(refreshToken)){
+            throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "적절하지 않은 리프레시 토큰입니다.");
+        }
     }
 }

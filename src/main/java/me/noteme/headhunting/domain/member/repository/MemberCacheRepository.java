@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -30,20 +31,15 @@ public class MemberCacheRepository {
         return valueOps.get(CacheKey.confirmKey(confirmKey));
     }
 
-    public void saveAuthenticationKey(Long memberId, String refreshToken) {
-        String key = CacheKey.authenticationKey(memberId.toString());
+    public void saveBlackListKey(String refreshToken) {
+        String key = CacheKey.blackListKey(refreshToken);
         valueOps.set(key, refreshToken, Duration.ofMillis(refreshExpire));
     }
 
-    public Optional<String> findAuthenticationKey(Long memberId) {
-        return Optional.ofNullable(
-                valueOps.get(CacheKey.authenticationKey(memberId.toString()))
-        );
-    }
-
-    public void deleteAuthenticationKey(Long memberId) {
-        valueOps.getOperations().delete(
-                CacheKey.authenticationKey(memberId.toString())
-        );
+    public boolean findAuthenticationKey(String refreshToken) {
+        String key = CacheKey.blackListKey(refreshToken);
+        String s = valueOps.get(key);
+        log.debug("{}",s);
+        return Objects.nonNull(s);
     }
 }
