@@ -105,7 +105,6 @@ class ResumeControllerTest extends RestDocsSupport {
 
         TechResponse techResponse = TechResponse.of(
                 1L,
-                1L,
                 List.of(
                         TechSkillResponse.of(1L, "Java", "java-icon.png"),
                         TechSkillResponse.of(2L, "Spring", "spring-icon.png")
