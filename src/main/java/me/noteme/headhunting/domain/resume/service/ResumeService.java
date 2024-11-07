@@ -1,5 +1,9 @@
 package me.noteme.headhunting.domain.resume.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Function;
 
@@ -172,8 +177,26 @@ public class ResumeService {
         return ResumeResponse.of(basic, educationals, companies, activities, projects, languages, qualifications, tech);
     }
 
-    public String auto(String question) {
-        return openAiService.auto(question);
+    public OpenAiResponse auto(String question) {
+        String response = openAiService.auto(question);
+
+        // GsonBuilder에 LocalDate 타입의 어댑터 추가
+        // LocalDate 형식을 위한 DateTimeFormatter 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class,
+                        (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
+                                src == null ? null : new com.google.gson.JsonPrimitive(src.format(formatter))
+                )
+                .registerTypeAdapter(LocalDate.class,
+                        (JsonDeserializer<LocalDate>) (json, typeOfT, context) ->
+                                json == null ? null : LocalDate.parse(json.getAsString(), formatter)
+                )
+                .create();
+        OpenAiResponse openAiResponse = gson.fromJson(response, OpenAiResponse.class);
+
+        log.debug("{}",openAiResponse);
+        return openAiResponse;
     }
 
     private <T, R, E extends Enum<E>> List<R> filterByEnum(
