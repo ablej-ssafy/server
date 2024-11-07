@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Slf4j
@@ -147,8 +148,25 @@ public class ResumeService {
         return em.getReference(Member.class, memberId);
     }
 
+    // TODO: 추후 N + 1 발생 확인
     public ResumeBasicResponse getBasicInfo(Long memberId) {
-        return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
+        ResumeBasic resumeBasic = resumeBasicRepository.findByMemberId(memberId);
+        ResumeBasicResponse resumeBasicResponse =
+                ResumeBasicResponse.fromEntity(resumeBasic);
+
+        Member member = memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        if (Objects.nonNull(resumeBasicResponse.getName())) {
+            resumeBasicResponse.setName(member.getNickname());
+        }
+        if (Objects.nonNull(resumeBasicResponse.getEmail())) {
+            resumeBasicResponse.setEmail(member.getUsername());
+        }
+        if (Objects.nonNull(resumeBasicResponse.getTitle())) {
+            resumeBasicResponse.setTitle(resumeBasicResponse.getName() + "의 이력서");
+        }
+
+        return resumeBasicResponse;
     }
 
     public ResumeResponse getResume(Long memberId) {
