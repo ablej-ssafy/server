@@ -19,9 +19,11 @@ public class CertificationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postCertification(
+            @LoginUser Long memberId,
             @Validated @RequestBody CertificationRequest request
     ) {
         certificationService.saveAllCertifications(
+                memberId,
                 request.getCertifications()
         );
 

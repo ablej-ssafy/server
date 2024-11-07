@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor(staticName = "of")
 public class ResumeBasicResponse {
-    private Long resumeId;
     private Long resumeBasicId;
     private String title;
     private String profile;
@@ -23,7 +22,6 @@ public class ResumeBasicResponse {
 
     public static ResumeBasicResponse fromEntity(ResumeBasic basic) {
         return ResumeBasicResponse.of(
-                basic.getResume().getId(),
                 basic.getId(),
                 basic.getTitle(),
                 basic.getProfileImage(),
@@ -31,7 +29,7 @@ public class ResumeBasicResponse {
                 basic.getEmail(),
                 basic.getBirth(),
                 basic.getPhone(),
-                basic.getJob().getName(),
+                basic.getJob(),
                 basic.getIntroduce(),
                 basic.getPortfolioUrl()
         );

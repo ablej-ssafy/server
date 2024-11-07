@@ -22,9 +22,11 @@ public class EducationalController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postEducational(
+            @LoginUser Long memberId,
             @Validated @RequestBody EducationalRequest request
     ) {
         educationalService.saveAllEducationals(
+                memberId,
                 request.getEducationals()
         );
 

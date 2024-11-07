@@ -11,7 +11,6 @@ import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
-import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
@@ -26,7 +25,6 @@ import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,12 +105,12 @@ public class ResumeService {
     }
 
     @Transactional
-    public void saveResumeBasic(Long resumeId, Long jobId, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Long resumeBasicId) {
-        JobCategory job = getJobById(jobId);
-        Resume resume = getResumeById(resumeId);
+    public void saveResumeBasic(Long memberId, String job, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl) {
+        Resume resume = getResumeByMemberId(memberId);
 
-        ResumeBasic resumeBasic = ResumeBasic
-                .of(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
+        ResumeBasic resumeBasic = resume.getResumeBasic() != null
+                ? ResumeBasic.of(resume.getResumeBasic().getId(), title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile)
+                : ResumeBasic.of(null, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
 
         resumeBasicRepository.save(resumeBasic);
     }
@@ -126,24 +124,16 @@ public class ResumeService {
         resumeRepository.save(resume);
     }
 
-    private JobCategory getJobById(Long jobId) {
-        return em.getReference(JobCategory.class, jobId);
-    }
-
-    private Resume getResumeById(Long resumeId) {
-        return em.getReference(Resume.class, resumeId);
-    }
-
-    private Member getMemberById(Long memberId) {
-        return em.getReference(Member.class, memberId);
-    }
-
     public ResumeBasicResponse getBasicInfo(Long memberId) {
-        return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
+        return resumeBasicRepository.findByMemberId(memberId)
+                .map(ResumeBasicResponse::fromEntity)
+                .orElse(null);
     }
 
     public ResumeResponse getResume(Long memberId) {
-        ResumeBasicResponse basic = ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
+        ResumeBasicResponse basic = resumeBasicRepository.findByMemberId(memberId)
+                .map(ResumeBasicResponse::fromEntity)
+                .orElse(null);
         List<Educational> edu = resumeRepository.findAllEducationalByMemberId(memberId);
 
         List<EducationalForm> educationals = edu.stream()
@@ -161,10 +151,20 @@ public class ResumeService {
         List<CertificationForm> languages = filterByEnum(certifications, CertificationType.LANGUAGE, Certification::getCertificationType, CertificationForm::fromEntity);
         List<CertificationForm> qualifications = filterByEnum(certifications, CertificationType.QUALIFICATION, Certification::getCertificationType, CertificationForm::fromEntity);
 
-        TechStack techStack = resumeRepository.findTechByMemberId(memberId);
-        TechResponse tech = TechResponse.fromEntity(techStack);
+        TechResponse tech = resumeRepository.findTechByMemberId(memberId)
+                .map(TechResponse::fromEntity)
+                .orElse(null);
 
         return ResumeResponse.of(basic, educationals, companies, activities, projects, languages, qualifications, tech);
+    }
+
+    private Resume getResumeByMemberId(Long memberId) {
+        return resumeRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
+    }
+
+    private Member getMemberById(Long memberId) {
+        return em.getReference(Member.class, memberId);
     }
 
     private <T, R, E extends Enum<E>> List<R> filterByEnum(
@@ -178,5 +178,4 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
-
 }

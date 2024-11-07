@@ -42,21 +42,19 @@ public class CertificationControllerTest extends RestDocsSupport {
     @MockBean
     private CertificationService certificationService;
 
-    @Autowired
-    private ResourceLoader loader;
-
     @Test
     @DisplayName("자격증_업데이트_테스트")
+    @CustomMockUser
     void 자격증_업데이트_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+
         CertificationRequest request = new CertificationRequest();
         List<CertificationForm> certificationForms = List.of(
-                CertificationForm.of(1L, "자격증 이름", "발행 기관", "인증 번호", LocalDate.of(2020, 5, 20), "A", CertificationType.QUALIFICATION, 1L),
-                CertificationForm.of(1L, "어학 이름", "발행 기관", "인증 번호", LocalDate.of(2019, 8, 15), "B", CertificationType.LANGUAGE, 2L)
+                CertificationForm.of("자격증 이름", "발행 기관", "인증 번호", LocalDate.of(2020, 5, 20), "A", CertificationType.QUALIFICATION, 1L),
+                CertificationForm.of("어학 이름", "발행 기관", "인증 번호", LocalDate.of(2019, 8, 15), "B", CertificationType.LANGUAGE, 1L)
         );
         request.setCertifications(certificationForms);
-
-        System.out.println(toJson(request));
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = mockMvc.perform(post("/api/v1/certification")
@@ -72,7 +70,6 @@ public class CertificationControllerTest extends RestDocsSupport {
                                 .summary("자격 정보 업데이트 API")
                                 .description("자격증 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("certifications[].name").type(JsonFieldType.STRING).description("자격증 이름"),
                                         fieldWithPath("certifications[].organization").type(JsonFieldType.STRING).description("발행 기관"),
                                         fieldWithPath("certifications[].credential").type(JsonFieldType.STRING).optional().description("인증 번호"),
@@ -84,7 +81,7 @@ public class CertificationControllerTest extends RestDocsSupport {
                                 .build()
                 )));
 
-        verify(certificationService).saveAllCertifications(request.getCertifications());
+        verify(certificationService).saveAllCertifications(memberId, request.getCertifications());
     }
 
     @Test
@@ -94,7 +91,6 @@ public class CertificationControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
         CertificationForm certificationForm = CertificationForm.of(
-                1L,
                 "정보처리기사",
                 "한국산업인력공단",
                 "12345678",
@@ -121,7 +117,6 @@ public class CertificationControllerTest extends RestDocsSupport {
                                 .summary("자격 전체 조회 API")
                                 .description("로그인 한 사용자가 작성한 자격 정보를 조회합니다.")
                                 .responseFields(response(
-                                        fieldWithPath("data.certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("data.certifications[].name").type(JsonFieldType.STRING).description("자격증 이름"),
                                         fieldWithPath("data.certifications[].organization").type(JsonFieldType.STRING).description("발급 기관"),
                                         fieldWithPath("data.certifications[].credential").type(JsonFieldType.STRING).description("자격 번호"),
@@ -140,7 +135,6 @@ public class CertificationControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
         CertificationForm certificationForm = CertificationForm.of(
-                1L,
                 "정보처리기사",
                 "한국산업인력공단",
                 "12345678",
@@ -170,7 +164,6 @@ public class CertificationControllerTest extends RestDocsSupport {
                                         parameterWithName("type").description("조회할 자격 유형을 작성합니다. (예: language, qualification")
                                 )
                                 .responseFields(response(
-                                        fieldWithPath("data.certifications[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("data.certifications[].name").type(JsonFieldType.STRING).description("자격증 이름"),
                                         fieldWithPath("data.certifications[].organization").type(JsonFieldType.STRING).description("발급 기관"),
                                         fieldWithPath("data.certifications[].credential").type(JsonFieldType.STRING).description("자격 번호"),

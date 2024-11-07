@@ -1,18 +1,16 @@
 package me.noteme.headhunting.domain.resume.controller.request;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 public class ResumeBasicRequest {
-    @Min(value = 1, message = "이력서 번호는 필수값입니다.")
-    private Long resumeId;
-
-    private Long jobId;
+    private String job;
 
     /**
      * 이력서 프로필 URL
@@ -55,6 +53,4 @@ public class ResumeBasicRequest {
      * 포트폴리오 URL
      */
     private String portfolioUrl;
-
-    private Long resumeBasicId;
 }

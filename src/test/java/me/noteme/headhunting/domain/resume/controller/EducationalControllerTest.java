@@ -44,17 +44,16 @@ public class EducationalControllerTest extends RestDocsSupport {
     @MockBean
     private EducationalService educationalService;
 
-    @Autowired
-    private ResourceLoader loader;
-
     @Test
     @DisplayName("교육_업데이트_테스트")
+    @CustomMockUser
     void 교육_업데이트_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
         EducationalRequest request = new EducationalRequest();
         List<EducationalForm> educationalForms = List.of(
-                EducationalForm.of(1L, "교육 이름", "전공", EducationalType.BACHELOR, "A", GradeType.FOUR_POINT_FIVE, "설명", LocalDate.of(2021, 3, 1), LocalDate.of(2021, 8, 31), 1L),
-                EducationalForm.of(1L, "학위 이름", "세부 전공", EducationalType.MASTER, "B", GradeType.FOUR_POINT_ZERO, "설명", LocalDate.of(2019, 3, 1), LocalDate.of(2020, 8, 31), 2L)
+                EducationalForm.of("교육 이름", "전공", EducationalType.BACHELOR, "A", GradeType.FOUR_POINT_FIVE, "설명", LocalDate.of(2021, 3, 1), LocalDate.of(2021, 8, 31), 1L),
+                EducationalForm.of("학위 이름", "세부 전공", EducationalType.MASTER, "B", GradeType.FOUR_POINT_ZERO, "설명", LocalDate.of(2019, 3, 1), LocalDate.of(2020, 8, 31), 2L)
         );
         request.setEducationals(educationalForms);
 
@@ -72,7 +71,6 @@ public class EducationalControllerTest extends RestDocsSupport {
                                 .summary("학교 정보 추가 API")
                                 .description("교육 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("educationals[].name").type(JsonFieldType.STRING).description("교육 이름"),
                                         fieldWithPath("educationals[].major").type(JsonFieldType.STRING).description("전공"),
                                         fieldWithPath("educationals[].category").type(JsonFieldType.STRING).description("교육 유형 (BACHELOR, MASTERS 등)"),
@@ -86,7 +84,7 @@ public class EducationalControllerTest extends RestDocsSupport {
                                 .build()
                 )));
 
-        verify(educationalService).saveAllEducationals(request.getEducationals());
+        verify(educationalService).saveAllEducationals(memberId, request.getEducationals());
     }
 
     @Test
@@ -96,7 +94,6 @@ public class EducationalControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
         EducationalForm educationalForm = EducationalForm.of(
-                1L,
                 "바밤대학교",
                 "바밤과",
                 EducationalType.BACHELOR,
@@ -125,7 +122,6 @@ public class EducationalControllerTest extends RestDocsSupport {
                                 .summary("학교 정보 조회 API")
                                 .description("로그인 한 사용자가 작성한 학교 정보를 조회합니다.")
                                 .responseFields(response(
-                                        fieldWithPath("data.educationals[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("data.educationals[].name").type(JsonFieldType.STRING).description("학교 이름"),
                                         fieldWithPath("data.educationals[].major").type(JsonFieldType.STRING).description("전공"),
                                         fieldWithPath("data.educationals[].category").type(JsonFieldType.STRING).description("학교 타입(ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),

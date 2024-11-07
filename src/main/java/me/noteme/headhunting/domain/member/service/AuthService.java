@@ -14,6 +14,8 @@ import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.repository.JobCategoryRepository;
+import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +38,7 @@ public class AuthService {
 
     private final EntityManager em;
     private final ApplicationEventPublisher publisher;
+    private final ResumeRepository resumeRepository;
 
     /**
      * 회원 가입 로직
@@ -71,6 +74,10 @@ public class AuthService {
         });
 
         memberRepository.save(member);
+
+        resumeRepository.save(Resume.builder()
+                .member(member)
+                .build());
 
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }

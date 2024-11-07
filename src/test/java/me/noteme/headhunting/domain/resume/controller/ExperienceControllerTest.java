@@ -44,17 +44,16 @@ public class ExperienceControllerTest extends RestDocsSupport {
     @MockBean
     private ExperienceService experienceService;
 
-    @Autowired
-    private ResourceLoader loader;
-
     @Test
     @DisplayName("경험_업데이트_테스트")
+    @CustomMockUser
     void 경험_업데이트_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
         ExperienceRequest request = new ExperienceRequest();
         List<ExperienceForm> experienceForms = List.of(
-                ExperienceForm.of(1L, ExperienceType.PROJECT, "프로젝트 경험", "회사명", LocalDate.of(2021, 3, 1), LocalDate.of(2022, 3, 1), "설명", "https://example.com", 1L),
-                ExperienceForm.of(1L, ExperienceType.ACTIVITY, "봉사 활동", "봉사단체", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 6, 1), "설명", "https://volunteer.com", 2L)
+                ExperienceForm.of(ExperienceType.PROJECT, "프로젝트 경험", "회사명", LocalDate.of(2021, 3, 1), LocalDate.of(2022, 3, 1), "설명", "https://example.com", 1L),
+                ExperienceForm.of(ExperienceType.ACTIVITY, "봉사 활동", "봉사단체", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 6, 1), "설명", "https://volunteer.com", 2L)
         );
         request.setExperiences(experienceForms);
 
@@ -72,7 +71,6 @@ public class ExperienceControllerTest extends RestDocsSupport {
                                 .summary("경험 업데이트 API")
                                 .description("경험 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("experiences[].resumeId").type(JsonFieldType.NUMBER).description("이력서 ID"),
                                         fieldWithPath("experiences[].experienceType").type(JsonFieldType.STRING).description("경험 유형 (PROJECT, VOLUNTEER 등)"),
                                         fieldWithPath("experiences[].title").type(JsonFieldType.STRING).description("경험 제목"),
                                         fieldWithPath("experiences[].affiliation").type(JsonFieldType.STRING).description("회사/기관 이름"),
@@ -85,7 +83,7 @@ public class ExperienceControllerTest extends RestDocsSupport {
                                 .build()
                 )));
 
-        verify(experienceService).saveAllExperience(request.getExperiences());
+        verify(experienceService).saveAllExperience(memberId, request.getExperiences());
     }
 
     @Test
@@ -95,7 +93,6 @@ public class ExperienceControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
         ExperienceForm experienceForm = ExperienceForm.of(
-                1L,
                 ExperienceType.COMPANY,
                 "활동 이름",
                 "소속",
@@ -123,7 +120,6 @@ public class ExperienceControllerTest extends RestDocsSupport {
                                 .summary("경험 전체 조회 API")
                                 .description("로그인 한 사용자가 작성한 경험 정보를 조회합니다.")
                                 .responseFields(response(
-                                        fieldWithPath("data.experiences[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("data.experiences[].experienceType").type(JsonFieldType.STRING).description("경험 타입 (COMPANY, PROJECT, ACTIVITY)"),
                                         fieldWithPath("data.experiences[].title").type(JsonFieldType.STRING).description("활동 이름"),
                                         fieldWithPath("data.experiences[].affiliation").type(JsonFieldType.STRING).description("활동 소속"),
@@ -143,7 +139,6 @@ public class ExperienceControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
         ExperienceForm experienceForm = ExperienceForm.of(
-                1L,
                 ExperienceType.COMPANY,
                 "활동 이름",
                 "소속",
@@ -174,7 +169,6 @@ public class ExperienceControllerTest extends RestDocsSupport {
                                         parameterWithName("type").description("조회할 경험을 작성합니다. (예: company, activity, project")
                                 )
                                 .responseFields(response(
-                                        fieldWithPath("data.experiences[].resumeId").type(JsonFieldType.NUMBER).description("이력서 PK"),
                                         fieldWithPath("data.experiences[].experienceType").type(JsonFieldType.STRING).description("경험 타입 (COMPANY, PROJECT, ACTIVITY)"),
                                         fieldWithPath("data.experiences[].title").type(JsonFieldType.STRING).description("활동 이름"),
                                         fieldWithPath("data.experiences[].affiliation").type(JsonFieldType.STRING).description("활동 소속"),
