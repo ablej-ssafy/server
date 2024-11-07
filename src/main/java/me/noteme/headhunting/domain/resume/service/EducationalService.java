@@ -52,6 +52,13 @@ public class EducationalService {
         educationalRepository.deleteById(educationId);
     }
 
+    @Transactional
+    public EducationalForm createEmptyEducational(Long memberId) {
+        return EducationalForm.fromEntity(educationalRepository.save(
+                Educational.of(getResumeByMemberId(memberId))
+        ));
+    }
+
     private Resume getResumeByMemberId(Long memberId) {
         return resumeRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));

@@ -14,6 +14,8 @@ import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.repository.JobCategoryRepository;
+import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +37,7 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
 
     private final ApplicationEventPublisher publisher;
+    private final ResumeRepository resumeRepository;
 
     /**
      * 회원 가입 로직
@@ -69,9 +72,14 @@ public class AuthService {
             member.addInterestJob(interestJob);
         });
 
-        Member m = memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
-        publisher.publishEvent(ResumeInitEvent.of(m.getId()));
+        resumeRepository.save(
+                Resume.builder()
+                        .member(savedMember)
+                        .build()
+        );
+//        publisher.publishEvent(ResumeInitEvent.of(savedMember.getId()));
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 

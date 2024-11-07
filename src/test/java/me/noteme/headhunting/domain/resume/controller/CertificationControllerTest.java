@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.resume.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
@@ -12,12 +13,10 @@ import me.noteme.headhunting.domain.resume.service.CertificationService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -82,6 +81,45 @@ public class CertificationControllerTest extends RestDocsSupport {
                 )));
 
         verify(certificationService).saveAllCertifications(memberId, request.getCertifications());
+    }
+
+    @Test
+    @DisplayName("자격증_컬럼_추가_테스트")
+    @CustomMockUser
+    void 자격증_컬럼_추가_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        String type = "language";
+
+        CertificationForm mockResponse = CertificationForm.of(null, null, null, null, null, CertificationType.LANGUAGE, 1L);
+        when(certificationService.createEmptyCertification(memberId, type)).thenReturn(mockResponse);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = mockMvc.perform(post("/api/v1/certification/add/type/{type}", type)
+                .contentType("application/json")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isCreated())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서-자격증")
+                                .summary("자격 정보 추가 API")
+                                .description("자격증 정보 레코드를 추가합니다.")
+                                .pathParameters(
+                                        parameterWithName("type").type(SimpleType.STRING).description("자격 타입"))
+                                .responseFields(response(
+                                        fieldWithPath("data.name").type(JsonFieldType.NULL).description("null"),
+                                        fieldWithPath("data.organization").type(JsonFieldType.NULL).description("null"),
+                                        fieldWithPath("data.credential").type(JsonFieldType.NULL).optional().description("null"),
+                                        fieldWithPath("data.acquisitionAt").type(JsonFieldType.NULL).description("null"),
+                                        fieldWithPath("data.grade").type(JsonFieldType.NULL).optional().description("null"),
+                                        fieldWithPath("data.certificationType").type(JsonFieldType.STRING).description("자격증 유형 (QUALIFICATION, LANGUAGE)"),
+                                        fieldWithPath("data.certificationId").type(JsonFieldType.NUMBER).optional().description("자격증 ID")))
+                                .build()
+                )));
+
+        verify(certificationService).createEmptyCertification(memberId, type);
     }
 
     @Test

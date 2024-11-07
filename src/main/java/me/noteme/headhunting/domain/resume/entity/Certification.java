@@ -49,4 +49,11 @@ public class Certification {
         certification.resume = resume;
         return certification;
     }
+
+    public static Certification of(CertificationType certificationType, Resume resume) {
+        Certification certification = new Certification();
+        certification.certificationType = certificationType;
+        certification.resume = resume;
+        return certification;
+    }
  }

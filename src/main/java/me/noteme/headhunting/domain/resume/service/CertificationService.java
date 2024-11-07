@@ -46,6 +46,21 @@ public class CertificationService {
     }
 
     @Transactional
+    public CertificationForm createEmptyCertification(Long memberId, String type) {
+        if (StringUtils.isEmpty(type)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "요청 타입이 틀렸습니다.");
+        }
+
+        CertificationType certificationType = CertificationType.from(type);
+        return CertificationForm.fromEntity(certificationRepository.save(
+                Certification.of(
+                        certificationType,
+                        getResumeByMemberId(memberId)
+                )
+        ));
+    }
+
+    @Transactional
     public void deleteById(Long certificationId) {
         certificationRepository.deleteById(certificationId);
     }
