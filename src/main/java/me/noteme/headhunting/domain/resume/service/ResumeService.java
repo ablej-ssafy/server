@@ -7,12 +7,9 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
-import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
-import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
-import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentCategoryRepository;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
@@ -35,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Slf4j
@@ -117,11 +115,8 @@ public class ResumeService {
     @Transactional
     public void saveResumeBasic(Long memberId, String job, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl) {
         Resume resume = getResumeByMemberId(memberId);
-
-        ResumeBasic resumeBasic = resume.getResumeBasic() != null
-                ? ResumeBasic.of(resume.getResumeBasic().getId(), title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile)
-                : ResumeBasic.of(null, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
-
+        Long resumeBasicId = Objects.isNull(resume.getResumeBasic()) ? null : resume.getResumeBasic().getId();
+        ResumeBasic resumeBasic = ResumeBasic.of(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
         resumeBasicRepository.save(resumeBasic);
     }
 
