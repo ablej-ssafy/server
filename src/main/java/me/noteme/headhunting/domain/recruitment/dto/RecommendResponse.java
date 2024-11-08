@@ -1,6 +1,5 @@
 package me.noteme.headhunting.domain.recruitment.dto;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,7 @@ import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(staticName = "of")
 public class RecommendResponse implements Comparable<RecommendResponse> {
     private Long id;
     private String title;
@@ -18,7 +17,7 @@ public class RecommendResponse implements Comparable<RecommendResponse> {
     private double similarity;
 
     public static RecommendResponse create(Recruitment recruitment, boolean isScrapped, double similarity) {
-        return new RecommendResponse(
+        return RecommendResponse.of(
                 recruitment.getId(),
                 recruitment.getName(),
                 recruitment.getCompany().getName(),
