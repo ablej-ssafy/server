@@ -3,13 +3,12 @@ package me.noteme.headhunting.domain.member.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
+import me.noteme.headhunting.common.listener.event.ResumeInitEvent;
 import me.noteme.headhunting.domain.member.dto.CustomOAuth2User;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.entity.ProviderType;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -42,11 +41,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         AtomicBoolean isNewUser = new AtomicBoolean(false);
         Member member = memberRepository.findByUsername(username).orElseGet(() -> {
-            log.info("신규 유저 생성 응답: {}", response);
-
             isNewUser.set(true);
             String encodedPassword = passwordEncoder.encode(response.getProviderId());
-            return memberRepository.save(
+            return memberRepository.saveAndFlush(
                     Member.builder()
                             .username(username)
                             .password(encodedPassword)
@@ -59,7 +56,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         });
 
         if (isNewUser.get()) {
-            publisher.publishEvent(ConfirmEmailEvent.of(username, response.getName()));
+            publisher.publishEvent(ResumeInitEvent.of(member.getId()));
         }
 
         return new CustomOAuth2User(member);

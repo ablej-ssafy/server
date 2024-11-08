@@ -9,7 +9,7 @@ import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
 
 import java.util.Map;
 
-public class CustomOAuth2UserFactory {
+public abstract class CustomOAuth2UserFactory {
     public static OAuth2Response parseOAuth2Response(ProviderType providerType, Map<String, Object> attributes) {
         return switch (providerType) {
             case KAKAO -> new KakaoResponse(attributes);
