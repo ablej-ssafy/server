@@ -54,7 +54,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
         Long memberId = 1L;
         Long recruitmentId = 1L;
         Recruitment recruitment = MockRecruitment.create(recruitmentId);
-        RecruitmentResponse response = RecruitmentResponse.fromEntity(recruitment);
+        RecruitmentResponse response = RecruitmentResponse.fromEntity(recruitment, false);
         when(recruitmentService.getRecruitmentById(memberId, recruitmentId)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면

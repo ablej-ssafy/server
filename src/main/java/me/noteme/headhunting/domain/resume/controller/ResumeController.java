@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
@@ -35,7 +36,7 @@ public class ResumeController {
     }
 
     @PostMapping("/pdf")
-    public SuccessResponse<List<RecruitmentSummaryResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
+    public SuccessResponse<List<RecommendResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
         return SuccessResponse.of(resumeService.upload(memberId, resumePdf));
     }
 
