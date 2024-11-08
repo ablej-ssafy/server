@@ -41,4 +41,14 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>,
         WHERE r.id IN :recruitmentIds
     """)
     List<Recruitment> findRecruitmentsById(@Param("recruitmentIds") List<Long> recruitmentIds);
+
+    @Query("""
+        SELECT r
+        FROM Recruitment r
+        LEFT JOIN FETCH r.category c
+        LEFT JOIN FETCH r.childCategories
+        LEFT JOIN FETCH r.company co
+        LEFT JOIN FETCH r.images i
+    """)
+    Page<Recruitment> findRecruitments(Pageable pageable);
 }
