@@ -28,7 +28,8 @@ public class WebSecurityConfig {
     private final String[] permitAllPaths = {
             "/favicon.ico",
             "/api/v1/auth/**",
-            "/api/v1/recruitment/**",
+            "/api/v1/recruitments/**",
+            "/api/v1/recruitments",
             "/api/v1/company/**",
             "/api/v1/search/**"
     };

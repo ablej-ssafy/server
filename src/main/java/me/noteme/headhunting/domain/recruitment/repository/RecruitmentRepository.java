@@ -30,4 +30,14 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>,
         WHERE jc.id = :categoryId
     """)
     Page<Recruitment> findRecruitmentsByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    @Query("""
+        SELECT r
+        FROM Recruitment r
+        LEFT JOIN FETCH r.category c
+        LEFT JOIN FETCH r.childCategories
+        LEFT JOIN FETCH r.company co
+        LEFT JOIN FETCH r.images i
+    """)
+    Page<Recruitment> findRecruitments(Pageable pageable);
 }

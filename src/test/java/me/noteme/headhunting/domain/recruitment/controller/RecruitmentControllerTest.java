@@ -59,7 +59,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-            get("/api/v1/recruitment/{recruitmentId}", recruitmentId)
+            get("/api/v1/recruitments/{recruitmentId}", recruitmentId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -123,7 +123,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-            get("/api/v1/recruitment/category/{categoryId}", categoryId)
+            get("/api/v1/recruitments/category/{categoryId}", categoryId)
                 .queryParam("page", "0")
                 .queryParam("size", "20")
         );
@@ -168,7 +168,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                get("/api/v1/recruitment/category")
+                get("/api/v1/recruitments/category")
                         .contentType("application/json")
         );
 
@@ -188,6 +188,55 @@ class RecruitmentControllerTest extends RestDocsSupport {
     }
 
     @Test
+    @DisplayName("채용공고_목록_전체_조회_테스트")
+    void 채용공고_목록_전체_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        int size = 20;
+        Pageable pageable = Pageable.ofSize(size);
+        AtomicLong id = new AtomicLong(1);
+        List<RecruitmentSummaryResponse> recruitments = Stream.of("에이블제이 백엔드", "호두에이아이랩", "[인텔리전스랩스] 넥슨크리에이터즈팀 백엔드 개발자 (Java)", "카펜스트리트(에이콘3D)").map(name -> {
+            Long recruitmentId = id.getAndIncrement();
+            Recruitment recruitment = MockRecruitment.create(recruitmentId, name, recruitmentId);
+            return RecruitmentSummaryResponse.fromEntity(recruitment);
+        }).toList();
+        Page<RecruitmentSummaryResponse> response = new PageImpl<>(recruitments, pageable, size);
+        when(recruitmentService.getRecruitments(null, pageable)).thenReturn(response);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/recruitments")
+                        .queryParam("page", "0")
+                        .queryParam("size", "20")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(
+                        this.restDocs.document(resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("채용 공고")
+                                        .summary("채용 공고 전체 조회 API")
+                                        .description("전체 채용 공고 목록을 조회합니다.")
+                                        .queryParameters(
+                                                parameterWithName("page").type(SimpleType.NUMBER).defaultValue(0).description("페이지 번호"),
+                                                parameterWithName("size").type(SimpleType.NUMBER).defaultValue(20).description("페이지 크기")
+                                        ).responseFields(response(page(
+                                                fieldWithPath("data.content[].recruitmentId").type(JsonFieldType.NUMBER).description("채용 공고 ID"),
+                                                fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("채용 공고명"),
+                                                fieldWithPath("data.content[].category").type(JsonFieldType.STRING).description("직업 카테고리 이름"),
+                                                fieldWithPath("data.content[].companyId").type(JsonFieldType.NUMBER).description("기업 ID"),
+                                                fieldWithPath("data.content[].companyName").type(JsonFieldType.STRING).description("기업명"),
+                                                fieldWithPath("data.content[].thumbnail").type(JsonFieldType.STRING).description("기업 소개용 썸네일"),
+                                                fieldWithPath("data.content[].location").type(JsonFieldType.STRING).description("기업 위치 지역 (서울)"),
+                                                fieldWithPath("data.content[].strict").type(JsonFieldType.STRING).description("기업 위치 구역 (서초구)"),
+                                                fieldWithPath("data.content[].scrapped").type(JsonFieldType.BOOLEAN).description("스크랩 여부 (비로그인 시 false)")
+                                        )))
+                                        .build()
+                        )));
+
+    }
+
+    @Test
     @DisplayName("채용공고_스크랩_생성_테스트")
     @CustomMockUser
     void 채용공고_스크랩_생성_테스트() throws Exception {
@@ -197,7 +246,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                post("/api/v1/recruitment/{recruitmentId}/scrap", recruitmentId)
+                post("/api/v1/recruitments/{recruitmentId}/scrap", recruitmentId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -212,6 +261,8 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                 ).responseFields(empty())
                                 .build()
                 )));
+
+        verify(recruitmentService).scrapRecruitment(memberId, recruitmentId);
     }
 
     @Test
@@ -224,7 +275,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                delete("/api/v1/recruitment/{recruitmentId}/scrap", recruitmentId)
+                delete("/api/v1/recruitments/{recruitmentId}/scrap", recruitmentId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -239,5 +290,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                 )
                                 .build()
                 )));
+
+        verify(recruitmentService).unScrapRecruitment(memberId, recruitmentId);
     }
 }

@@ -18,9 +18,19 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/recruitment")
+@RequestMapping("/api/v1/recruitments")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
+
+    @GetMapping
+    public SuccessResponse<PagedModel<RecruitmentSummaryResponse>> getRecruitments(
+            @LoginUser Long memberId,
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return SuccessResponse.of(
+                new PagedModel<>(recruitmentService.getRecruitments(memberId, pageable))
+        );
+    }
 
     @GetMapping("/{recruitmentId}")
     public SuccessResponse<RecruitmentResponse> getRecruitmentById(

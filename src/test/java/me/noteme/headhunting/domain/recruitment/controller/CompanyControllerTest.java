@@ -64,7 +64,7 @@ class CompanyControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         var actions = this.mockMvc.perform(
-                get("/api/v1/company/{companyId}", companyId)
+                get("/api/v1/companies/{companyId}", companyId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
