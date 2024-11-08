@@ -14,8 +14,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class ResumeEventListener {
     private final ResumeService resumeService;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void initResumeRecord(ResumeInitEvent event) {
-        resumeService.resumeInit(event.getMemberId());
+        resumeService.resumeInit(event.getId());
     }
 }

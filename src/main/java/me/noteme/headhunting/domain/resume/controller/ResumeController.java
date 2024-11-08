@@ -56,7 +56,7 @@ public class ResumeController {
     }
 
     // TODO: 테스트 용도
-    @PostMapping("")
+    @PostMapping("/basic/test")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResume(@LoginUser Long memberId) {
         resumeService.resumeInit(memberId);

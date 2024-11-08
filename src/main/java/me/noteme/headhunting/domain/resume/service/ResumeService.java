@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -121,18 +122,24 @@ public class ResumeService {
     }
 
     @Transactional
-    public void resumeInit(long memberId) {
-        Resume resume = Resume.builder()
-                .member(getMemberById(memberId))
-                .build();
+    public void resumeInit(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
 
+        Resume resume = Resume.builder()
+                .member(member)
+                .build();
         resumeRepository.save(resume);
     }
 
     public ResumeBasicResponse getBasicInfo(Long memberId) {
+        Member member = memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
         return resumeBasicRepository.findByMemberId(memberId)
                 .map(ResumeBasicResponse::fromEntity)
-                .orElse(null);
+                .orElseGet(ResumeBasicResponse::new)
+                .setInfoIfEmpty(member);
     }
 
     public ResumeResponse getResume(Long memberId) {
@@ -166,10 +173,6 @@ public class ResumeService {
     private Resume getResumeByMemberId(Long memberId) {
         return resumeRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
-    }
-
-    private Member getMemberById(Long memberId) {
-        return em.getReference(Member.class, memberId);
     }
 
     private <T, R, E extends Enum<E>> List<R> filterByEnum(

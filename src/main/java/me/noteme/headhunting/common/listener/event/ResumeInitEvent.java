@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(staticName = "of")
 public class ResumeInitEvent {
-    private Long memberId;
+    private Long id;
 }

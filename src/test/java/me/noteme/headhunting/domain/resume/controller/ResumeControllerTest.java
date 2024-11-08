@@ -205,10 +205,10 @@ class ResumeControllerTest extends RestDocsSupport {
     @CustomMockUser
     void 이력서_생성_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        long memberId = 1L;
+        Long memberId = 1L;
 
         // * WHEN: 이걸 실행하면
-        ResultActions actions = mockMvc.perform(post("/api/v1/resume")
+        ResultActions actions = mockMvc.perform(post("/api/v1/resume/basic/test")
                 .contentType("application/json")
         );
 

@@ -3,8 +3,6 @@ package me.noteme.headhunting.domain.recruitment.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.recruitment.dto.CompanyRecruitmentResponse;
-import me.noteme.headhunting.domain.recruitment.dto.CompanyResponse;
 import me.noteme.headhunting.domain.recruitment.dto.CompanyWithRecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.entity.Company;
 import me.noteme.headhunting.domain.recruitment.entity.MockCompany;
@@ -18,9 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
