@@ -72,14 +72,12 @@ public class AuthService {
             member.addInterestJob(interestJob);
         });
 
-        Member savedMember = memberRepository.save(member);
+        memberRepository.saveAndFlush(member);
 
-        resumeRepository.save(
-                Resume.builder()
-                        .member(savedMember)
-                        .build()
-        );
-//        publisher.publishEvent(ResumeInitEvent.of(savedMember.getId()));
+        // Resume 저장 로직
+        publisher.publishEvent(ResumeInitEvent.of(member.getId()));
+
+        // 이메일 전송 로직
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 
@@ -141,7 +139,7 @@ public class AuthService {
     }
 
     private void validateToken(String refreshToken) {
-        if(memberCacheRepository.findAuthenticationKey(refreshToken)){
+        if (memberCacheRepository.findAuthenticationKey(refreshToken)) {
             throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "적절하지 않은 리프레시 토큰입니다.");
         }
     }
