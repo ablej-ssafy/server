@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -130,9 +131,13 @@ public class ResumeService {
     }
 
     public ResumeBasicResponse getBasicInfo(Long memberId) {
+        Member member = memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
         return resumeBasicRepository.findByMemberId(memberId)
                 .map(ResumeBasicResponse::fromEntity)
-                .orElse(null);
+                .orElseGet(ResumeBasicResponse::new)
+                .setInfoIfEmpty(member);
     }
 
     public ResumeResponse getResume(Long memberId) {
