@@ -5,7 +5,7 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
-import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.service.RecommendService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

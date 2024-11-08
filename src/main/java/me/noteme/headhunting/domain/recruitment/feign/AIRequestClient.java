@@ -24,5 +24,5 @@ public interface AIRequestClient {
      * 요청 Type 2가지 분류
      */
     @PostMapping("/job-postings/recommend")
-    AbleJResponse<List<RecommendResponse>> getResumeRecommend(@RequestBody JobRecommendRequest request);
+    AbleJResponse<List<AiRecommendResponse>> getResumeRecommend(@RequestBody JobRecommendRequest request);
 }

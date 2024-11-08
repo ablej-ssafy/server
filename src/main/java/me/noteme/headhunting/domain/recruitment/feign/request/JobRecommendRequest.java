@@ -9,6 +9,5 @@ public class JobRecommendRequest {
     private String resume;
     private int careerYear;
     private long jobTitleId;
-    private String jobTitle;
     private int k;
 }

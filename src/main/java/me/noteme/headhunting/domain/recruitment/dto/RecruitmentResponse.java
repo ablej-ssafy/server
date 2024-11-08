@@ -28,27 +28,6 @@ public class RecruitmentResponse {
     private int annualFrom;
     private boolean isScrapped;
 
-    public static RecruitmentResponse fromEntity(Recruitment recruitment) {
-        return RecruitmentResponse.of(
-                recruitment.getId(),
-                recruitment.getName(),
-                CategoryResponse.fromEntity(recruitment.getCategory()),
-                recruitment.getChildCategories().stream().map(CategoryResponse::fromEntity).toList(),
-                recruitment.getImages().stream().map(RecruitmentImage::getImageUrl).toList(),
-                CompanyResponse.fromEntity(recruitment.getCompany()),
-                recruitment.getIntro(),
-                recruitment.getTask(),
-                recruitment.getRequirement(),
-                recruitment.getPreference(),
-                recruitment.getBenefit(),
-                recruitment.getHireRound(),
-                recruitment.getDueTime(),
-                recruitment.getAnnualTo(),
-                recruitment.getAnnualFrom(),
-                false
-        );
-    }
-
     public static RecruitmentResponse fromEntity(Recruitment recruitment, boolean isScrapped) {
         return RecruitmentResponse.of(
                 recruitment.getId(),

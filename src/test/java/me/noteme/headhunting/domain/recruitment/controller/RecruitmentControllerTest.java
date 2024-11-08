@@ -54,12 +54,12 @@ class RecruitmentControllerTest extends RestDocsSupport {
         Long memberId = 1L;
         Long recruitmentId = 1L;
         Recruitment recruitment = MockRecruitment.create(recruitmentId);
-        RecruitmentResponse response = RecruitmentResponse.fromEntity(recruitment);
+        RecruitmentResponse response = RecruitmentResponse.fromEntity(recruitment, false);
         when(recruitmentService.getRecruitmentById(memberId, recruitmentId)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-            get("/api/v1/recruitment/{recruitmentId}", recruitmentId)
+                get("/api/v1/recruitment/{recruitmentId}", recruitmentId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -123,9 +123,9 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-            get("/api/v1/recruitment/category/{categoryId}", categoryId)
-                .queryParam("page", "0")
-                .queryParam("size", "20")
+                get("/api/v1/recruitment/category/{categoryId}", categoryId)
+                        .queryParam("page", "0")
+                        .queryParam("size", "20")
         );
 
         // * THEN: 이런 결과가 나와야 한다

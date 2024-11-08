@@ -9,7 +9,8 @@ import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
-import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
+import me.noteme.headhunting.domain.member.repository.ScrapRepository;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentCategoryRepository;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
@@ -28,12 +29,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
 @Slf4j
@@ -42,6 +43,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ResumeService {
     private final RecruitmentCategoryRepository recruitmentCategoryRepository;
+    private final ScrapRepository scrapRepository;
     private final ResumeBasicRepository resumeBasicRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final MemberRepository memberRepository;
@@ -60,16 +62,13 @@ public class ResumeService {
     }
 
     @Transactional
-    public List<RecruitmentSummaryResponse> upload(Long memberId, MultipartFile resumePdf) {
+    public List<RecommendResponse> upload(Long memberId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
 
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
-        Member member = memberRepository.findFetchById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-        List<Long> jobCategoryIds = member.getInterestJobs().stream()
-                .map(interestJob -> interestJob.getJobCategory().getId())
-                .toList();
+        Member member = getMember(memberId);
+        List<Long> jobCategoryIds = getJobCategoryIds(member);
 
         List<Long> recruitmentIds = recruitmentCategoryRepository.
                 findRecruitmentIdsByCategoryIds(
@@ -77,8 +76,13 @@ public class ResumeService {
                         Pageable.ofSize(3))
                 .getContent();
 
+        Set<Long> scrappedIds = scrapRepository.isScrapped(memberId, recruitmentIds);
+
         return recruitmentRepository.findRecruitmentsById(recruitmentIds).stream()
-                .map(RecruitmentSummaryResponse::fromEntity)
+                .map(recruitment -> RecommendResponse.create(
+                        recruitment,
+                        scrappedIds.contains(recruitment.getId()))
+                )
                 .toList();
     }
 
@@ -133,8 +137,7 @@ public class ResumeService {
     }
 
     public ResumeBasicResponse getBasicInfo(Long memberId) {
-        Member member = memberRepository.findFetchById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        Member member = getMember(memberId);
 
         return resumeBasicRepository.findByMemberId(memberId)
                 .map(ResumeBasicResponse::fromEntity)
@@ -173,6 +176,17 @@ public class ResumeService {
     private Resume getResumeByMemberId(Long memberId) {
         return resumeRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
+    }
+
+    private List<Long> getJobCategoryIds(Member member) {
+        return member.getInterestJobs().stream()
+                .map(interestJob -> interestJob.getJobCategory().getId())
+                .toList();
+    }
+
+    private Member getMember(Long memberId) {
+        return memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
     private <T, R, E extends Enum<E>> List<R> filterByEnum(
