@@ -2,6 +2,7 @@ package me.noteme.headhunting.domain.resume.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.noteme.headhunting.domain.resume.entity.ReferenceUrl;
 import me.noteme.headhunting.domain.resume.entity.TechStack;
 
@@ -9,9 +10,9 @@ import java.util.Comparator;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 public class TechResponse {
-    Long resumeId;
     Long techId;
     List<TechSkillResponse> techSkills;
     List<ReferenceUrlResponse> referenceUrls;
@@ -33,7 +34,6 @@ public class TechResponse {
                 .toList();
 
         return TechResponse.of(
-                techStack.getResume().getId(),
                 techStack.getId(),
                 techSkillResponses,
                 referenceUrlResponses

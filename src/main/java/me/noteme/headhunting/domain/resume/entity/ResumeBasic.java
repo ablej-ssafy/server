@@ -22,9 +22,7 @@ public class ResumeBasic {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id")
-    private JobCategory job;
+    private String job;
 
     /**
      * 이력서 제목
@@ -69,7 +67,7 @@ public class ResumeBasic {
     @Column(name = "portfolio_url")
     private String portfolioUrl;
 
-    public static ResumeBasic of(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, JobCategory jobCategory, String profileImage) {
+    public static ResumeBasic of(Long id, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Resume resume, String job, String profileImage) {
         return ResumeBasic.builder()
                 .id(id)
                 .title(title)
@@ -80,7 +78,7 @@ public class ResumeBasic {
                 .introduce(introduce)
                 .portfolioUrl(portfolioUrl)
                 .resume(resume)
-                .job(jobCategory)
+                .job(job)
                 .profileImage(profileImage)
                 .build();
     }

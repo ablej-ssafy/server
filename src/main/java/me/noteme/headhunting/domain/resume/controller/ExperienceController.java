@@ -22,9 +22,11 @@ public class ExperienceController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postExperience(
+            @LoginUser Long memberId,
             @Validated @RequestBody ExperienceRequest request
     ) {
         experienceService.saveAllExperience(
+                memberId,
                 request.getExperiences()
         );
 

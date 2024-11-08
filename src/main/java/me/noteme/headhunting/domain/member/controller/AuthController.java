@@ -63,12 +63,11 @@ public class AuthController {
     public SuccessResponse<Void> signOut(
             HttpServletRequest request,
             HttpServletResponse response,
-            @LoginUser Long memberId,
             @Validated @RequestBody RefreshRequest refreshRequest
     ) {
         String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
 
-        authService.signOut(memberId, refreshToken);
+        authService.signOut(refreshToken);
 
         removeToken(response);
         return SuccessResponse.empty();
@@ -78,12 +77,11 @@ public class AuthController {
     public SuccessResponse<JwtToken> refresh(
             HttpServletRequest request,
             HttpServletResponse response,
-            @LoginUser Long memberId,
             @Validated @RequestBody RefreshRequest refreshRequest
     ) {
         String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
 
-        JwtToken token = authService.refresh(memberId, refreshToken);
+        JwtToken token = authService.refresh(refreshToken);
         addToken(response, token);
 
         return SuccessResponse.of(token);

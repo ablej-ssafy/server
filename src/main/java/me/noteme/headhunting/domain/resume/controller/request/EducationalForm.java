@@ -1,9 +1,8 @@
 package me.noteme.headhunting.domain.resume.controller.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.noteme.headhunting.domain.resume.entity.Educational;
 import me.noteme.headhunting.domain.resume.entity.EducationalType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
@@ -12,11 +11,9 @@ import me.noteme.headhunting.domain.resume.entity.Resume;
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 public class EducationalForm {
-    @Min(value = 1, message = "이력서 번호는 필수값입니다.(최소 1)")
-    private Long resumeId;
-
     /**
      * 학교 이름
      */
@@ -72,7 +69,6 @@ public class EducationalForm {
 
     public static EducationalForm fromEntity(Educational educational) {
         return EducationalForm.of(
-                educational.getResume().getId(),
                 educational.getName(),
                 educational.getMajor(),
                 educational.getCategory(),

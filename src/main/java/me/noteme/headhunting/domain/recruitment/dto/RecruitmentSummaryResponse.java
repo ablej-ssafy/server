@@ -21,7 +21,7 @@ public class RecruitmentSummaryResponse {
         return RecruitmentSummaryResponse.of(
                 recruitment.getId(),
                 recruitment.getName(),
-                recruitment.getCompany().getThumbnailImage(),
+                recruitment.getThumbnail(),
                 recruitment.getCompany().getId(),
                 recruitment.getCompany().getName(),
                 recruitment.getCompany().getLocation(),
@@ -35,7 +35,7 @@ public class RecruitmentSummaryResponse {
         return RecruitmentSummaryResponse.of(
                 recruitment.getId(),
                 recruitment.getName(),
-                recruitment.getCompany().getThumbnailImage(),
+                recruitment.getThumbnail(),
                 recruitment.getCompany().getId(),
                 recruitment.getCompany().getName(),
                 recruitment.getCompany().getLocation(),

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
@@ -14,11 +15,9 @@ import org.checkerframework.checker.units.qual.C;
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 public class CertificationForm {
-    @NotNull(message = "이력서 번호는 필수값입니다.")
-    private Long resumeId;
-
     /**
      * 자격증 이름
      */
@@ -68,7 +67,6 @@ public class CertificationForm {
 
     public static CertificationForm fromEntity(Certification certification) {
         return CertificationForm.of(
-                certification.getResume().getId(),
                 certification.getName(),
                 certification.getOrganization(),
                 certification.getCredential(),

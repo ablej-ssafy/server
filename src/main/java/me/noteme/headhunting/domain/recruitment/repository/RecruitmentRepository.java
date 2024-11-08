@@ -34,6 +34,17 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>,
     @Query("""
         SELECT r
         FROM Recruitment r
+        LEFT JOIN FETCH r.category
+        LEFT JOIN FETCH r.childCategories
+        LEFT JOIN FETCH r.images
+        LEFT JOIN FETCH r.company
+        WHERE r.id IN :recruitmentIds
+    """)
+    List<Recruitment> findRecruitmentsById(@Param("recruitmentIds") List<Long> recruitmentIds);
+
+    @Query("""
+        SELECT r
+        FROM Recruitment r
         LEFT JOIN FETCH r.category c
         LEFT JOIN FETCH r.childCategories
         LEFT JOIN FETCH r.company co

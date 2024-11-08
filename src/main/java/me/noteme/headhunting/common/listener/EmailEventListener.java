@@ -17,7 +17,7 @@ public class EmailEventListener {
     private final EmailService emailService;
     private final MemberCacheRepository memberCacheRepository;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
     public void sendEmail(ConfirmEmailEvent event) {
         String confirmKey = KeyUtils.generateKey();
         emailService.sendConfirmationEmail(event.getEmail(), event.getNickname(), confirmKey);

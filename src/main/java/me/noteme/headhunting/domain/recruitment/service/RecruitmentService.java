@@ -8,7 +8,7 @@ import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.entity.Scrap;
 import me.noteme.headhunting.domain.member.repository.ScrapRepository;
-import me.noteme.headhunting.domain.recruitment.dto.JobCategoryResponse;
+import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
@@ -52,9 +52,9 @@ public class RecruitmentService {
         );
     }
 
-    public List<JobCategoryResponse> getJobCategories() {
+    public List<CategoryResponse> getJobCategories() {
         return jobCategoryRepository.findAll().stream()
-                .map(JobCategoryResponse::fromEntity)
+                .map(CategoryResponse::fromEntity)
                 .toList();
     }
 

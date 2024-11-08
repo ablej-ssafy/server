@@ -21,27 +21,27 @@ public class Educational {
     @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String major;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     @Builder.Default
     private EducationalType category = EducationalType.BACHELOR;
 
     private String grade;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "grade_type", nullable = false)
+    @Column(name = "grade_type")
     @Builder.Default
     private GradeType gradeType = GradeType.FOUR_POINT_FIVE;
 
     private String description;
 
-    @Column(name = "start_at", nullable = false)
+    @Column(name = "start_at")
     private LocalDate startAt;
 
     @Column(name = "end_at")
@@ -60,6 +60,14 @@ public class Educational {
         educational.startAt = startAt;
         educational.endAt = endAt;
         educational.resume = resume;
+        return educational;
+    }
+
+    public static Educational of(Resume resume) {
+        Educational educational = new Educational();
+        educational.resume = resume;
+        educational.gradeType = null;
+        educational.category = null;
         return educational;
     }
 }

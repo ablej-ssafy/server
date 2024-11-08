@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.resume.controller;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
 import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
 import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
@@ -22,13 +23,23 @@ public class EducationalController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postEducational(
+            @LoginUser Long memberId,
             @Validated @RequestBody EducationalRequest request
     ) {
         educationalService.saveAllEducationals(
+                memberId,
                 request.getEducationals()
         );
 
         return SuccessResponse.empty();
+    }
+
+    @PostMapping("/add")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SuccessResponse<EducationalForm> createEmptyEducational(
+            @LoginUser Long memberId
+    ) {
+        return SuccessResponse.of(educationalService.createEmptyEducational(memberId));
     }
 
     @GetMapping("")

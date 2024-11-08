@@ -22,9 +22,12 @@ public class TechController {
 
     @PostMapping("/stack")
     @ResponseStatus(HttpStatus.CREATED)
-    public SuccessResponse<Void> postTechStack(@Validated @RequestBody TechStackRequest request) {
+    public SuccessResponse<Void> postTechStack(
+            @LoginUser Long memberId,
+            @Validated @RequestBody TechStackRequest request
+    ) {
         techService.saveTechStack(
-                request.getResumeId(),
+                memberId,
                 request.getReferenceUrls(),
                 request.getTechSkills(),
                 request.getTechStackId()
