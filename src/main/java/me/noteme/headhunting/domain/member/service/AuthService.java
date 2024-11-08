@@ -14,8 +14,6 @@ import me.noteme.headhunting.domain.member.dto.JwtToken;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.repository.JobCategoryRepository;
-import me.noteme.headhunting.domain.resume.entity.Resume;
-import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,11 +31,9 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final JobCategoryRepository jobRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenProvider tokenProvider;
 
     private final ApplicationEventPublisher publisher;
-    private final ResumeRepository resumeRepository;
 
     /**
      * 회원 가입 로직
@@ -124,21 +120,24 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재하지 않는 사용자입니다."));
     }
 
-    public void signOut(String refreshToken) {
-        validateToken(refreshToken);
+    public void signOut(Long memberId, String refreshToken) {
+        validate(memberId, refreshToken);
         memberCacheRepository.saveBlackListKey(refreshToken);
     }
 
-    public JwtToken refresh(String refreshToken) {
-        validateToken(refreshToken);
-        JwtToken jwtToken = jwtTokenProvider.refreshToken(refreshToken);
+    public JwtToken refresh(Long memberId, String refreshToken) {
+        validate(memberId, refreshToken);
+        JwtToken jwtToken = tokenProvider.refreshToken(refreshToken);
 
         memberCacheRepository.saveBlackListKey(refreshToken);
-
         return jwtToken;
     }
 
-    private void validateToken(String refreshToken) {
+    private void validate(Long memberId, String refreshToken) {
+        Long tokenId = tokenProvider.parseMemberId(refreshToken);
+        if(!Objects.equals(memberId, tokenId)){
+            throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "유효하지 않는 토큰입니다.");
+        }
         if (memberCacheRepository.findAuthenticationKey(refreshToken)) {
             throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "적절하지 않은 리프레시 토큰입니다.");
         }

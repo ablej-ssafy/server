@@ -100,6 +100,11 @@ public class JwtTokenProvider {
         return generate(Long.parseLong(claims.getSubject()), authorities);
     }
 
+    public Long parseMemberId(String token){
+        Claims claims = parseClaims(token);
+        return Long.parseLong(claims.getSubject());
+    }
+
     /**
      * accessToken 파싱
      *
@@ -126,7 +131,7 @@ public class JwtTokenProvider {
         throw new CustomException(ErrorCode.BAD_REQUEST, message);
     }
 
-    public Authentication parseAuthentication(String accessToken) throws Exception {
+    public Authentication parseAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
 
         Collection<? extends GrantedAuthority> authorities =
