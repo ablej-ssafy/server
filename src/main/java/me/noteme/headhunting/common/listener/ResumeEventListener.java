@@ -1,9 +1,14 @@
 package me.noteme.headhunting.common.listener;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.listener.event.ResumeInitEvent;
-import me.noteme.headhunting.domain.resume.service.ResumeService;
+import me.noteme.headhunting.domain.member.entity.Member;
+import me.noteme.headhunting.domain.resume.entity.mongo.MongoResume;
+import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
+import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -12,10 +17,21 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @RequiredArgsConstructor
 public class ResumeEventListener {
-    private final ResumeService resumeService;
+    private final EntityManager em;
+    private final ResumeRepository resumeRepository;
+    private final MongoResumeRepository mongoResumeRepository;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void initResumeRecord(ResumeInitEvent event) {
-        resumeService.resumeInit(event.getId());
+        Resume resume = Resume.builder()
+                .member(em.getReference(Member.class, event.getId()))
+                .build();
+
+        resumeRepository.save(resume);
+        mongoResumeRepository.save(
+                MongoResume.builder()
+                        .memberId(event.getId())
+                        .build()
+        );
     }
 }

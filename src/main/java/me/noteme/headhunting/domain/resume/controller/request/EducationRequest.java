@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class EducationalRequest {
+public class EducationRequest {
     @Valid
-    private List<EducationalForm> educationals;
+    private List<EducationForm> educations;
 }

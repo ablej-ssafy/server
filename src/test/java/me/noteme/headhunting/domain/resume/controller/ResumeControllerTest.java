@@ -5,14 +5,13 @@ import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
-import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
+import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
-import me.noteme.headhunting.domain.resume.entity.EducationalType;
+import me.noteme.headhunting.domain.resume.entity.EducationType;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
@@ -26,14 +25,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -74,10 +70,10 @@ class ResumeControllerTest extends RestDocsSupport {
                 "A passionate developer", "https://portfolio.example.com"
         );
 
-        List<EducationalForm> educationals = List.of(
-                EducationalForm.of("바밤대학교", "바밤과", EducationalType.BACHELOR, "4.3", GradeType.FOUR_POINT_FIVE,
+        List<EducationForm> educations = List.of(
+                EducationForm.of("바밤대학교", "바밤과", EducationType.BACHELOR, "4.3", GradeType.FOUR_POINT_FIVE,
                         "학부재밌었다.", LocalDate.of(2018, 2, 12), LocalDate.of(2024, 2, 15), 1L),
-                EducationalForm.of("바밤대학교", "바밤과", EducationalType.MASTER, "4.3", GradeType.FOUR_POINT_FIVE,
+                EducationForm.of("바밤대학교", "바밤과", EducationType.MASTER, "4.3", GradeType.FOUR_POINT_FIVE,
                         "학부재밌었다.", LocalDate.of(2018, 2, 12), LocalDate.of(2024, 2, 15), 2L)
         );
 
@@ -115,7 +111,7 @@ class ResumeControllerTest extends RestDocsSupport {
                 )
         );
 
-        ResumeResponse mockResponse = ResumeResponse.of(basicResponse, educationals, companies, activities, projects, languages, qualifications, techResponse);
+        ResumeResponse mockResponse = ResumeResponse.of(basicResponse, educations, companies, activities, projects, languages, qualifications, techResponse);
 
         when(resumeService.getResume(memberId))
                 .thenReturn(mockResponse);
@@ -143,15 +139,15 @@ class ResumeControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.basic.job").type(JsonFieldType.STRING).description("직업"),
                                         fieldWithPath("data.basic.introduce").type(JsonFieldType.STRING).description("자기소개"),
                                         fieldWithPath("data.basic.portfolioUrl").type(JsonFieldType.STRING).description("포트폴리오 URL"),
-                                        fieldWithPath("data.educationals[].name").type(JsonFieldType.STRING).description("학교 이름"),
-                                        fieldWithPath("data.educationals[].major").type(JsonFieldType.STRING).description("전공"),
-                                        fieldWithPath("data.educationals[].category").type(JsonFieldType.STRING).description("학교 타입"),
-                                        fieldWithPath("data.educationals[].grade").type(JsonFieldType.STRING).description("학점"),
-                                        fieldWithPath("data.educationals[].gradeType").type(JsonFieldType.STRING).description("최대 학점"),
-                                        fieldWithPath("data.educationals[].description").type(JsonFieldType.STRING).description("활동 내용 설명"),
-                                        fieldWithPath("data.educationals[].startAt").type(JsonFieldType.STRING).description("입학 날짜"),
-                                        fieldWithPath("data.educationals[].endAt").type(JsonFieldType.STRING).description("졸업 날짜"),
-                                        fieldWithPath("data.educationals[].educationalId").type(JsonFieldType.NUMBER).description("학력 ID"),
+                                        fieldWithPath("data.educations[].name").type(JsonFieldType.STRING).description("학교 이름"),
+                                        fieldWithPath("data.educations[].major").type(JsonFieldType.STRING).description("전공"),
+                                        fieldWithPath("data.educations[].category").type(JsonFieldType.STRING).description("학교 타입"),
+                                        fieldWithPath("data.educations[].grade").type(JsonFieldType.STRING).description("학점"),
+                                        fieldWithPath("data.educations[].gradeType").type(JsonFieldType.STRING).description("최대 학점"),
+                                        fieldWithPath("data.educations[].description").type(JsonFieldType.STRING).description("활동 내용 설명"),
+                                        fieldWithPath("data.educations[].startAt").type(JsonFieldType.STRING).description("입학 날짜"),
+                                        fieldWithPath("data.educations[].endAt").type(JsonFieldType.STRING).description("졸업 날짜"),
+                                        fieldWithPath("data.educations[].educationId").type(JsonFieldType.NUMBER).description("학력 ID"),
                                         fieldWithPath("data.companies[].experienceType").type(JsonFieldType.STRING).description("경험 타입 (COMPANY)"),
                                         fieldWithPath("data.companies[].title").type(JsonFieldType.STRING).description("회사 이름"),
                                         fieldWithPath("data.companies[].affiliation").type(JsonFieldType.STRING).description("회사 소속"),

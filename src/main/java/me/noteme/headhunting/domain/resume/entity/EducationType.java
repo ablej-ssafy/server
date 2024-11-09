@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum EducationalType {
+public enum EducationType {
     ASSOCIATE_DEGREE("전문대"),
     BACHELOR("대학"),
     MASTER("석사"),

@@ -4,13 +4,13 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
-import me.noteme.headhunting.domain.resume.controller.request.EducationalRequest;
-import me.noteme.headhunting.domain.resume.dto.EducationalResponse;
+import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
+import me.noteme.headhunting.domain.resume.controller.request.EducationRequest;
+import me.noteme.headhunting.domain.resume.dto.EducationResponse;
 import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
-import me.noteme.headhunting.domain.resume.entity.EducationalType;
+import me.noteme.headhunting.domain.resume.entity.EducationType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
-import me.noteme.headhunting.domain.resume.service.EducationalService;
+import me.noteme.headhunting.domain.resume.service.EducationService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,16 +31,16 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("이력서 교육 컨트롤러 테스트")
-@WebMvcTest(value = EducationalController.class,
+@WebMvcTest(value = EducationController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
         }
 )
-public class EducationalControllerTest extends RestDocsSupport {
+public class EducationControllerTest extends RestDocsSupport {
 
     @MockBean
-    private EducationalService educationalService;
+    private EducationService educationService;
 
     @Test
     @DisplayName("교육_업데이트_테스트")
@@ -48,15 +48,15 @@ public class EducationalControllerTest extends RestDocsSupport {
     void 교육_업데이트_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
-        EducationalRequest request = new EducationalRequest();
-        List<EducationalForm> educationalForms = List.of(
-                EducationalForm.of("교육 이름", "전공", EducationalType.BACHELOR, "A", GradeType.FOUR_POINT_FIVE, "설명", LocalDate.of(2021, 3, 1), LocalDate.of(2021, 8, 31), 1L),
-                EducationalForm.of("학위 이름", "세부 전공", EducationalType.MASTER, "B", GradeType.FOUR_POINT_ZERO, "설명", LocalDate.of(2019, 3, 1), LocalDate.of(2020, 8, 31), 2L)
+        EducationRequest request = new EducationRequest();
+        List<EducationForm> educationForms = List.of(
+                EducationForm.of("교육 이름", "전공", EducationType.BACHELOR, "A", GradeType.FOUR_POINT_FIVE, "설명", LocalDate.of(2021, 3, 1), LocalDate.of(2021, 8, 31), 1L),
+                EducationForm.of("학위 이름", "세부 전공", EducationType.MASTER, "B", GradeType.FOUR_POINT_ZERO, "설명", LocalDate.of(2019, 3, 1), LocalDate.of(2020, 8, 31), 2L)
         );
-        request.setEducationals(educationalForms);
+        request.setEducations(educationForms);
 
         // * WHEN: 이걸 실행하면
-        ResultActions actions = this.mockMvc.perform(post("/api/v1/educational")
+        ResultActions actions = this.mockMvc.perform(post("/api/v1/education")
                 .contentType("application/json")
                 .content(toJson(request))
         );
@@ -69,20 +69,20 @@ public class EducationalControllerTest extends RestDocsSupport {
                                 .summary("학교 정보 업데이트 API")
                                 .description("교육 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("educationals[].name").type(JsonFieldType.STRING).description("교육 이름"),
-                                        fieldWithPath("educationals[].major").type(JsonFieldType.STRING).description("전공"),
-                                        fieldWithPath("educationals[].category").type(JsonFieldType.STRING).description("교육 유형 (BACHELOR, MASTERS 등)"),
-                                        fieldWithPath("educationals[].grade").type(JsonFieldType.STRING).optional().description("성적"),
-                                        fieldWithPath("educationals[].gradeType").type(JsonFieldType.STRING).description("성적 유형 (FOUR_POINT_FIVE, FOUR_POINT_ZERO 등)"),
-                                        fieldWithPath("educationals[].description").type(JsonFieldType.STRING).optional().description("설명"),
-                                        fieldWithPath("educationals[].startAt").type(JsonFieldType.STRING).description("교육 시작일"),
-                                        fieldWithPath("educationals[].endAt").type(JsonFieldType.STRING).optional().description("교육 종료일"),
-                                        fieldWithPath("educationals[].educationalId").type(JsonFieldType.NUMBER).optional().description("교육 PK (새로 추가 시 null)")
+                                        fieldWithPath("educations[].name").type(JsonFieldType.STRING).description("교육 이름"),
+                                        fieldWithPath("educations[].major").type(JsonFieldType.STRING).description("전공"),
+                                        fieldWithPath("educations[].category").type(JsonFieldType.STRING).description("교육 유형 (BACHELOR, MASTERS 등)"),
+                                        fieldWithPath("educations[].grade").type(JsonFieldType.STRING).optional().description("성적"),
+                                        fieldWithPath("educations[].gradeType").type(JsonFieldType.STRING).description("성적 유형 (FOUR_POINT_FIVE, FOUR_POINT_ZERO 등)"),
+                                        fieldWithPath("educations[].description").type(JsonFieldType.STRING).optional().description("설명"),
+                                        fieldWithPath("educations[].startAt").type(JsonFieldType.STRING).description("교육 시작일"),
+                                        fieldWithPath("educations[].endAt").type(JsonFieldType.STRING).optional().description("교육 종료일"),
+                                        fieldWithPath("educations[].educationId").type(JsonFieldType.NUMBER).optional().description("교육 PK (새로 추가 시 null)")
                                 ).responseFields(empty())
                                 .build()
                 )));
 
-        verify(educationalService).saveAllEducationals(memberId, request.getEducationals());
+        verify(educationService).saveAllEducations(memberId, request.getEducations());
     }
 
 //    @Test
@@ -127,10 +127,10 @@ public class EducationalControllerTest extends RestDocsSupport {
     void 교육_정보_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
-        EducationalForm educationalForm = EducationalForm.of(
+        EducationForm educationForm = EducationForm.of(
                 "바밤대학교",
                 "바밤과",
-                EducationalType.BACHELOR,
+                EducationType.BACHELOR,
                 "4.3",
                 GradeType.FOUR_POINT_FIVE,
                 "학부재밌었다.",
@@ -139,13 +139,13 @@ public class EducationalControllerTest extends RestDocsSupport {
                 1L
         );
 
-        EducationalResponse mockResponse = EducationalResponse.of(List.of(educationalForm));
-        when(educationalService.getAllEducationals(memberId))
+        EducationResponse mockResponse = EducationResponse.of(List.of(educationForm));
+        when(educationService.getAllEducations(memberId))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = mockMvc.perform(
-                get("/api/v1/educational")
+                get("/api/v1/education")
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -156,15 +156,15 @@ public class EducationalControllerTest extends RestDocsSupport {
                                 .summary("학교 정보 조회 API")
                                 .description("로그인 한 사용자가 작성한 학교 정보를 조회합니다.")
                                 .responseFields(response(
-                                        fieldWithPath("data.educationals[].name").type(JsonFieldType.STRING).description("학교 이름"),
-                                        fieldWithPath("data.educationals[].major").type(JsonFieldType.STRING).description("전공"),
-                                        fieldWithPath("data.educationals[].category").type(JsonFieldType.STRING).description("학교 타입(ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),
-                                        fieldWithPath("data.educationals[].grade").type(JsonFieldType.STRING).description("학점"),
-                                        fieldWithPath("data.educationals[].gradeType").type(JsonFieldType.STRING).description("최대 학점"),
-                                        fieldWithPath("data.educationals[].description").type(JsonFieldType.STRING).description("활동 내용 설명"),
-                                        fieldWithPath("data.educationals[].startAt").type(JsonFieldType.STRING).description("입학 날짜"),
-                                        fieldWithPath("data.educationals[].endAt").type(JsonFieldType.STRING).description("졸업 날짜"),
-                                        fieldWithPath("data.educationals[].educationalId").type(JsonFieldType.NUMBER).description("학력 PK")
+                                        fieldWithPath("data.educations[].name").type(JsonFieldType.STRING).description("학교 이름"),
+                                        fieldWithPath("data.educations[].major").type(JsonFieldType.STRING).description("전공"),
+                                        fieldWithPath("data.educations[].category").type(JsonFieldType.STRING).description("학교 타입(ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR)"),
+                                        fieldWithPath("data.educations[].grade").type(JsonFieldType.STRING).description("학점"),
+                                        fieldWithPath("data.educations[].gradeType").type(JsonFieldType.STRING).description("최대 학점"),
+                                        fieldWithPath("data.educations[].description").type(JsonFieldType.STRING).description("활동 내용 설명"),
+                                        fieldWithPath("data.educations[].startAt").type(JsonFieldType.STRING).description("입학 날짜"),
+                                        fieldWithPath("data.educations[].endAt").type(JsonFieldType.STRING).description("졸업 날짜"),
+                                        fieldWithPath("data.educations[].educationId").type(JsonFieldType.NUMBER).description("학력 PK")
                                         )).build()
                 )));
     }
@@ -180,10 +180,10 @@ public class EducationalControllerTest extends RestDocsSupport {
                 EnumTypeResponse.of("DOCTOR", "박사")
         );
 
-        when(educationalService.getEducationTypes()).thenReturn(mockResponse);
+        when(educationService.getEducationTypes()).thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
-        ResultActions actions = mockMvc.perform(get("/api/v1/educational/type"));
+        ResultActions actions = mockMvc.perform(get("/api/v1/education/type"));
 
         // * THEN: 이런 결과가 나와야 한다
         actions.andExpect(status().isOk())
@@ -203,12 +203,12 @@ public class EducationalControllerTest extends RestDocsSupport {
     @DisplayName("교육_정보_삭제_테스트")
     void 교육_정보_삭제_테스트() throws Exception {
         // * GIVEN: 교육 타입 목록이 주어졌을 때
-        Long educationalId = 1L;
-        doNothing().when(educationalService).deleteById(educationalId);
+        Long educationId = 1L;
+        doNothing().when(educationService).deleteById(educationId);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = mockMvc.perform(
-                delete("/api/v1/educational/{educationalId}", educationalId)
+                delete("/api/v1/education/{educationId}", educationId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -220,6 +220,6 @@ public class EducationalControllerTest extends RestDocsSupport {
                                 .description("교육 정보를 삭제합니다.")
                                 .build()
                 )));
-        verify(educationalService).deleteById(educationalId);
+        verify(educationService).deleteById(educationId);
     }
 }

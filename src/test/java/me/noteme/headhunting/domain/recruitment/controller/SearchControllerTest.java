@@ -160,7 +160,7 @@ class SearchControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("회사")
+                                .tag("검색")
                                 .summary("회사 이름 기반 검색 API")
                                 .description("회사 이름을 기반으로 검색하여 회사 목록을 반환합니다.")
                                 .queryParameters(
@@ -212,7 +212,7 @@ class SearchControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("채용 공고")
+                                .tag("검색")
                                 .summary("채용 공고 검색 조회 API")
                                 .description("검색어를 기반으로 채용 공고를 검색합니다.")
                                 .queryParameters(

@@ -13,13 +13,15 @@ import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentCategoryRepository;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
-import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
+import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
+import me.noteme.headhunting.domain.resume.entity.mongo.MongoResumeBasic;
+import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
@@ -28,7 +30,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -50,6 +51,7 @@ public class ResumeService {
     private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
     private final StorageService storageService;
+    private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
 
     public String download(Long memberId, Long resumePdfId) {
@@ -118,7 +120,7 @@ public class ResumeService {
         Resume resume = getResumeByMemberId(memberId);
         Long resumeBasicId = Objects.isNull(resume.getResumeBasic()) ? null : resume.getResumeBasic().getId();
         ResumeBasic resumeBasic = ResumeBasic.of(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
-        resumeBasicRepository.save(resumeBasic);
+        mongoResumeRepository.updateBasic(memberId, MongoResumeBasic.from(resumeBasicRepository.save(resumeBasic)));
     }
 
     @Transactional
@@ -146,10 +148,10 @@ public class ResumeService {
         ResumeBasicResponse basic = resumeBasicRepository.findByMemberId(memberId)
                 .map(ResumeBasicResponse::fromEntity)
                 .orElse(null);
-        List<Educational> edu = resumeRepository.findAllEducationalByMemberId(memberId);
+        List<Education> edu = resumeRepository.findAllEducationByMemberId(memberId);
 
-        List<EducationalForm> educationals = edu.stream()
-                .map(EducationalForm::fromEntity)
+        List<EducationForm> educations = edu.stream()
+                .map(EducationForm::fromEntity)
                 .toList();
 
         List<Experience> experiences = resumeRepository.findAllExperienceByMemberId(memberId);
@@ -167,7 +169,7 @@ public class ResumeService {
                 .map(TechResponse::fromEntity)
                 .orElse(null);
 
-        return ResumeResponse.of(basic, educationals, companies, activities, projects, qualifications, languages, tech);
+        return ResumeResponse.of(basic, educations, companies, activities, projects, qualifications, languages, tech);
     }
 
     private Resume getResumeByMemberId(Long memberId) {

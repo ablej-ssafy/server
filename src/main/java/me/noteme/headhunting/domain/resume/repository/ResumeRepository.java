@@ -19,12 +19,12 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
     @Query("""
         SELECT e
         FROM Resume r
-        JOIN Educational e
+        JOIN Education e
         ON e.resume.id = r.id
         WHERE r.member.id = :memberId
         ORDER BY e.id ASC
     """)
-    List<Educational> findAllEducationalByMemberId(@Param("memberId") Long memberId);
+    List<Education> findAllEducationByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
         SELECT e
