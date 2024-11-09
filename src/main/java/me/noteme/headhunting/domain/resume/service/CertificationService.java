@@ -8,7 +8,9 @@ import me.noteme.headhunting.domain.resume.dto.CertificationResponse;
 import me.noteme.headhunting.domain.resume.entity.Certification;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.entity.mongo.MongoCertification;
 import me.noteme.headhunting.domain.resume.repository.CertificationRepository;
+import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CertificationService {
     private final CertificationRepository certificationRepository;
+    private final MongoResumeRepository mongoResumeRepository;
     private final ResumeRepository resumeRepository;
 
     @Transactional
@@ -30,7 +33,14 @@ public class CertificationService {
                 .map(form -> form.toEntity(getResumeByMemberId(memberId)))
                 .toList();
 
-        certificationRepository.saveAll(certifications);
+        // FIXME: 자격 정보 타입을 입력받아 아래 코드 삭제
+        CertificationType certificationType = certifications.getFirst().getCertificationType();
+        List<MongoCertification> mongoCertifications = certificationRepository.saveAll(certifications)
+                .stream().map(MongoCertification::from).toList();
+        switch (certificationType) {
+            case QUALIFICATION -> mongoResumeRepository.updateQualifications(memberId, mongoCertifications);
+            case LANGUAGE -> mongoResumeRepository.updateLanguages(memberId,mongoCertifications);
+        }
     }
 
     public CertificationResponse getCertifications(Long memberId, String type) {

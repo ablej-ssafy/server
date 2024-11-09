@@ -9,7 +9,9 @@ import me.noteme.headhunting.domain.resume.dto.ExperienceResponse;
 import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.entity.mongo.MongoExperience;
 import me.noteme.headhunting.domain.resume.repository.ExperienceRepository;
+import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExperienceService {
     private final ExperienceRepository experienceRepository;
+    private final MongoResumeRepository mongoResumeRepository;
     private final ResumeRepository resumeRepository;
 
     @Transactional
@@ -31,7 +34,16 @@ public class ExperienceService {
                 .map(form -> form.toEntity(getResumeByMemberId(memberId)))
                 .toList();
 
-        experienceRepository.saveAll(experiences);
+        List<MongoExperience> mongoExperiences = experienceRepository.saveAll(experiences)
+                .stream().map(MongoExperience::from).toList();
+
+        // FIXME: 입력을 받을 때 경험 타입을 동시에 받아서 처리하고 아래 코드를 삭제함.
+        ExperienceType experienceType = experiences.getFirst().getExperienceType();
+        switch (experienceType) {
+            case COMPANY -> mongoResumeRepository.updateCompanies(memberId, mongoExperiences);
+            case ACTIVITY -> mongoResumeRepository.updateActivities(memberId, mongoExperiences);
+            case PROJECT -> mongoResumeRepository.updateProjects(memberId, mongoExperiences);
+        }
     }
 
     public ExperienceResponse getExperiences(Long memberId, String type) {
