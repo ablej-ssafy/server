@@ -53,6 +53,15 @@ public interface PromptConst {
                             }
                         ]
                     }
-                    Ensure valid JSON format without extra characters like backticks or quotes. Here is the resume text: %s
+                    Instructions:
+                    1. Ensure all JSON syntax is correct without any additional symbols or slashes.
+                    2. In the aiExperiences section:
+                       - title should contain the name of the project or experience (e.g., "딸깍", "친환경 커스터마이징 쇼핑몰").
+                       - affiliation should contain the role or position of the individual (e.g., "Developer", "Project Leader").
+                    3. Use the "YYY-MM-DD" format for all dates that correspond to LocalDate. If the date is missing or listed as "In Progress", replace it with today's date with the "YYY-MM-DD" format.
+                    4. Omit optional fields like `referenceUrl` or `grade` if no values are available for them.
+                    5. In the description field:
+                       - Use proper punctuation, but ensure there is no trailing comma at the end of each sentence.
+                       - Avoid adding unnecessary characters or symbols.
             """;
 }

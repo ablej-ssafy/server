@@ -1,5 +1,6 @@
 package me.noteme.headhunting.common.config;
 
+import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
