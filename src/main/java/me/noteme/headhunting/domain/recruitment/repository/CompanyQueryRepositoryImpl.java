@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.domain.recruitment.entity.Company;
+import me.noteme.headhunting.domain.recruitment.entity.QCompanyImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.noteme.headhunting.domain.recruitment.entity.QCompany.company;
+import static me.noteme.headhunting.domain.recruitment.entity.QCompanyImage.companyImage;
 import static me.noteme.headhunting.domain.recruitment.entity.QRecruitment.recruitment;
 
 @Repository
@@ -34,6 +36,7 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
                 queryFactory.select(company)
                     .from(company)
                     .leftJoin(company.recruitments, recruitment).fetchJoin()
+                    .leftJoin(company.companyImages, companyImage).fetchJoin()
                     .where(company.id.eq(companyId))
                     .fetchOne()
         );

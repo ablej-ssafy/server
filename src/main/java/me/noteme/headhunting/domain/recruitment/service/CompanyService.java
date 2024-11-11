@@ -27,9 +27,10 @@ public class CompanyService {
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
         );
 
-        Set<Long> scrapped = scrapRepository.isScrapped(
-                memberId, company.getRecruitments().stream().map(Recruitment::getId).toList()
-        );
+        // * 프론트엔드에서 ISR 을 사용하여 이미 스크랩한 채용공고인지 확인하는 로직 추가 예정
+//        Set<Long> scrapped = scrapRepository.isScrapped(
+//                memberId, company.getRecruitments().stream().map(Recruitment::getId).toList()
+//        );
 
         return CompanyWithRecruitmentResponse.fromEntity(company);
     }

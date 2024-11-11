@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.recruitment.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.noteme.headhunting.domain.recruitment.entity.Company;
+import me.noteme.headhunting.domain.recruitment.entity.CompanyImage;
 
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ public class CompanyWithRecruitmentResponse {
     private double longitude;
     private String location;
     private String strict;
+    private List<String> images;
     private List<CompanyRecruitmentResponse> recruitments;
 
     public static CompanyWithRecruitmentResponse fromEntity(Company company) {
@@ -42,6 +44,7 @@ public class CompanyWithRecruitmentResponse {
                 company.getLongitude(),
                 company.getLocation(),
                 company.getStrict(),
+                company.getCompanyImages().stream().map(CompanyImage::getImageUrl).toList(),
                 company.getRecruitments().stream()
                         .map(CompanyRecruitmentResponse::fromEntity)
                         .toList()
@@ -64,6 +67,7 @@ public class CompanyWithRecruitmentResponse {
                 company.getLongitude(),
                 company.getLocation(),
                 company.getStrict(),
+                company.getCompanyImages().stream().map(CompanyImage::getImageUrl).toList(),
                 company.getRecruitments().stream()
                         .map(recruitment -> CompanyRecruitmentResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId())))
                         .toList()

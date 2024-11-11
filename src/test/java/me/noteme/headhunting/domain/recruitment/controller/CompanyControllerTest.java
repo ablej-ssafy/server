@@ -20,7 +20,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
@@ -52,7 +54,7 @@ class CompanyControllerTest extends RestDocsSupport {
         Long companyId = 1L;
         Company company = MockCompany.create(companyId, "회사1");
         AtomicLong id = new AtomicLong(1);
-        List<Recruitment> recruitments = Stream.of("채용1", "채용2", "채용3").map(name -> MockRecruitment.create(id.getAndIncrement(), name)).toList();
+        Set<Recruitment> recruitments = Stream.of("채용1", "채용2", "채용3").map(name -> MockRecruitment.create(id.getAndIncrement(), name)).collect(Collectors.toSet());
         when(company.getRecruitments()).thenReturn(recruitments);
         CompanyWithRecruitmentResponse response = CompanyWithRecruitmentResponse.fromEntity(company);
         when(companyService.getCompanyById(null , companyId)).thenReturn(response);
@@ -86,6 +88,7 @@ class CompanyControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
                                         fieldWithPath("data.location").type(JsonFieldType.STRING).description("지역"),
                                         fieldWithPath("data.strict").type(JsonFieldType.STRING).description("구역"),
+                                        fieldWithPath("data.images[]").type(JsonFieldType.ARRAY).description("회사 관련 이미지들"),
                                         fieldWithPath("data.recruitments[].recruitmentId").type(JsonFieldType.NUMBER).description("채용 ID"),
                                         fieldWithPath("data.recruitments[].name").type(JsonFieldType.STRING).description("채용명"),
                                         fieldWithPath("data.recruitments[].thumbnail").type(JsonFieldType.STRING).description("썸네일 이미지"),

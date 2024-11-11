@@ -1,5 +1,7 @@
 package me.noteme.headhunting.domain.recruitment.entity;
 
+import java.util.Set;
+
 import static org.mockito.Mockito.*;
 
 public class MockCompany {
@@ -9,6 +11,8 @@ public class MockCompany {
 
     public static Company create(Long id, String name) {
         Company company = mock(Company.class);
+        CompanyImage image1 = createImage(1L, "이미지 URL");
+        CompanyImage image2 = createImage(2L, "이미지 URL");
         lenient().when(company.getId()).thenReturn(id);
         lenient().when(company.getName()).thenReturn(name);
         lenient().when(company.getThumbnailImage()).thenReturn("기업 소개용 썸네일 이미지");
@@ -23,6 +27,14 @@ public class MockCompany {
         lenient().when(company.getRoadAddress()).thenReturn("기업 도로명 주소");
         lenient().when(company.getLocation()).thenReturn("기업 지역 (서울)");
         lenient().when(company.getStrict()).thenReturn("기업 구역 (서초구)");
+        lenient().when(company.getCompanyImages()).thenReturn(Set.of(image1, image2));
         return company;
+    }
+
+    public static CompanyImage createImage(Long id, String url) {
+        CompanyImage companyImage = mock(CompanyImage.class);
+        lenient().when(companyImage.getId()).thenReturn(id);
+        lenient().when(companyImage.getImageUrl()).thenReturn(url);
+        return companyImage;
     }
 }

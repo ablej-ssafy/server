@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "company")
@@ -23,7 +25,11 @@ public class Company {
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Recruitment> recruitments = new ArrayList<>();
+    private Set<Recruitment> recruitments = new HashSet<>();
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private Set<CompanyImage> companyImages = new HashSet<>();
 
     private String name;
 
