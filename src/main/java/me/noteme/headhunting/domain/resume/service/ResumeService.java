@@ -16,16 +16,14 @@ import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
+import me.noteme.headhunting.domain.resume.controller.request.ResumeOrderRequest;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
 import me.noteme.headhunting.domain.resume.entity.mongo.MongoResumeBasic;
-import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
-import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
-import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
-import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
+import me.noteme.headhunting.domain.resume.repository.*;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +51,7 @@ public class ResumeService {
     private final PDFToTextConverter pdfToTextConverter;
     private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
+    private final ResumeOrderRepository resumeOrderRepository;
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
@@ -176,6 +175,31 @@ public class ResumeService {
         return ResumeResponse.of(basic, educations, companies, activities, projects, qualifications, languages, tech);
     }
 
+    public ResumeOrderResponse getResumeOrder(Long memberId, Long resumeId) {
+        ResumeOrder resumeOrder = resumeOrderRepository.findById(resumeId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        return ResumeOrderResponse.fromEntity(resumeOrder);
+    }
+
+    @Transactional
+    public void updateResumeOrder(Long memberId, Long resumeId, String keyword, double value) {
+        ResumeOrder resumeOrder = resumeOrderRepository.findById(resumeId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        resumeOrder.update(keyword, value);
+    }
+
     private Resume getResumeByMemberId(Long memberId) {
         return resumeRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
@@ -203,5 +227,4 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
-
 }

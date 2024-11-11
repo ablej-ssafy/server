@@ -10,6 +10,7 @@ import me.noteme.headhunting.domain.recruitment.service.SearchService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +27,7 @@ public class SearchController {
     }
 
     @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSearchKeyword(
             @LoginUser Long userId,
             @RequestParam String keyword

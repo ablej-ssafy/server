@@ -5,10 +5,7 @@ import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
-import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
-import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
-import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
+import me.noteme.headhunting.domain.resume.controller.request.*;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
 import me.noteme.headhunting.domain.resume.entity.EducationType;
@@ -428,5 +425,82 @@ class ResumeControllerTest extends RestDocsSupport {
 
         // 서비스 메서드 호출 검증
         verify(resumeService).delete(memberId, resumePdfId);
+    }
+
+    @Test
+    @DisplayName("이력서_순서_조회_테스트")
+    @CustomMockUser
+    void 이력서_순서_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long resumeId = 1L;
+
+        ResumeOrderResponse response = ResumeOrderResponse.of(0, 1, 2,3 ,4, 5, 6, 7);
+        when(resumeService.getResumeOrder(memberId, resumeId)).thenReturn(response);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/resume/{resumeId}/order", resumeId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서")
+                                .summary("이력서 순서 조회 API")
+                                .description("이력서의 순서를 조회합니다.")
+                                .pathParameters(
+                                        parameterWithName("resumeId").description("이력서 ID")
+                                )
+                                .responseFields(response(
+                                        fieldWithPath("data.basic").type(JsonFieldType.NUMBER).description("기본 정보 순서"),
+                                        fieldWithPath("data.education").type(JsonFieldType.NUMBER).description("학력 순서"),
+                                        fieldWithPath("data.company").type(JsonFieldType.NUMBER).description("경력 순서"),
+                                        fieldWithPath("data.project").type(JsonFieldType.NUMBER).description("프로젝트 순서"),
+                                        fieldWithPath("data.activity").type(JsonFieldType.NUMBER).description("활동 순서"),
+                                        fieldWithPath("data.qualification").type(JsonFieldType.NUMBER).description("자격증 순서"),
+                                        fieldWithPath("data.language").type(JsonFieldType.NUMBER).description("어학 순서"),
+                                        fieldWithPath("data.tech").type(JsonFieldType.NUMBER).description("기술 스택 순서")
+                                )).build()
+                )));
+    }
+
+    @Test
+    @DisplayName("이력서_순서_업데이트_테스트")
+    @CustomMockUser
+    void 이력서_순서_업데이트_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long resumeId = 1L;
+
+        ResumeOrderRequest request = new ResumeOrderRequest();
+        request.setKey("basic");
+        request.setOrder(1.5);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                patch("/api/v1/resume/{resumeId}/order", resumeId)
+                .contentType("application/json")
+                .content(toJson(request))
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서")
+                                .summary("이력서 순서 업데이트 API")
+                                .description("이력서의 순서를 업데이트합니다.")
+                                .pathParameters(
+                                        parameterWithName("resumeId").description("이력서 ID")
+                                )
+                                .requestFields(
+                                        fieldWithPath("key").type(JsonFieldType.STRING).description("순서를 업데이트할 항목"),
+                                        fieldWithPath("order").type(JsonFieldType.NUMBER).description("순서 값")
+                                ).responseFields(empty())
+                                .build()
+                )));
+        verify(resumeService).updateResumeOrder(memberId, resumeId, request.getKey(), request.getOrder());
     }
 }
