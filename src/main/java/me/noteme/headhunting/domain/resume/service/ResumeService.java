@@ -2,11 +2,10 @@ package me.noteme.headhunting.domain.resume.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonSerializer;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.noteme.headhunting.common.adapter.LocalDateAdapter;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.service.OpenAiService;
@@ -17,8 +16,6 @@ import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.repository.ScrapRepository;
 import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentCategoryRepository;
-import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
-import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
@@ -37,11 +34,11 @@ import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -66,6 +63,9 @@ public class ResumeService {
     private final EntityManager em;
 
     private final OpenAiService openAiService;
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
 
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
@@ -138,6 +138,13 @@ public class ResumeService {
         mongoResumeRepository.updateBasic(memberId, MongoResumeBasic.from(resumeBasicRepository.save(resumeBasic)));
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public OpenAiResponse autoResume(String question) {
+        return gson.fromJson(
+                openAiService.autoResume(question), OpenAiResponse.class
+        );
+    }
+
     @Transactional
     public void resumeInit(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -203,28 +210,6 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
-    public OpenAiResponse auto(String question) {
-        String response = openAiService.auto(question);
-
-        // GsonBuilder에 LocalDate 타입의 어댑터 추가
-        // LocalDate 형식을 위한 DateTimeFormatter 설정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class,
-                        (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
-                                src == null ? null : new com.google.gson.JsonPrimitive(src.format(formatter))
-                )
-                .registerTypeAdapter(LocalDate.class,
-                        (JsonDeserializer<LocalDate>) (json, typeOfT, context) ->
-                                json == null ? null : LocalDate.parse(json.getAsString(), formatter)
-                )
-                .create();
-        OpenAiResponse openAiResponse = gson.fromJson(response, OpenAiResponse.class);
-
-        log.debug("{}",openAiResponse);
-        return openAiResponse;
-    }
-
     private <T, R, E extends Enum<E>> List<R> filterByEnum(
             List<T> items,
             E enumValue,
@@ -236,5 +221,4 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
-
 }

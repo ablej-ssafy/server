@@ -5,7 +5,6 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
-import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
@@ -101,9 +100,8 @@ public class ResumeController {
         return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
     }
 
-    // TODO : 이력서 자동완성 TEST
     @GetMapping("/auto")
     public SuccessResponse<OpenAiResponse> test(@RequestBody String resume) {
-        return SuccessResponse.of(resumeService.auto(resume));
+        return SuccessResponse.of(resumeService.autoResume(resume));
     }
 }
