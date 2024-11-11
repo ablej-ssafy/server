@@ -10,8 +10,6 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class ResumeBasicRequest {
-    private String job;
-
     /**
      * 이력서 프로필 URL
      */
@@ -43,6 +41,11 @@ public class ResumeBasicRequest {
      */
     @Length(max = 13)
     private String phone;
+
+    /**
+     * 직무
+     */
+    private String job;
 
     /**
      * 한 줄 소개

@@ -229,7 +229,7 @@ public class CertificationControllerTest extends RestDocsSupport {
         actions.andExpect(status().isNoContent())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("이력서-자격")
+                                .tag("이력서-자격증")
                                 .summary("자격 삭제 API")
                                 .description("자격 정보를 삭제합니다.")
                                 .build()

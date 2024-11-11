@@ -61,7 +61,6 @@ public class ResumeService {
     private final PDFToTextConverter pdfToTextConverter;
     private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
-    private final PDFToTextConverter pdfConverter;
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
