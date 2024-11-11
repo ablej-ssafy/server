@@ -122,7 +122,7 @@ public class ResumeController {
     }
 
     @PostMapping("/auto")
-    public SuccessResponse<OpenAiResponse> auto(@RequestParam("file") MultipartFile file) {
+    public SuccessResponse<OpenAiResponse> auto(@RequestPart("file") MultipartFile file) {
         return SuccessResponse.of(resumeService.autoResume(file));
     }
 }
