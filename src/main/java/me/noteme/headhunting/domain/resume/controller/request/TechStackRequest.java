@@ -9,9 +9,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class TechStackRequest {
-    private List<ReferenceUrlRequest> referenceUrls;
-
+    private Long techId;
+    private String githubUrl;
+    private String notionUrl;
     private List<Long> techSkills;
-
-    private Long techStackId;
 }

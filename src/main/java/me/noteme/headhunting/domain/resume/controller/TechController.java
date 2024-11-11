@@ -28,9 +28,10 @@ public class TechController {
     ) {
         techService.saveTechStack(
                 memberId,
-                request.getReferenceUrls(),
+                request.getGithubUrl(),
+                request.getNotionUrl(),
                 request.getTechSkills(),
-                request.getTechStackId()
+                request.getTechId()
         );
 
         return SuccessResponse.empty();

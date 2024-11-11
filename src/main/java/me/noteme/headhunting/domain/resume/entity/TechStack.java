@@ -22,9 +22,11 @@ public class TechStack {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
-    @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private Set<ReferenceUrl> referenceUrls = new HashSet<>();
+    @Column(name = "github_url")
+    private String githubUrl;
+
+    @Column(name = "notion_url")
+    private String notionUrl;
 
     @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

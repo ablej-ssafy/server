@@ -17,12 +17,10 @@ import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -51,9 +49,6 @@ class ResumeControllerTest extends RestDocsSupport {
 
     @MockBean
     private StorageService storageService;
-
-    @Autowired
-    private ResourceLoader loader;
 
     @Test
     @DisplayName("이력서_전체_정보_조회_테스트")
@@ -102,10 +97,8 @@ class ResumeControllerTest extends RestDocsSupport {
                         TechSkillResponse.of(1L, "Java", "java-icon.png"),
                         TechSkillResponse.of(2L, "Spring", "spring-icon.png")
                 ),
-                List.of(
-                        ReferenceUrlResponse.of(1L, "https://example.com/java"),
-                        ReferenceUrlResponse.of(2L, "https://example.com/spring")
-                )
+                "https://example.com/java",
+                "https://example.com/spring"
         );
 
         ResumeResponse mockResponse = ResumeResponse.of(basicResponse, educations, companies, activities, projects, languages, qualifications, techResponse);
@@ -187,8 +180,8 @@ class ResumeControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.tech.techSkills[].skillId").type(JsonFieldType.NUMBER).description("기술 ID"),
                                         fieldWithPath("data.tech.techSkills[].skillName").type(JsonFieldType.STRING).description("기술 이름"),
                                         fieldWithPath("data.tech.techSkills[].skillIcon").type(JsonFieldType.STRING).description("기술 아이콘 URL"),
-                                        fieldWithPath("data.tech.referenceUrls[].referenceUrlId").type(JsonFieldType.NUMBER).description("참조 URL ID"),
-                                        fieldWithPath("data.tech.referenceUrls[].url").type(JsonFieldType.STRING).description("참조 URL")
+                                        fieldWithPath("data.tech.githubUrl").type(JsonFieldType.STRING).description("Github 참조 URL"),
+                                        fieldWithPath("data.tech.notionUrl").type(JsonFieldType.STRING).description("Notion 참조 URL")
                                 )).build()
                 )));
     }
