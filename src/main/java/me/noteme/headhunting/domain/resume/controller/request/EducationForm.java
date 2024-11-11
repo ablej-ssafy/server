@@ -1,22 +1,19 @@
 package me.noteme.headhunting.domain.resume.controller.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.noteme.headhunting.domain.resume.entity.Educational;
-import me.noteme.headhunting.domain.resume.entity.EducationalType;
+import lombok.NoArgsConstructor;
+import me.noteme.headhunting.domain.resume.entity.Education;
+import me.noteme.headhunting.domain.resume.entity.EducationType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
-public class EducationalForm {
-    @Min(value = 1, message = "이력서 번호는 필수값입니다.(최소 1)")
-    private Long resumeId;
-
+public class EducationForm {
     /**
      * 학교 이름
      */
@@ -31,7 +28,7 @@ public class EducationalForm {
      * 학교 분류
      * ASSOCIATE_DEGREE, BACHELOR, MASTER, DOCTOR
      */
-    private EducationalType category;
+    private EducationType category;
 
     /**
      * 학점 평균
@@ -53,11 +50,11 @@ public class EducationalForm {
 
     private LocalDate endAt;
 
-    private Long educationalId;
+    private Long educationId;
 
-    public Educational toEntity(Resume resume) {
-        return Educational.of(
-                this.educationalId,
+    public Education toEntity(Resume resume) {
+        return Education.of(
+                this.educationId,
                 this.name,
                 this.major,
                 this.category,
@@ -70,18 +67,17 @@ public class EducationalForm {
         );
     }
 
-    public static EducationalForm fromEntity(Educational educational) {
-        return EducationalForm.of(
-                educational.getResume().getId(),
-                educational.getName(),
-                educational.getMajor(),
-                educational.getCategory(),
-                educational.getGrade(),
-                educational.getGradeType(),
-                educational.getDescription(),
-                educational.getStartAt(),
-                educational.getEndAt(),
-                educational.getId()
+    public static EducationForm fromEntity(Education education) {
+        return EducationForm.of(
+                education.getName(),
+                education.getMajor(),
+                education.getCategory(),
+                education.getGrade(),
+                education.getGradeType(),
+                education.getDescription(),
+                education.getStartAt(),
+                education.getEndAt(),
+                education.getId()
         );
     }
 

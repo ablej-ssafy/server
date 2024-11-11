@@ -15,6 +15,7 @@ public class CompanyRecruitmentResponse {
     private int annualTo;
     private int annualFrom;
     private LocalDate dueTime;
+    private boolean isScrapped;
 
     public static CompanyRecruitmentResponse fromEntity(Recruitment recruitment) {
         return CompanyRecruitmentResponse.of(
@@ -23,7 +24,20 @@ public class CompanyRecruitmentResponse {
                 recruitment.getThumbnail(),
                 recruitment.getAnnualTo(),
                 recruitment.getAnnualFrom(),
-                recruitment.getDueTime()
+                recruitment.getDueTime(),
+                false
+        );
+    }
+
+    public static CompanyRecruitmentResponse fromEntity(Recruitment recruitment, boolean isScrapped) {
+        return CompanyRecruitmentResponse.of(
+                recruitment.getId(),
+                recruitment.getName(),
+                recruitment.getThumbnail(),
+                recruitment.getAnnualTo(),
+                recruitment.getAnnualFrom(),
+                recruitment.getDueTime(),
+                isScrapped
         );
     }
 }

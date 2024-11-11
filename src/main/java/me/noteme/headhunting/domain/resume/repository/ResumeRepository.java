@@ -6,17 +6,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
     @Query("""
+        SELECT r
+        FROM Resume r
+        WHERE r.member.id = :memberId
+    """)
+    Optional<Resume> findByMemberId(@Param("memberId") Long memberId);
+
+    @Query("""
         SELECT e
         FROM Resume r
-        JOIN Educational e
+        JOIN Education e
         ON e.resume.id = r.id
         WHERE r.member.id = :memberId
         ORDER BY e.id ASC
     """)
-    List<Educational> findAllEducationalByMemberId(@Param("memberId") Long memberId);
+    List<Education> findAllEducationByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
         SELECT e
@@ -46,5 +54,5 @@ public interface ResumeRepository extends JpaRepository<Resume, Long> {
         WHERE r.member.id = :memberId
         ORDER BY t.id ASC
     """)
-    TechStack findTechByMemberId(@Param("memberId") Long memberId);
+    Optional<TechStack> findTechByMemberId(@Param("memberId") Long memberId);
 }

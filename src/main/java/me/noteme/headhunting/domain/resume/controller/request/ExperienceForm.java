@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
@@ -11,11 +12,9 @@ import me.noteme.headhunting.domain.resume.entity.Resume;
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 public class ExperienceForm {
-    @Min(value = 1, message = "이력서 번호는 필수값입니다.(최소 1)")
-    private Long resumeId;
-
     /**
      * COMPANY, PROJECT, ACTIVITY
      */
@@ -64,7 +63,6 @@ public class ExperienceForm {
 
     public static ExperienceForm fromEntity(Experience experience) {
         return ExperienceForm.of(
-                experience.getResume().getId(),
                 experience.getExperienceType(),
                 experience.getTitle(),
                 experience.getAffiliation(),

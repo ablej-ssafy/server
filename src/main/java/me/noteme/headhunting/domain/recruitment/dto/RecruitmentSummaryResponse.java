@@ -15,17 +15,33 @@ public class RecruitmentSummaryResponse {
     private String location;
     private String strict;
     private String category;
+    private boolean isScrapped;
 
     public static RecruitmentSummaryResponse fromEntity(Recruitment recruitment) {
         return RecruitmentSummaryResponse.of(
                 recruitment.getId(),
                 recruitment.getName(),
-                recruitment.getCompany().getThumbnailImage(),
+                recruitment.getThumbnail(),
                 recruitment.getCompany().getId(),
                 recruitment.getCompany().getName(),
                 recruitment.getCompany().getLocation(),
                 recruitment.getCompany().getStrict(),
-                recruitment.getCategory().getName()
+                recruitment.getCategory().getName(),
+                false
+        );
+    }
+
+    public static RecruitmentSummaryResponse fromEntity(Recruitment recruitment, boolean isScrapped) {
+        return RecruitmentSummaryResponse.of(
+                recruitment.getId(),
+                recruitment.getName(),
+                recruitment.getThumbnail(),
+                recruitment.getCompany().getId(),
+                recruitment.getCompany().getName(),
+                recruitment.getCompany().getLocation(),
+                recruitment.getCompany().getStrict(),
+                recruitment.getCategory().getName(),
+                isScrapped
         );
     }
 }

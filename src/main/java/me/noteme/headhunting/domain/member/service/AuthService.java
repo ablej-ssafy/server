@@ -1,11 +1,11 @@
 package me.noteme.headhunting.domain.member.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
+import me.noteme.headhunting.common.listener.event.ResumeInitEvent;
 import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
@@ -31,10 +31,8 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final JobCategoryRepository jobRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenProvider tokenProvider;
 
-    private final EntityManager em;
     private final ApplicationEventPublisher publisher;
 
     /**
@@ -70,8 +68,12 @@ public class AuthService {
             member.addInterestJob(interestJob);
         });
 
-        memberRepository.save(member);
+        memberRepository.saveAndFlush(member);
 
+        // Resume 저장 로직
+        publisher.publishEvent(ResumeInitEvent.of(member.getId()));
+
+        // 이메일 전송 로직
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
     }
 
@@ -103,7 +105,7 @@ public class AuthService {
         Member member = getMember(email);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.BAD_REQUEST, "유효하지 않은 비밀번호 입니다.");
         }
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
@@ -119,20 +121,25 @@ public class AuthService {
     }
 
     public void signOut(Long memberId, String refreshToken) {
-        validateToken(memberId, refreshToken);
-        memberCacheRepository.saveAuthenticationKey(memberId, refreshToken);
+        validate(memberId, refreshToken);
+        memberCacheRepository.saveBlackListKey(refreshToken);
     }
 
     public JwtToken refresh(Long memberId, String refreshToken) {
-        validateToken(memberId, refreshToken);
-        return jwtTokenProvider.refreshToken(refreshToken);
+        validate(memberId, refreshToken);
+        JwtToken jwtToken = tokenProvider.refreshToken(refreshToken);
+
+        memberCacheRepository.saveBlackListKey(refreshToken);
+        return jwtToken;
     }
 
-    private void validateToken(Long memberId, String refreshToken) {
-        memberCacheRepository.findAuthenticationKey(memberId).ifPresent(key -> {
-            if (key.equals(refreshToken)) {
-                throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "이미 로그아웃된 사용자 입니다.");
-            }
-        });
+    private void validate(Long memberId, String refreshToken) {
+        Long tokenId = tokenProvider.parseMemberId(refreshToken);
+        if(!Objects.equals(memberId, tokenId)){
+            throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "유효하지 않는 토큰입니다.");
+        }
+        if (memberCacheRepository.findAuthenticationKey(refreshToken)) {
+            throw new CustomException(ErrorCode.AUTHENTICATION_FAILED, "적절하지 않은 리프레시 토큰입니다.");
+        }
     }
 }

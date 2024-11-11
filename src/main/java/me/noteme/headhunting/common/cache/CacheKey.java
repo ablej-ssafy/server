@@ -5,8 +5,8 @@ public class CacheKey {
         return "email:verify:" + key;
     }
 
-    public static String authenticationKey(String key) {
-        return "authentication:" + key;
+    public static String blackListKey(String key) {
+        return "blackList:" + key;
     }
 
     public static String searchKey() {

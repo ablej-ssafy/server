@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
@@ -36,7 +37,7 @@ public class ResumeController {
     }
 
     @PostMapping("/pdf")
-    public SuccessResponse<List<RecruitmentSummaryResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
+    public SuccessResponse<List<RecommendResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
         return SuccessResponse.of(resumeService.upload(memberId, resumePdf));
     }
 
@@ -57,7 +58,7 @@ public class ResumeController {
     }
 
     // TODO: 테스트 용도
-    @PostMapping("")
+    @PostMapping("/basic/test")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResume(@LoginUser Long memberId) {
         resumeService.resumeInit(memberId);
@@ -71,11 +72,12 @@ public class ResumeController {
     @PostMapping("/basic")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postResumeBase(
+            @LoginUser Long memberId,
             @Validated @RequestBody ResumeBasicRequest request
     ) {
         resumeService.saveResumeBasic(
-                request.getResumeId(),
-                request.getJobId(),
+                memberId,
+                request.getJob(),
                 request.getProfile(),
                 request.getTitle(),
                 request.getName(),
@@ -83,8 +85,7 @@ public class ResumeController {
                 request.getBirth(),
                 request.getPhone(),
                 request.getIntroduce(),
-                request.getPortfolioUrl(),
-                request.getResumeBasicId()
+                request.getPortfolioUrl()
         );
 
         return SuccessResponse.empty();

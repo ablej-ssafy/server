@@ -14,17 +14,22 @@ import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
+import me.noteme.headhunting.domain.member.repository.ScrapRepository;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
+import me.noteme.headhunting.domain.recruitment.repository.RecruitmentCategoryRepository;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
-import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
+import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
+import me.noteme.headhunting.domain.resume.entity.mongo.MongoResumeBasic;
+import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumePdfRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeBasicRepository;
 import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
@@ -38,6 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
 @Slf4j
@@ -45,6 +52,8 @@ import java.util.function.Function;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ResumeService {
+    private final RecruitmentCategoryRepository recruitmentCategoryRepository;
+    private final ScrapRepository scrapRepository;
     private final ResumeBasicRepository resumeBasicRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final MemberRepository memberRepository;
@@ -54,6 +63,7 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final PDFToTextConverter pdfConverter;
     private final StorageService storageService;
+    private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
 
     private final OpenAiService openAiService;
@@ -66,22 +76,27 @@ public class ResumeService {
     }
 
     @Transactional
-    public List<RecruitmentSummaryResponse> upload(Long memberId, MultipartFile resumePdf) {
+    public List<RecommendResponse> upload(Long memberId, MultipartFile resumePdf) {
         String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
 
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
-        Member member = memberRepository.findFetchById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        Member member = getMember(memberId);
+        List<Long> jobCategoryIds = getJobCategoryIds(member);
 
-        log.debug("멤버 조회 ");
-        JobCategory jobCategory = member.getInterestJobs().getFirst().getJobCategory();
-
-        log.debug("카데고리 조회 ");
-        return recruitmentRepository.findRecruitmentsByCategoryId(
-                        jobCategory.getId(),
+        List<Long> recruitmentIds = recruitmentCategoryRepository.
+                findRecruitmentIdsByCategoryIds(
+                        jobCategoryIds,
                         Pageable.ofSize(3))
-                .map(RecruitmentSummaryResponse::fromEntity)
+                .getContent();
+
+        Set<Long> scrappedIds = scrapRepository.isScrapped(memberId, recruitmentIds);
+
+        return recruitmentRepository.findRecruitmentsById(recruitmentIds).stream()
+                .map(recruitment -> RecommendResponse.create(
+                        recruitment,
+                        scrappedIds.contains(recruitment.getId()))
+                )
                 .toList();
     }
 
@@ -99,7 +114,7 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
         resumePdfRepository.deleteById(resumePdfId);
-        String key = String.format("%s/%s",memberId, resumePdf.getKey());
+        String key = String.format("%s/%s", memberId, resumePdf.getKey());
         storageService.delete(key);
         storageService.delete(key + ".pdf");
     }
@@ -117,47 +132,42 @@ public class ResumeService {
     }
 
     @Transactional
-    public void saveResumeBasic(Long resumeId, Long jobId, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl, Long resumeBasicId) {
-        JobCategory job = getJobById(jobId);
-        Resume resume = getResumeById(resumeId);
-
-        ResumeBasic resumeBasic = ResumeBasic
-                .of(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
-
-        resumeBasicRepository.save(resumeBasic);
+    public void saveResumeBasic(Long memberId, String job, String profile, String title, String name, String email, LocalDate birth, String phone, String introduce, String portfolioUrl) {
+        Resume resume = getResumeByMemberId(memberId);
+        Long resumeBasicId = Objects.isNull(resume.getResumeBasic()) ? null : resume.getResumeBasic().getId();
+        ResumeBasic resumeBasic = ResumeBasic.of(resumeBasicId, title, name, email, birth, phone, introduce, portfolioUrl, resume, job, profile);
+        mongoResumeRepository.updateBasic(memberId, MongoResumeBasic.from(resumeBasicRepository.save(resumeBasic)));
     }
 
     @Transactional
-    public void resumeInit(long memberId) {
+    public void resumeInit(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
         Resume resume = Resume.builder()
-                .member(getMemberById(memberId))
+                .member(member)
                 .build();
 
         resumeRepository.save(resume);
     }
 
-    private JobCategory getJobById(Long jobId) {
-        return em.getReference(JobCategory.class, jobId);
-    }
-
-    private Resume getResumeById(Long resumeId) {
-        return em.getReference(Resume.class, resumeId);
-    }
-
-    private Member getMemberById(Long memberId) {
-        return em.getReference(Member.class, memberId);
-    }
-
     public ResumeBasicResponse getBasicInfo(Long memberId) {
-        return ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
+        Member member = getMember(memberId);
+
+        return resumeBasicRepository.findByMemberId(memberId)
+                .map(ResumeBasicResponse::fromEntity)
+                .orElseGet(ResumeBasicResponse::new)
+                .setInfoIfEmpty(member);
     }
 
     public ResumeResponse getResume(Long memberId) {
-        ResumeBasicResponse basic = ResumeBasicResponse.fromEntity(resumeBasicRepository.findByMemberId(memberId));
-        List<Educational> edu = resumeRepository.findAllEducationalByMemberId(memberId);
+        ResumeBasicResponse basic = resumeBasicRepository.findByMemberId(memberId)
+                .map(ResumeBasicResponse::fromEntity)
+                .orElse(null);
+        List<Education> edu = resumeRepository.findAllEducationByMemberId(memberId);
 
-        List<EducationalForm> educationals = edu.stream()
-                .map(EducationalForm::fromEntity)
+        List<EducationForm> educations = edu.stream()
+                .map(EducationForm::fromEntity)
                 .toList();
 
         List<Experience> experiences = resumeRepository.findAllExperienceByMemberId(memberId);
@@ -171,10 +181,27 @@ public class ResumeService {
         List<CertificationForm> languages = filterByEnum(certifications, CertificationType.LANGUAGE, Certification::getCertificationType, CertificationForm::fromEntity);
         List<CertificationForm> qualifications = filterByEnum(certifications, CertificationType.QUALIFICATION, Certification::getCertificationType, CertificationForm::fromEntity);
 
-        TechStack techStack = resumeRepository.findTechByMemberId(memberId);
-        TechResponse tech = TechResponse.fromEntity(techStack);
+        TechResponse tech = resumeRepository.findTechByMemberId(memberId)
+                .map(TechResponse::fromEntity)
+                .orElse(null);
 
-        return ResumeResponse.of(basic, educationals, companies, activities, projects, languages, qualifications, tech);
+        return ResumeResponse.of(basic, educations, companies, activities, projects, qualifications, languages, tech);
+    }
+
+    private Resume getResumeByMemberId(Long memberId) {
+        return resumeRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
+    }
+
+    private List<Long> getJobCategoryIds(Member member) {
+        return member.getInterestJobs().stream()
+                .map(interestJob -> interestJob.getJobCategory().getId())
+                .toList();
+    }
+
+    private Member getMember(Long memberId) {
+        return memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 
     public OpenAiResponse auto(String question) {

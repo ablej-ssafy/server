@@ -5,6 +5,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.annotation.PostConstruct;
+import me.noteme.headhunting.common.exception.CustomException;
+import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.member.dto.JwtToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -98,6 +100,11 @@ public class JwtTokenProvider {
         return generate(Long.parseLong(claims.getSubject()), authorities);
     }
 
+    public Long parseMemberId(String token){
+        Claims claims = parseClaims(token);
+        return Long.parseLong(claims.getSubject());
+    }
+
     /**
      * accessToken 파싱
      *
@@ -106,7 +113,6 @@ public class JwtTokenProvider {
      */
     private Claims parseClaims(String accessToken) {
         String message;
-        Exception exception;
         try {
             return Jwts.parser()
                     .verifyWith(secretKey)
@@ -115,21 +121,17 @@ public class JwtTokenProvider {
                     .getPayload();
         } catch (ExpiredJwtException e) {
             message = "유효기간이 만료된 토큰입니다.";
-            exception = e;
         } catch (MalformedJwtException e) {
             message = "잘못된 형식의 토큰입니다.";
-            exception = e;
         } catch (IllegalArgumentException e) {
             message = "잘못된 인자입니다.";
-            exception = e;
         } catch (Exception e) {
             message = "토큰 파싱 중 에러가 발생했습니다.";
-            exception = e;
         }
-        throw new IllegalArgumentException(message, exception);
+        throw new CustomException(ErrorCode.BAD_REQUEST, message);
     }
 
-    public Authentication parseAuthentication(String accessToken) throws Exception {
+    public Authentication parseAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
 
         Collection<? extends GrantedAuthority> authorities =

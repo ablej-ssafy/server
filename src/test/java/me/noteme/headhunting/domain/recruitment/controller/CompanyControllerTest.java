@@ -3,8 +3,6 @@ package me.noteme.headhunting.domain.recruitment.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.recruitment.dto.CompanyRecruitmentResponse;
-import me.noteme.headhunting.domain.recruitment.dto.CompanyResponse;
 import me.noteme.headhunting.domain.recruitment.dto.CompanyWithRecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.entity.Company;
 import me.noteme.headhunting.domain.recruitment.entity.MockCompany;
@@ -18,9 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
@@ -60,11 +55,11 @@ class CompanyControllerTest extends RestDocsSupport {
         List<Recruitment> recruitments = Stream.of("채용1", "채용2", "채용3").map(name -> MockRecruitment.create(id.getAndIncrement(), name)).toList();
         when(company.getRecruitments()).thenReturn(recruitments);
         CompanyWithRecruitmentResponse response = CompanyWithRecruitmentResponse.fromEntity(company);
-        when(companyService.getCompanyById(companyId)).thenReturn(response);
+        when(companyService.getCompanyById(null , companyId)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         var actions = this.mockMvc.perform(
-                get("/api/v1/company/{companyId}", companyId)
+                get("/api/v1/companies/{companyId}", companyId)
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -91,7 +86,8 @@ class CompanyControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.recruitments[].thumbnail").type(JsonFieldType.STRING).description("썸네일 이미지"),
                                         fieldWithPath("data.recruitments[].annualTo").type(JsonFieldType.NUMBER).description("연차 상한"),
                                         fieldWithPath("data.recruitments[].annualFrom").type(JsonFieldType.NUMBER).description("연차 하한"),
-                                        fieldWithPath("data.recruitments[].dueTime").type(JsonFieldType.STRING).optional().description("마감일")
+                                        fieldWithPath("data.recruitments[].dueTime").type(JsonFieldType.STRING).optional().description("마감일"),
+                                        fieldWithPath("data.recruitments[].scrapped").type(JsonFieldType.BOOLEAN).optional().description("스크랩 여부 (비로그인 시 false)")
                                 )).build()
                 )));
     }

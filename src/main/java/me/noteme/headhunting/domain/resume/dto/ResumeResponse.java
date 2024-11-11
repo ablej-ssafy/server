@@ -3,7 +3,7 @@ package me.noteme.headhunting.domain.resume.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
-import me.noteme.headhunting.domain.resume.controller.request.EducationalForm;
+import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor(staticName = "of")
 public class ResumeResponse {
     private ResumeBasicResponse basic;
-    private List<EducationalForm> educationals;
+    private List<EducationForm> educations;
     private List<ExperienceForm> companies;
     private List<ExperienceForm> activities;
     private List<ExperienceForm> projects;

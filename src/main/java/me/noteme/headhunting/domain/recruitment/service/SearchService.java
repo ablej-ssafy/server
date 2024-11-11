@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.recruitment.service;
 
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.domain.member.repository.ScrapRepository;
 import me.noteme.headhunting.domain.recruitment.dto.CompanyResponse;
 import me.noteme.headhunting.domain.recruitment.dto.KeywordResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
@@ -14,49 +15,62 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class SearchService {
     private final CompanyRepository companyRepository;
     private final RecruitmentRepository recruitmentRepository;
+    private final ScrapRepository scrapRepository;
     private final SearchCacheRepository searchCacheRepository;
 
-    public Page<CompanyResponse> searchCompanies(Long userId, String type, String query, Pageable pageable) {
+    public Page<CompanyResponse> searchCompanies(Long memberId, String type, String query, Pageable pageable) {
         if (type.equals("name")) {
-            searchCacheRepository.addKeyword(userId, query);
+            searchCacheRepository.addKeyword(memberId, query);
         }
         Page<Company> companies = companyRepository.searchCompanies(type, query, pageable);
+
         return companies.map(CompanyResponse::fromEntity);
     }
 
-    public Page<RecruitmentSummaryResponse> searchRecruitments(Long userId, String query, Pageable pageable) {
-        searchCacheRepository.addKeyword(userId, query);
+    public Page<RecruitmentSummaryResponse> searchRecruitments(Long memberId, String query, Pageable pageable) {
+        searchCacheRepository.addKeyword(memberId, query);
         Page<Recruitment> recruitments = recruitmentRepository.searchRecruitments(query, pageable);
-        return recruitments.map(RecruitmentSummaryResponse::fromEntity);
+        Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
+
+        return recruitments.map(
+                recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId()))
+        );
     }
 
-    public SearchResponse rankKeywords(Long userId) {
-        AtomicInteger rank = new AtomicInteger(1);
-        SearchResponse response = new SearchResponse();
+    public SearchResponse rankKeywords(Long memberId) {
+        List<KeywordResponse> topKeywordResponses = getTopKeywordResponses();
+        List<KeywordResponse> recentKeywords =
+                Objects.isNull(memberId) ? List.of() : getRecentKeywords(memberId);
 
-        response.setRanks(searchCacheRepository.getTopKeywords().stream().map(
-                keyword -> KeywordResponse.of(rank.getAndIncrement(), keyword)
-        ).toList());
+        return SearchResponse.of(topKeywordResponses, recentKeywords);
+    }
 
-        if (userId == null) {
-            response.setRecentKeywords(List.of());
-            return response;
+    private List<KeywordResponse> getRecentKeywords(Long memberId) {
+        Set<String> keywords = searchCacheRepository.getKeywords(memberId);
+
+        List<KeywordResponse> recentKeywords = new ArrayList<>();
+        int recent = 1;
+        for (String keyword : keywords) {
+            recentKeywords.add(KeywordResponse.of(recent++, keyword));
         }
+        return recentKeywords;
+    }
 
-        AtomicInteger recent = new AtomicInteger(1);
-        response.setRecentKeywords(searchCacheRepository.getKeywords(userId).stream().map(
-                keyword -> KeywordResponse.of(recent.getAndIncrement(), keyword)
-        ).toList());
+    private List<KeywordResponse> getTopKeywordResponses() {
+        Set<String> topKeywords = searchCacheRepository.getTopKeywords();
 
-        return response;
+        List<KeywordResponse> keywordResponses = new ArrayList<>();
+        int rank = 1;
+        for (String keyword : topKeywords) {
+            keywordResponses.add(KeywordResponse.of(rank++, keyword));
+        }
+        return keywordResponses;
     }
 }

@@ -1,14 +1,18 @@
 package me.noteme.headhunting.domain.resume.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import me.noteme.headhunting.common.exception.CustomException;
+import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
 import me.noteme.headhunting.domain.resume.dto.EnumTypeResponse;
 import me.noteme.headhunting.domain.resume.dto.ExperienceResponse;
 import me.noteme.headhunting.domain.resume.entity.Experience;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.entity.mongo.MongoExperience;
 import me.noteme.headhunting.domain.resume.repository.ExperienceRepository;
+import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
+import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,24 +25,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExperienceService {
     private final ExperienceRepository experienceRepository;
-    private final EntityManager em;
+    private final MongoResumeRepository mongoResumeRepository;
+    private final ResumeRepository resumeRepository;
 
     @Transactional
-    public void saveExperience(Long resumeId, ExperienceType experienceType, String title, String affiliation, LocalDate startAt, LocalDate endAt, String description, String referenceUrl, Long experienceId) {
-        Resume resume = getResumeById(resumeId);
-
-        Experience experience = generateExperience(experienceId, experienceType, title, affiliation, startAt, endAt, description, referenceUrl, resume);
-
-        experienceRepository.save(experience);
-    }
-
-    @Transactional
-    public void saveAllExperience(List<ExperienceForm> experienceForms) {
+    public void saveAllExperience(Long memberId, List<ExperienceForm> experienceForms) {
         List<Experience> experiences = experienceForms.stream()
-                .map(form -> form.toEntity(getResumeById(form.getResumeId())))
+                .map(form -> form.toEntity(getResumeByMemberId(memberId)))
                 .toList();
 
-        experienceRepository.saveAll(experiences);
+        List<MongoExperience> mongoExperiences = experienceRepository.saveAll(experiences)
+                .stream().map(MongoExperience::from).toList();
+
+        // FIXME: 입력을 받을 때 경험 타입을 동시에 받아서 처리하고 아래 코드를 삭제함.
+        ExperienceType experienceType = experiences.getFirst().getExperienceType();
+        switch (experienceType) {
+            case COMPANY -> mongoResumeRepository.updateCompanies(memberId, mongoExperiences);
+            case ACTIVITY -> mongoResumeRepository.updateActivities(memberId, mongoExperiences);
+            case PROJECT -> mongoResumeRepository.updateProjects(memberId, mongoExperiences);
+        }
     }
 
     public ExperienceResponse getExperiences(Long memberId, String type) {
@@ -69,21 +74,8 @@ public class ExperienceService {
                 .toList();
     }
 
-    private Resume getResumeById(Long resumeId) {
-        return em.getReference(Resume.class, resumeId);
-    }
-
-    private static Experience generateExperience(Long experienceId, ExperienceType experienceType, String title, String affiliation, LocalDate startAt, LocalDate endAt, String description, String referenceUrl, Resume resume) {
-        return Experience.builder()
-                .id(experienceId)
-                .resume(resume)
-                .experienceType(experienceType)
-                .title(title)
-                .affiliation(affiliation)
-                .startAt(startAt)
-                .endAt(endAt)
-                .description(description)
-                .referenceUrl(referenceUrl)
-                .build();
+    private Resume getResumeByMemberId(Long memberId) {
+        return resumeRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
     }
 }

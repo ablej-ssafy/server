@@ -3,7 +3,7 @@ package me.noteme.headhunting.domain.resume.dto;
 import lombok.Data;
 import lombok.ToString;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
-import me.noteme.headhunting.domain.resume.entity.EducationalType;
+import me.noteme.headhunting.domain.resume.entity.EducationType;
 import me.noteme.headhunting.domain.resume.entity.ExperienceType;
 import me.noteme.headhunting.domain.resume.entity.GradeType;
 
@@ -36,7 +36,7 @@ public class OpenAiResponse {
     public static class AiEducational {
         private String name;
         private String major;
-        private EducationalType category;
+        private EducationType category;
         private Double grade;
         private GradeType gradeType;
         private String description;

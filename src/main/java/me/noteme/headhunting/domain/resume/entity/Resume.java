@@ -41,7 +41,7 @@ public class Resume extends BaseEntity {
      */
     @OneToMany(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Educational> educationals = new ArrayList<>();
+    private List<Education> educations = new ArrayList<>();
 
     /**
      * 경험 (직무, 프로젝트, 대내외 활동)

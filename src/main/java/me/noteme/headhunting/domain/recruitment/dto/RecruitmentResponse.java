@@ -26,8 +26,9 @@ public class RecruitmentResponse {
     private LocalDate dueTime;
     private int annualTo;
     private int annualFrom;
+    private boolean isScrapped;
 
-    public static RecruitmentResponse fromEntity(Recruitment recruitment) {
+    public static RecruitmentResponse fromEntity(Recruitment recruitment, boolean isScrapped) {
         return RecruitmentResponse.of(
                 recruitment.getId(),
                 recruitment.getName(),
@@ -43,7 +44,8 @@ public class RecruitmentResponse {
                 recruitment.getHireRound(),
                 recruitment.getDueTime(),
                 recruitment.getAnnualTo(),
-                recruitment.getAnnualFrom()
+                recruitment.getAnnualFrom(),
+                isScrapped
         );
     }
 }

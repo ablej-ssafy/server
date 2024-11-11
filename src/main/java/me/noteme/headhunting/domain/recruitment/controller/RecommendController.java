@@ -5,11 +5,10 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyzeRequest;
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
-import me.noteme.headhunting.domain.recruitment.feign.response.RecommendResponse;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.service.RecommendService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,12 +18,12 @@ import java.util.List;
 public class RecommendController {
     private final RecommendService recommendService;
 
-    @PostMapping
+    @GetMapping("/{resumePdfId}")
     public SuccessResponse<List<RecommendResponse>> analyzeResume(
             @LoginUser Long memberId,
-            @RequestPart("file") MultipartFile file
+            @PathVariable("resumePdfId") Long resumePdfId
     ) {
-        return SuccessResponse.of(recommendService.analyzeResume(memberId, file));
+        return SuccessResponse.of(recommendService.analyzeResume(memberId, resumePdfId));
     }
 
     @Deprecated

@@ -22,9 +22,11 @@ public class ExperienceController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public SuccessResponse<Void> postExperience(
+            @LoginUser Long memberId,
             @Validated @RequestBody ExperienceRequest request
     ) {
         experienceService.saveAllExperience(
+                memberId,
                 request.getExperiences()
         );
 
@@ -40,10 +42,9 @@ public class ExperienceController {
     }
 
     @DeleteMapping("/{experienceId}")
-    public SuccessResponse<Void> deleteExperience(@PathVariable("experienceId") Long experienceId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteExperience(@PathVariable("experienceId") Long experienceId) {
         experienceService.deleteById(experienceId);
-
-        return SuccessResponse.empty();
     }
 
     @GetMapping("/type")

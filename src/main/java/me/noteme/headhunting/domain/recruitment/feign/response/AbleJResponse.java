@@ -7,4 +7,6 @@ public class AbleJResponse<T>{
     private boolean success;
     private T data;
     private String error;
+    private String message;
+    private String detail;
 }

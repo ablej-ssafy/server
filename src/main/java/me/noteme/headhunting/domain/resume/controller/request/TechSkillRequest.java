@@ -2,8 +2,10 @@ package me.noteme.headhunting.domain.resume.controller.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class TechSkillRequest {
     @NotEmpty(message = "이름은 필수값입니다.")
     String name;
