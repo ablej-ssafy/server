@@ -56,7 +56,7 @@ public class SearchService {
     }
 
     private List<KeywordResponse> getRecentKeywords(Long memberId) {
-        Set<String> keywords = searchCacheRepository.getKeywords(memberId);
+        List<String> keywords = searchCacheRepository.getKeywords(memberId);
 
         List<KeywordResponse> recentKeywords = new ArrayList<>();
         int recent = 1;
@@ -68,12 +68,10 @@ public class SearchService {
 
     private List<KeywordResponse> getTopKeywordResponses() {
         Set<String> topKeywords = searchCacheRepository.getTopKeywords();
-        log.info("topKeywords: {}", topKeywords);
 
         List<KeywordResponse> keywordResponses = new ArrayList<>();
         int rank = 1;
         for (String keyword : topKeywords) {
-            log.info("rank keyword: {}", keyword);
             keywordResponses.add(KeywordResponse.of(rank++, keyword));
         }
         return keywordResponses;

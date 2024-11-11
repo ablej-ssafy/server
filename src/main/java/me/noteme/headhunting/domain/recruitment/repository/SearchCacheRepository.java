@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.recruitment.repository;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.cache.CacheKey;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
@@ -36,8 +37,8 @@ public class SearchCacheRepository {
         return zSetOperations.reverseRange(CacheKey.searchKey(), 0, 9);
     }
 
-    public Set<String> getKeywords(Long userId) {
-        return zSetOperations.reverseRange(CacheKey.searchUserKey(userId), 0, 4);
+    public List<String> getKeywords(Long userId) {
+        return listOperations.range(CacheKey.searchUserKey(userId), 0, 4);
     }
 
     public void removeKeyword(Long userId, String keyword) {
