@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface RecruitmentQueryRepository {
     Page<Recruitment> findRecruitmentsByCategoryId(Long categoryId, Pageable pageable);
-
+    Page<Recruitment> findRecruitments(Pageable pageable);
     Page<Recruitment> searchRecruitments(String query, Pageable pageable);
 }

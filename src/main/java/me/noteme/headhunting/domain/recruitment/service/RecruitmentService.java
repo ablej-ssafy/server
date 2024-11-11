@@ -83,10 +83,10 @@ public class RecruitmentService {
 
     public Page<RecruitmentSummaryResponse> getRecruitments(Long memberId, Pageable pageable) {
         Page<Recruitment> recruitments = recruitmentRepository.findRecruitments(pageable);
-        Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
+//        Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
 
         return recruitments.map(
-                recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId()))
+                recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, false)
         );
     }
 

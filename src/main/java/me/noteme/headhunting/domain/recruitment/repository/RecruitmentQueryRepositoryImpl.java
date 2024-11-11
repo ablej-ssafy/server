@@ -25,10 +25,26 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
     }
 
     @Override
+    public Page<Recruitment> findRecruitments(Pageable pageable) {
+        Long count = countRecruitment();
+        List<Long> ids = getRecruitmentIds(pageable);
+        List<Recruitment> contents = getRecruitmentContents(ids);
+        return new PageImpl<>(contents, pageable, count);
+    }
+
+    @Override
     public Page<Recruitment> searchRecruitments(String query, Pageable pageable) {
         Long count = countRecruitmentsByQuery(query);
         List<Recruitment> contents = getContentsByQuery(query, pageable);
         return new PageImpl<>(contents, pageable, count);
+    }
+
+    private List<Long> getRecruitmentIds(Pageable pageable) {
+        return queryFactory.select(recruitment.id)
+                .from(recruitment)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 
     private List<Recruitment> getContentsByCategoryId(Long categoryId, Pageable pageable) {
@@ -38,6 +54,16 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
                 .where(recruitment.category.id.eq(categoryId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private List<Recruitment> getRecruitmentContents(List<Long> ids) {
+        return queryFactory.selectFrom(recruitment)
+                .leftJoin(recruitment.category).fetchJoin()
+                .leftJoin(recruitment.childCategories).fetchJoin()
+                .leftJoin(recruitment.company).fetchJoin()
+                .leftJoin(recruitment.images).fetchJoin()
+                .where(recruitment.id.in(ids))
                 .fetch();
     }
 
@@ -51,6 +77,12 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    private Long countRecruitment() {
+        return queryFactory.select(recruitment.count())
+                .from(recruitment)
+                .fetchOne();
     }
 
     private Long countRecruitmentsByCategoryId(Long categoryId) {

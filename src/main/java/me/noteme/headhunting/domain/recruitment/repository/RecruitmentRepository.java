@@ -44,13 +44,13 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>,
     """)
     List<Recruitment> findRecruitmentsById(@Param("recruitmentIds") List<Long> recruitmentIds);
 
-    @Query("""
-        SELECT r
-        FROM Recruitment r
-        LEFT JOIN FETCH r.category c
-        LEFT JOIN FETCH r.childCategories
-        LEFT JOIN FETCH r.company co
-        LEFT JOIN FETCH r.images i
-    """)
-    Page<Recruitment> findRecruitments(Pageable pageable);
+//    @Query("""
+//        SELECT r
+//        FROM Recruitment r
+//        LEFT JOIN FETCH r.category c
+//        LEFT JOIN FETCH r.childCategories
+//        LEFT JOIN FETCH r.company co
+//        LEFT JOIN FETCH r.images i
+//    """)
+//    Page<Recruitment> findRecruitments(Pageable pageable);
 }
