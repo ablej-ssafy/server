@@ -55,6 +55,14 @@ public class RecruitmentController {
         return SuccessResponse.of(recruitmentService.getJobCategories());
     }
 
+    @GetMapping("/{recruitmentId}/scrap")
+    public SuccessResponse<Boolean> isScrapped(
+            @LoginUser Long memberId,
+            @PathVariable("recruitmentId") Long recruitmentId
+    ) {
+        return SuccessResponse.of(recruitmentService.isScrapped(memberId, recruitmentId));
+    }
+
     @PostMapping("/{recruitmentId}/scrap")
     public SuccessResponse<Void> scrapRecruitment(
             @LoginUser Long memberId,
@@ -71,5 +79,13 @@ public class RecruitmentController {
             @PathVariable("recruitmentId") Long recruitmentId
     ) {
         recruitmentService.unScrapRecruitment(memberId, recruitmentId);
+    }
+
+    @GetMapping("/scraps")
+    public SuccessResponse<List<Long>> getScrappedRecruitments(
+            @LoginUser Long memberId,
+            @RequestParam("recruitmentIds") List<Long> recruitmentIds
+    ) {
+        return SuccessResponse.of(recruitmentService.isScrapped(memberId, recruitmentIds));
     }
 }

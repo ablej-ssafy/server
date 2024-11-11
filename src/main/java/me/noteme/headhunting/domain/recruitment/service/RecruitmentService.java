@@ -38,9 +38,10 @@ public class RecruitmentService {
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
         );
 
-        boolean scrapped = scrapRepository.isScrapped(memberId, recruitmentId);
+        // * 프론트엔드에서 ISR 로 조회용 쿼리 날리는 것으로 대체
+//        boolean scrapped = scrapRepository.isScrapped(memberId, recruitmentId);
 
-        return RecruitmentResponse.fromEntity(recruitment, scrapped);
+        return RecruitmentResponse.fromEntity(recruitment, false);
     }
 
     public Page<RecruitmentSummaryResponse> getRecruitmentsByCategoryId(Long memberId, Long categoryId, Pageable pageable) {
@@ -87,5 +88,13 @@ public class RecruitmentService {
         return recruitments.map(
                 recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId()))
         );
+    }
+
+    public boolean isScrapped(Long memberId, Long recruitmentId) {
+        return scrapRepository.isScrapped(memberId, recruitmentId);
+    }
+
+    public List<Long> isScrapped(Long memberId, List<Long> recruitmentIds) {
+        return scrapRepository.isScrapped(memberId, recruitmentIds).stream().toList();
     }
 }

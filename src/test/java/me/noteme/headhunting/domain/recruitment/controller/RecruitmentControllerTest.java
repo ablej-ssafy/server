@@ -293,4 +293,65 @@ class RecruitmentControllerTest extends RestDocsSupport {
 
         verify(recruitmentService).unScrapRecruitment(memberId, recruitmentId);
     }
+
+    @Test
+    @DisplayName("채용공고_스크랩_여부_조회_테스트")
+    @CustomMockUser
+    void 채용공고_스크랩_여부_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        Long recruitmentId = 1L;
+        when(recruitmentService.isScrapped(memberId, recruitmentId)).thenReturn(true);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/recruitments/{recruitmentId}/scrap", recruitmentId)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("채용 공고")
+                                .summary("채용 공고 스크랩 여부 조회 API")
+                                .description("로그인한 사용자가 채용 공고를 스크랩했는지 여부를 조회합니다.")
+                                .pathParameters(
+                                        parameterWithName("recruitmentId").type(SimpleType.NUMBER).description("조회할 채용 공고 ID")
+                                ).responseFields(response(
+                                        fieldWithPath("data").type(JsonFieldType.BOOLEAN).description("스크랩 여부")
+                                ))
+                                .build()
+                )));
+    }
+
+    @Test
+    @DisplayName("채용공고_여러개_스크랩_여부_조회_테스트")
+    @CustomMockUser
+    void 채용공고_여러개_스크랩_여부_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        List<Long> recruitmentIds = List.of(1L, 2L, 3L);
+        when(recruitmentService.isScrapped(memberId, recruitmentIds)).thenReturn(List.of(1L, 3L));
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/recruitments/scraps")
+                        .queryParam("recruitmentIds", "1", "2", "3")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("채용 공고")
+                                .summary("채용 공고 여러개 스크랩 여부 조회 API")
+                                .description("로그인한 사용자가 여러개의 채용 공고를 스크랩했는지 여부를 조회합니다.")
+                                .queryParameters(
+                                        parameterWithName("recruitmentIds").type(SimpleType.NUMBER).description("조회할 채용 공고 ID 목록")
+                                ).responseFields(response(
+                                        fieldWithPath("data").type(JsonFieldType.ARRAY).description("스크랩 여부 목록")
+                                ))
+                                .build()
+                )));
+    }
 }
