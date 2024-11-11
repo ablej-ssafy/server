@@ -1,10 +1,14 @@
 package me.noteme.headhunting.domain.resume.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.noteme.headhunting.common.adapter.LocalDateAdapter;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.service.OpenAiService;
 import me.noteme.headhunting.common.listener.event.FileUploadEvent;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.member.entity.Member;
@@ -16,7 +20,6 @@ import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
-import me.noteme.headhunting.domain.resume.controller.request.ResumeOrderRequest;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
@@ -28,6 +31,7 @@ import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +59,11 @@ public class ResumeService {
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
+
+    private final OpenAiService openAiService;
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
 
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
@@ -127,6 +136,16 @@ public class ResumeService {
         mongoResumeRepository.updateBasic(memberId, MongoResumeBasic.from(resumeBasicRepository.save(resumeBasic)));
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public OpenAiResponse autoResume(MultipartFile file) {
+        String pdfText = pdfToTextConverter.convertPdfToText(file);
+        String json = openAiService.autoResume(pdfText);
+        log.debug("{}",json);
+        return gson.fromJson(
+                json, OpenAiResponse.class
+        );
+    }
+
     @Transactional
     public void resumeInit(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -135,6 +154,7 @@ public class ResumeService {
         Resume resume = Resume.builder()
                 .member(member)
                 .build();
+
         resumeRepository.save(resume);
     }
 

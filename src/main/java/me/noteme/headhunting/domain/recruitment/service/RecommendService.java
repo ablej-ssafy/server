@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static me.noteme.headhunting.domain.recruitment.entity.JobCategory.mainCategoryIds;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,10 +40,7 @@ public class RecommendService {
     private final MemberRepository memberRepository;
     private final StorageService storageService;
 
-    private final Set<Long> mainCategoryIds = new HashSet<>(Set.of(
-            1L, 6L, 10L, 21L, 45L, 51L, 56L, 67L, 78L, 83L,
-            113L, 120L, 122L, 126L, 129L, 134L, 144L, 163L, 280L
-    ));
+
     private final int SIZE = 5;
 
     public List<RecommendResponse> analyzeResume(Long memberId, Long resumePdfId) {

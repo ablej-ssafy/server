@@ -11,6 +11,7 @@ import me.noteme.headhunting.domain.member.repository.ScrapRepository;
 import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import me.noteme.headhunting.domain.recruitment.repository.JobCategoryRepository;
 import me.noteme.headhunting.domain.recruitment.repository.RecruitmentRepository;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -54,6 +54,7 @@ public class RecruitmentService {
 
     public List<CategoryResponse> getJobCategories() {
         return jobCategoryRepository.findAll().stream()
+                .filter(jobCategory -> !JobCategory.mainCategoryIds.contains(jobCategory.getId()))
                 .map(CategoryResponse::fromEntity)
                 .toList();
     }

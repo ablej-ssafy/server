@@ -16,16 +16,21 @@ minio:
     resume: resume       # Private 버킷
 
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/ablej
-    username: ablej
-    password: ablej
+  ai:
+    openai:
+      api-key: ${app.ai-key}
+      model: gpt-4o-mini
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ablej
+    username: ablej
+    password: ablej
 
   data:
     mongodb:

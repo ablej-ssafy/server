@@ -2,7 +2,6 @@ package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 
 import java.time.LocalDate;
 
