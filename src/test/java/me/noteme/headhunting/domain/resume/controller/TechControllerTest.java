@@ -4,7 +4,6 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlRequest;
 import me.noteme.headhunting.domain.resume.controller.request.TechSkillRequest;
 import me.noteme.headhunting.domain.resume.controller.request.TechStackRequest;
 import me.noteme.headhunting.domain.resume.dto.ReferenceUrlResponse;
@@ -14,12 +13,10 @@ import me.noteme.headhunting.domain.resume.service.TechService;
 import org.apache.catalina.security.SecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -51,12 +48,10 @@ public class TechControllerTest extends RestDocsSupport {
         // * GIVEN: 테스트 요청 데이터 생성
         Long memberId = 1L;
         TechStackRequest request = new TechStackRequest();
-        request.setReferenceUrls(List.of(
-                ReferenceUrlRequest.of(1L, "https://example.com/project1"),
-                ReferenceUrlRequest.of(2L, "https://example.com/project2")
-        ));
+        request.setGithubUrl("https://example.com/project1");
+        request.setNotionUrl("https://example.com/project2");
         request.setTechSkills(List.of(1L, 2L));
-        request.setTechStackId(1L);
+        request.setTechId(1L);
 
         // * WHEN: API 호출
         ResultActions actions = this.mockMvc.perform(post("/api/v1/tech/stack")
@@ -72,20 +67,20 @@ public class TechControllerTest extends RestDocsSupport {
                                 .summary("기술 스택 업데이트 API")
                                 .description("기술 스택 정보를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("referenceUrls").type(JsonFieldType.ARRAY).optional().description("참조 URL 목록"),
-                                        fieldWithPath("referenceUrls[].id").type(JsonFieldType.NUMBER).description("참조 URL PK"),
-                                        fieldWithPath("referenceUrls[].url").type(JsonFieldType.STRING).description("참조 URL"),
+                                        fieldWithPath("githubUrl").type(JsonFieldType.STRING).optional().description("Github 참조 URL"),
+                                        fieldWithPath("notionUrl").type(JsonFieldType.STRING).description("Notion 참조 URL"),
                                         fieldWithPath("techSkills").type(JsonFieldType.ARRAY).optional().description("기술 PK 목록"),
-                                        fieldWithPath("techStackId").type(JsonFieldType.NUMBER).optional().description("기술 스택 PK (새로 추가 시 null)")
+                                        fieldWithPath("techId").type(JsonFieldType.NUMBER).optional().description("기술 스택 PK (새로 추가 시 null)")
                                 ).responseFields(empty())
                                 .build()
                 )));
 
         verify(techService).saveTechStack(
                 memberId,
-                request.getReferenceUrls(),
+                request.getGithubUrl(),
+                request.getNotionUrl(),
                 request.getTechSkills(),
-                request.getTechStackId()
+                request.getTechId()
         );
     }
 
@@ -135,10 +130,8 @@ public class TechControllerTest extends RestDocsSupport {
                         TechSkillResponse.of(1L, "Java", "java-icon.png"),
                         TechSkillResponse.of(2L, "Spring", "spring-icon.png")
                 ),
-                List.of(
-                        ReferenceUrlResponse.of(1L, "https://example.com/java"),
-                        ReferenceUrlResponse.of(2L, "https://example.com/spring")
-                )
+                "https://example.com/java",
+                "https://example.com/spring"
         );
 
         when(techService.getTechStack(memberId))
@@ -161,8 +154,8 @@ public class TechControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.techSkills[].skillId").type(JsonFieldType.NUMBER).description("기술 PK"),
                                         fieldWithPath("data.techSkills[].skillName").type(JsonFieldType.STRING).description("기술 이름"),
                                         fieldWithPath("data.techSkills[].skillIcon").type(JsonFieldType.STRING).description("기술 아이콘 URL"),
-                                        fieldWithPath("data.referenceUrls[].referenceUrlId").type(JsonFieldType.NUMBER).description("참조 URL PK"),
-                                        fieldWithPath("data.referenceUrls[].url").type(JsonFieldType.STRING).description("참조 URL")
+                                        fieldWithPath("data.githubUrl").type(JsonFieldType.STRING).description("Github 참조 URL"),
+                                        fieldWithPath("data.notionUrl").type(JsonFieldType.STRING).description("Notion 참조 URL")
                                 )).build()
                 )));
     }
