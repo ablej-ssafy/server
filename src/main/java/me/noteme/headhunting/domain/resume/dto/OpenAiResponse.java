@@ -1,5 +1,6 @@
 package me.noteme.headhunting.domain.resume.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
@@ -21,6 +22,7 @@ public class OpenAiResponse {
     private List<AiReferenceUrl> aiReferenceUrls;
 
     @Data
+    @AllArgsConstructor
     public static class AiBasic {
         private String title;
         private String name;
@@ -33,6 +35,7 @@ public class OpenAiResponse {
     }
 
     @Data
+    @AllArgsConstructor
     public static class AiEducational {
         private String name;
         private String major;
@@ -45,6 +48,7 @@ public class OpenAiResponse {
     }
 
     @Data
+    @AllArgsConstructor
     public static class AiExperience {
         private ExperienceType experienceType;
         private String title;
@@ -56,6 +60,7 @@ public class OpenAiResponse {
     }
 
     @Data
+    @AllArgsConstructor
     public static class AiCertification {
         private String name;
         private String organization;
@@ -66,6 +71,7 @@ public class OpenAiResponse {
     }
 
     @Data
+    @AllArgsConstructor
     public static class AiReferenceUrl {
         private String url;
     }

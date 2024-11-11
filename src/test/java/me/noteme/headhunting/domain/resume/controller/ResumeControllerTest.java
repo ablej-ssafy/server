@@ -5,6 +5,7 @@ import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
+import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.resume.controller.request.*;
 import me.noteme.headhunting.domain.resume.dto.*;
 import me.noteme.headhunting.domain.resume.entity.CertificationType;
@@ -21,6 +22,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -30,6 +33,8 @@ import java.util.stream.Stream;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -49,6 +54,56 @@ class ResumeControllerTest extends RestDocsSupport {
 
     @MockBean
     private StorageService storageService;
+
+    @Test
+    @DisplayName("이력서 PDF 파일 업로드 테스트")
+    @CustomMockUser
+    void 이력서_PDF_업로드_테스트() throws Exception {
+        // * GIVEN: 테스트용 PDF 파일 준비
+        MockMultipartFile resumePdf = new MockMultipartFile(
+                "file", // @RequestPart("file")와 일치하게 설정
+                "test-resume.pdf",
+                MediaType.APPLICATION_PDF_VALUE,
+                "sample pdf content".getBytes()
+        );
+
+        // List<RecommendResponse> 타입의 가짜 응답 데이터 설정
+        List<RecommendResponse> response = List.of(
+                RecommendResponse.of(1L, "title1", "companyName1", "thumbnail1", false, 0.42)
+        );
+
+        when(resumeService.upload(anyLong(), eq(resumePdf))).thenReturn(response);
+
+        // * WHEN: API 호출
+        ResultActions actions = mockMvc.perform(
+                multipart("/api/v1/resume/pdf")
+                        .file(resumePdf)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+        );
+
+        // * THEN: 기대 결과 검증 및 RestDocs 문서화
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("이력서")
+                                .summary("이력서 PDF 파일 업로드 API")
+                                .description("PDF 형식의 이력서 파일을 업로드합니다. 'file' 파라미터를 통해 파일을 전달합니다.")
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data[].id").type(JsonFieldType.NUMBER).description("채용공고 ID"),
+                                        fieldWithPath("data[].title").type(JsonFieldType.STRING).description("채용공고 제목"),
+                                        fieldWithPath("data[].companyName").type(JsonFieldType.STRING).description("회사명"),
+                                        fieldWithPath("data[].thumbnail").type(JsonFieldType.STRING).description("썸네일 이미지"),
+                                        fieldWithPath("data[].scrapped").type(JsonFieldType.BOOLEAN).description("스크랩 여부"),
+                                        fieldWithPath("data[].similarity").type(JsonFieldType.NUMBER).description("유사도 점수")
+                                )
+                                .build()
+                )));
+        // upload 메서드 호출 여부 및 파일 전달 여부 확인
+        verify(resumeService).upload(anyLong(), eq(resumePdf));
+    }
 
     @Test
     @DisplayName("이력서_전체_정보_조회_테스트")

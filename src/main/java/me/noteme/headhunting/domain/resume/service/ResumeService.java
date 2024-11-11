@@ -137,9 +137,10 @@ public class ResumeService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public OpenAiResponse autoResume(String question) {
+    public OpenAiResponse autoResume(MultipartFile file) {
+        String pdfText = pdfToTextConverter.convertPdfToText(file);
         return gson.fromJson(
-                openAiService.autoResume(question), OpenAiResponse.class
+                openAiService.autoResume(pdfText), OpenAiResponse.class
         );
     }
 

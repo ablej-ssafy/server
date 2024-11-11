@@ -14,6 +14,7 @@ import me.noteme.headhunting.domain.resume.dto.ResumeResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +38,7 @@ public class ResumeController {
         return SuccessResponse.of(resumeService.getResume(memberId));
     }
 
-    @PostMapping("/pdf")
+    @PostMapping(value = "/pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public SuccessResponse<List<RecommendResponse>> uploadResumePdf(@LoginUser Long memberId, @RequestPart("file") MultipartFile resumePdf) {
         return SuccessResponse.of(resumeService.upload(memberId, resumePdf));
     }
@@ -121,7 +122,7 @@ public class ResumeController {
     }
 
     @GetMapping("/auto")
-    public SuccessResponse<OpenAiResponse> test(@RequestBody String resume) {
-        return SuccessResponse.of(resumeService.autoResume(resume));
+    public SuccessResponse<OpenAiResponse> auto(@RequestParam("file") MultipartFile file) {
+        return SuccessResponse.of(resumeService.autoResume(file));
     }
 }
