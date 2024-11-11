@@ -6,8 +6,10 @@ import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
+import me.noteme.headhunting.domain.resume.controller.request.ResumeOrderRequest;
 import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
+import me.noteme.headhunting.domain.resume.dto.ResumeOrderResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.service.ResumeService;
@@ -98,6 +100,24 @@ public class ResumeController {
         storageService.uploadFile(memberId, profile.getOriginalFilename(), profile);
 
         return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
+    }
+
+    @GetMapping("/{resumeId}/order")
+    public SuccessResponse<ResumeOrderResponse> getResumeOrder(
+            @LoginUser Long memberId,
+            @PathVariable Long resumeId
+    ) {
+        return SuccessResponse.of(resumeService.getResumeOrder(memberId, resumeId));
+    }
+
+    @PatchMapping("/{resumeId}/order")
+    public SuccessResponse<Void> updateResumeOrder(
+            @LoginUser Long memberId,
+            @PathVariable Long resumeId,
+            @RequestBody ResumeOrderRequest request
+    ) {
+        resumeService.updateResumeOrder(memberId, resumeId, request.getKey(), request.getOrder());
+        return SuccessResponse.empty();
     }
 
     @GetMapping("/auto")

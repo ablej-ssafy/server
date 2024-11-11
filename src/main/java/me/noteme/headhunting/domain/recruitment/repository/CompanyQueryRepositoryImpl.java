@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
-import static me.noteme.headhunting.domain.member.entity.QScrap.scrap;
 import static me.noteme.headhunting.domain.recruitment.entity.QCompany.company;
 import static me.noteme.headhunting.domain.recruitment.entity.QRecruitment.recruitment;
 

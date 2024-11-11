@@ -3,9 +3,6 @@ package me.noteme.headhunting.common.response;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @ToString
 public abstract class BaseResponse {

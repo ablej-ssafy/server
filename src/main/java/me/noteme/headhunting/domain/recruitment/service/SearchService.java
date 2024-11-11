@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.recruitment.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.domain.member.repository.ScrapRepository;
 import me.noteme.headhunting.domain.recruitment.dto.CompanyResponse;
 import me.noteme.headhunting.domain.recruitment.dto.KeywordResponse;
@@ -14,9 +15,11 @@ import me.noteme.headhunting.domain.recruitment.repository.SearchCacheRepository
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SearchService {
@@ -65,12 +68,19 @@ public class SearchService {
 
     private List<KeywordResponse> getTopKeywordResponses() {
         Set<String> topKeywords = searchCacheRepository.getTopKeywords();
+        log.info("topKeywords: {}", topKeywords);
 
         List<KeywordResponse> keywordResponses = new ArrayList<>();
         int rank = 1;
         for (String keyword : topKeywords) {
+            log.info("rank keyword: {}", keyword);
             keywordResponses.add(KeywordResponse.of(rank++, keyword));
         }
         return keywordResponses;
+    }
+
+    @Transactional
+    public void removeKeyword(Long userId, String keyword) {
+        searchCacheRepository.removeKeyword(userId, keyword);
     }
 }

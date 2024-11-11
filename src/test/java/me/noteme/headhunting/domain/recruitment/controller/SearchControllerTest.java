@@ -36,7 +36,9 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithNam
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -232,5 +234,35 @@ class SearchControllerTest extends RestDocsSupport {
                                 )))
                                 .build()
                 )));
+    }
+
+    @Test
+    @DisplayName("최근_검색어_삭제_테스트")
+    @CustomMockUser
+    void 최근_검색어_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+        String keyword = "최근 검색어";
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                delete("/api/v1/search")
+                        .queryParam("keyword", keyword)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isNoContent())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("검색")
+                                .summary("최근 검색어 삭제 API")
+                                .description("최근 검색어를 삭제합니다.")
+                                .queryParameters(
+                                        parameterWithName("keyword").type(SimpleType.STRING).description("검색어")
+                                )
+                                .build()
+                )));
+
+        verify(searchService).removeKeyword(userId, keyword);
     }
 }

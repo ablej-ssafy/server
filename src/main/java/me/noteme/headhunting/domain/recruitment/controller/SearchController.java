@@ -10,10 +10,8 @@ import me.noteme.headhunting.domain.recruitment.service.SearchService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +24,15 @@ public class SearchController {
         return SuccessResponse.of(
                 searchService.rankKeywords(userId)
         );
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSearchKeyword(
+            @LoginUser Long userId,
+            @RequestParam String keyword
+    ) {
+        searchService.removeKeyword(userId, keyword);
     }
 
     @GetMapping("/company")

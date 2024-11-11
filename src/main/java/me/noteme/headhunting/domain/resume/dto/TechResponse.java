@@ -3,7 +3,6 @@ package me.noteme.headhunting.domain.resume.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.noteme.headhunting.domain.resume.entity.ReferenceUrl;
 import me.noteme.headhunting.domain.resume.entity.TechStack;
 
 import java.util.Comparator;
@@ -15,7 +14,8 @@ import java.util.List;
 public class TechResponse {
     Long techId;
     List<TechSkillResponse> techSkills;
-    List<ReferenceUrlResponse> referenceUrls;
+    String githubUrl;
+    String notionUrl;
 
     public static TechResponse fromEntity(TechStack techStack) {
         // TODO: TechSkill, ReferenceUrl 조회 시 JOIN FETCH에서 발생되는 이슈(ex. 카타시안곱, MultipleBagFetchException) 개선점 생각하기
@@ -26,17 +26,11 @@ public class TechResponse {
                 ))
                 .toList();
 
-        List<ReferenceUrlResponse> referenceUrlResponses = techStack.getReferenceUrls().stream()
-                .sorted(Comparator.comparing(ReferenceUrl::getId))
-                .map(url -> ReferenceUrlResponse.of(
-                        url.getId(), url.getUrl()
-                ))
-                .toList();
-
         return TechResponse.of(
                 techStack.getId(),
                 techSkillResponses,
-                referenceUrlResponses
+                techStack.getGithubUrl(),
+                techStack.getNotionUrl()
         );
     }
 }

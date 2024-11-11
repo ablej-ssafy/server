@@ -1,7 +1,5 @@
 package me.noteme.headhunting.common.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.google.gson.Gson;
 import lombok.Getter;
 import me.noteme.headhunting.common.exception.CustomException;

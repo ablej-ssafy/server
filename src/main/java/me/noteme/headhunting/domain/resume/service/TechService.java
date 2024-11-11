@@ -1,10 +1,8 @@
 package me.noteme.headhunting.domain.resume.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
-import me.noteme.headhunting.domain.resume.controller.request.ReferenceUrlRequest;
 import me.noteme.headhunting.domain.resume.dto.TechResponse;
 import me.noteme.headhunting.domain.resume.dto.TechSkillResponse;
 import me.noteme.headhunting.domain.resume.entity.*;
@@ -25,24 +23,15 @@ public class TechService {
     private final ResumeRepository resumeRepository;
 
     @Transactional
-    public void saveTechStack(Long memberId, List<ReferenceUrlRequest> urls, List<Long> techSkills, Long techStackId) {
+    public void saveTechStack(Long memberId, String githubUrl, String notionUrl, List<Long> techSkills, Long techStackId) {
         Resume resume = getResumeByMemberId(memberId);
 
         TechStack techStack = TechStack.builder()
                 .id(techStackId)
+                .githubUrl(githubUrl)
+                .notionUrl(notionUrl)
                 .resume(resume)
                 .build();
-
-        // TODO: ReferenceUrl 저장 로직 수정 -> 불필요한 쿼리 조회 및 PK 증가 ISSUE
-        List<ReferenceUrl> referenceUrls = urls.stream()
-                .map(dto -> ReferenceUrl.builder()
-                        .techStack(techStack)
-                        .id(dto.getId())
-                        .url(dto.getUrl())
-                        .build())
-                .toList();
-
-        techStack.getReferenceUrls().addAll(referenceUrls);
 
         List<TechSkill> techSkillList = techSkillRepository.findAllById(techSkills);
 
