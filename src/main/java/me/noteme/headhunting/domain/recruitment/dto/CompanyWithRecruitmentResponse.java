@@ -13,6 +13,11 @@ public class CompanyWithRecruitmentResponse {
     private Long companyId;
     private String name;
     private String thumbnail;
+    private String description;
+    private String industryName;
+    private String link;
+    private int foundedYear;
+    private int age;
     private String address;
     private String roadAddress;
     private double latitude;
@@ -26,6 +31,11 @@ public class CompanyWithRecruitmentResponse {
                 company.getId(),
                 company.getName(),
                 company.getThumbnailImage(),
+                company.getDescription(),
+                company.getIndustryName(),
+                company.getLink(),
+                company.getFoundedYear(),
+                company.getAge(),
                 company.getAddress(),
                 company.getRoadAddress(),
                 company.getLatitude(),
@@ -43,6 +53,11 @@ public class CompanyWithRecruitmentResponse {
                 company.getId(),
                 company.getName(),
                 company.getThumbnailImage(),
+                company.getDescription(),
+                company.getIndustryName(),
+                company.getLink(),
+                company.getFoundedYear(),
+                company.getAge(),
                 company.getAddress(),
                 company.getRoadAddress(),
                 company.getLatitude(),

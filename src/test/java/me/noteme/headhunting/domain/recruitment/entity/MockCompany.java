@@ -15,6 +15,11 @@ public class MockCompany {
         lenient().when(company.getLongitude()).thenReturn(37.1234);
         lenient().when(company.getLatitude()).thenReturn(127.1234);
         lenient().when(company.getAddress()).thenReturn("기업 주소");
+        lenient().when(company.getDescription()).thenReturn("기업 소개");
+        lenient().when(company.getLink()).thenReturn("기업 링크");
+        lenient().when(company.getIndustryName()).thenReturn("기업 업종");
+        lenient().when(company.getFoundedYear()).thenReturn(2024);
+        lenient().when(company.getAge()).thenReturn(5);
         lenient().when(company.getRoadAddress()).thenReturn("기업 도로명 주소");
         lenient().when(company.getLocation()).thenReturn("기업 지역 (서울)");
         lenient().when(company.getStrict()).thenReturn("기업 구역 (서초구)");

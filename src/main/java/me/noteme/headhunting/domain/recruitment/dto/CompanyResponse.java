@@ -10,6 +10,7 @@ public class CompanyResponse {
     private Long companyId;
     private String name;
     private String thumbnail;
+
     private String address;
     private String roadAddress;
     private double latitude;
