@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static me.noteme.headhunting.domain.recruitment.entity.QRecruitment.recruitment;
+import static me.noteme.headhunting.domain.recruitment.entity.QRecruitmentCategory.recruitmentCategory;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,8 +21,9 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
 
     @Override
     public Page<Recruitment> findRecruitmentsByCategoryId(Long categoryId, Pageable pageable) {
-        Long count = countRecruitmentsByCategoryId(categoryId);
-        List<Recruitment> contents = getContentsByCategoryId(categoryId, pageable);
+        List<Long> ids = getRecruitmentCategoryIds(categoryId);
+        long count = ids.size();
+        List<Recruitment> contents = getContentsByCategoryId(ids, pageable);
         return new PageImpl<>(contents, pageable, count);
     }
 
@@ -39,6 +42,13 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
         return new PageImpl<>(contents, pageable, count);
     }
 
+    private List<Long> getRecruitmentCategoryIds(Long categoryId) {
+        return queryFactory.select(recruitment.id)
+                .from(recruitmentCategory)
+                .where(recruitmentCategory.category.id.eq(categoryId))
+                .fetch();
+    }
+
     private List<Long> getRecruitmentIds(Pageable pageable) {
         return queryFactory.select(recruitment.id)
                 .from(recruitment)
@@ -47,13 +57,15 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
                 .fetch();
     }
 
-    private List<Recruitment> getContentsByCategoryId(Long categoryId, Pageable pageable) {
+    private List<Recruitment> getContentsByCategoryId(List<Long> ids, Pageable pageable) {
+        List<Long> recruitmentIds = ids.stream()
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .toList();
         return queryFactory.selectFrom(recruitment)
                 .leftJoin(recruitment.category).fetchJoin()
                 .leftJoin(recruitment.company).fetchJoin()
-                .where(recruitment.category.id.eq(categoryId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .where(recruitment.id.in(recruitmentIds))
                 .fetch();
     }
 
@@ -82,13 +94,6 @@ public class RecruitmentQueryRepositoryImpl implements RecruitmentQueryRepositor
     private Long countRecruitment() {
         return queryFactory.select(recruitment.count())
                 .from(recruitment)
-                .fetchOne();
-    }
-
-    private Long countRecruitmentsByCategoryId(Long categoryId) {
-        return queryFactory.select(recruitment.count())
-                .from(recruitment)
-                .where(recruitment.category.id.eq(categoryId))
                 .fetchOne();
     }
 
