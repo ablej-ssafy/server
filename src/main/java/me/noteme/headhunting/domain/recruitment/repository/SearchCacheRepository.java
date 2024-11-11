@@ -30,4 +30,11 @@ public class SearchCacheRepository {
     public Set<String> getKeywords(Long userId) {
         return zSetOperations.reverseRange(CacheKey.searchUserKey(userId), 0, 4);
     }
+
+    public void removeKeyword(Long userId, String keyword) {
+        if (userId != null) {
+            zSetOperations.remove(CacheKey.searchUserKey(userId), keyword);
+        }
+        zSetOperations.remove(CacheKey.searchKey(), keyword);
+    }
 }

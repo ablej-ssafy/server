@@ -14,6 +14,7 @@ import me.noteme.headhunting.domain.recruitment.repository.SearchCacheRepository
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -72,5 +73,10 @@ public class SearchService {
             keywordResponses.add(KeywordResponse.of(rank++, keyword));
         }
         return keywordResponses;
+    }
+
+    @Transactional
+    public void removeKeyword(Long userId, String keyword) {
+        searchCacheRepository.removeKeyword(userId, keyword);
     }
 }

@@ -16,7 +16,7 @@ public class ReferenceUrl {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teck_stack_id")
+    @JoinColumn(name = "tech_stack_id")
     private TechStack techStack;
 
     private String url;
