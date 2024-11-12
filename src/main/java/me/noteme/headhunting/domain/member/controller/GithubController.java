@@ -17,9 +17,7 @@ public class GithubController {
     private final GithubService githubService;
 
     @PostMapping("/analysis")
-    public SuccessResponse<RepoAnalysisResponse> gitAnalysis(
-            @Validated @RequestBody RepoInfoRequest request
-    ) {
+    public SuccessResponse<RepoAnalysisResponse> gitAnalysis(@Validated @RequestBody RepoInfoRequest request) {
         return SuccessResponse.of(
                 githubService.repoAnalysis(request.getOwner(), request.getRepo(), request.getBranch(), request.getToken())
         );
