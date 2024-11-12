@@ -62,6 +62,7 @@ public class RecruitmentService {
 
     @Transactional
     public void scrapRecruitment(Long memberId, Long recruitmentId) {
+        log.debug("scrapRecruitment memberId: {}, recruitmentId: {}", memberId, recruitmentId);
         if (scrapRepository.isScrapped(memberId, recruitmentId)) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
@@ -74,6 +75,7 @@ public class RecruitmentService {
 
     @Transactional
     public void unScrapRecruitment(Long memberId, Long recruitmentId) {
+        log.debug("unScrapRecruitment memberId: {}, recruitmentId: {}", memberId, recruitmentId);
         Scrap scrap = scrapRepository.findScrap(memberId, recruitmentId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
         );
