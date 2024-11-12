@@ -40,8 +40,7 @@ public class RecommendService {
     private final MemberRepository memberRepository;
     private final StorageService storageService;
 
-
-    private final int SIZE = 5;
+    private final int SIZE = 30;
 
     public List<RecommendResponse> analyzeResume(Long memberId, Long resumePdfId) {
         List<AiRecommendResponse> recommendResponses = getAiRecommend(memberId, resumePdfId);
@@ -68,7 +67,8 @@ public class RecommendService {
 
         String resumeText = storageService.getData(memberId + "/" + resumePdf.getKey());
         JobCategory job = getJobCategory(member);
-
+        log.debug("jobCategory : {}", job.getName());
+        
         JobRecommendRequest request = JobRecommendRequest.of(
                 resumeText, member.getCareer(), job.getId(), SIZE
         );
