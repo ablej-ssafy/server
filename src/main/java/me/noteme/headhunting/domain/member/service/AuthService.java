@@ -6,7 +6,6 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
 import me.noteme.headhunting.common.listener.event.ResumeInitEvent;
-import me.noteme.headhunting.domain.member.entity.InterestJob;
 import me.noteme.headhunting.domain.member.repository.MemberCacheRepository;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.JwtTokenProvider;
@@ -42,16 +41,15 @@ public class AuthService {
      * @param password 비밀번호
      * @param name     이름
      */
+    // TODO: 사용자의 선호 직무는 단 1개입니다.
     @Transactional
-    public void signUp(String email, String password, String name, int careerYear, List<Long> jobIds) {
+    public void signUp(String email, String password, String name, int careerYear, long jobId) {
         if (memberRepository.findByUsername(email).isPresent()) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "이미 존재하는 사용자입니다.");
         }
 
-        List<JobCategory> jobs = jobRepository.findAllById(jobIds);
-        if (jobs.size() != jobIds.size()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "잘못된 직무 값입니다.");
-        }
+        JobCategory jobCategory = jobRepository.findById(jobId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "잘못된 직무 값입니다."));
 
         String encodedPassword = passwordEncoder.encode(password);
 
@@ -59,14 +57,9 @@ public class AuthService {
                 .username(email)
                 .password(encodedPassword)
                 .nickname(name)
+                .jobCategory(jobCategory)
                 .career(careerYear)
                 .build();
-
-        // TODO: Bulk Insert 고려
-        jobs.forEach(job -> {
-            InterestJob interestJob = InterestJob.of(job, member);
-            member.addInterestJob(interestJob);
-        });
 
         memberRepository.saveAndFlush(member);
 

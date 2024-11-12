@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor(staticName = "of")
 public class LoginMemberResponse {
@@ -13,5 +11,5 @@ public class LoginMemberResponse {
     private String name;
     private String email;
     private int career;
-    private List<CategoryResponse> categories;
+    private CategoryResponse jobCategory;
 }

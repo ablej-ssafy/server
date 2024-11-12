@@ -54,7 +54,7 @@ public class AuthController {
                 request.getPassword(),
                 request.getName(),
                 request.getCareerYear(),
-                request.getJobIds()
+                request.getJobId()
         );
         return SuccessResponse.empty();
     }

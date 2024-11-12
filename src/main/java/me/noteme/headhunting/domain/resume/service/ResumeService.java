@@ -79,11 +79,10 @@ public class ResumeService {
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
         Member member = getMember(memberId);
-        List<Long> jobCategoryIds = getJobCategoryIds(member);
 
         List<Long> recruitmentIds = recruitmentCategoryRepository.
                 findRecruitmentIdsByCategoryIds(
-                        jobCategoryIds,
+                        member.getJobCategory(),
                         Pageable.ofSize(3))
                 .getContent();
 
@@ -223,12 +222,6 @@ public class ResumeService {
     private Resume getResumeByMemberId(Long memberId) {
         return resumeRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
-    }
-
-    private List<Long> getJobCategoryIds(Member member) {
-        return member.getInterestJobs().stream()
-                .map(interestJob -> interestJob.getJobCategory().getId())
-                .toList();
     }
 
     private Member getMember(Long memberId) {
