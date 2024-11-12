@@ -8,6 +8,7 @@ import me.noteme.headhunting.domain.member.dto.LoginMemberResponse;
 import me.noteme.headhunting.domain.member.service.MemberService;
 import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.entity.MockRecruitment;
 import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import org.apache.catalina.security.SecurityConfig;
@@ -48,12 +49,8 @@ public class MemberControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         long memberId = 1L;
 
-        List<CategoryResponse> categoryResponses = List.of(
-                CategoryResponse.of(1L, "이름1"),
-                CategoryResponse.of(2L, "이름2"),
-                CategoryResponse.of(3L, "이름2")
-        );
-        LoginMemberResponse response = LoginMemberResponse.of(1L, "로그인 중인 사용자의 이름", "로그인 중인 사용자의 이메일", 0, categoryResponses);
+        CategoryResponse categoryResponse = CategoryResponse.of(1L, "name");
+        LoginMemberResponse response = LoginMemberResponse.of(1L, "로그인 중인 사용자의 이름", "로그인 중인 사용자의 이메일", 0, categoryResponse);
 
         when(memberService.info(memberId)).thenReturn(response);
 
@@ -75,9 +72,8 @@ public class MemberControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.name").type(JsonFieldType.STRING).description("사용자 이름"),
                                         fieldWithPath("data.email").type(JsonFieldType.STRING).description("사용자 이메일"),
                                         fieldWithPath("data.career").type(JsonFieldType.NUMBER).description("사용자 커리어"),
-                                        fieldWithPath("data.categories").type(JsonFieldType.ARRAY).description("사용자 선호 직무 목록"),
-                                        fieldWithPath("data.categories[].id").type(JsonFieldType.NUMBER).description("직무 ID"),
-                                        fieldWithPath("data.categories[].name").type(JsonFieldType.STRING).description("직무 이름")
+                                        fieldWithPath("data.jobCategory.id").type(JsonFieldType.NUMBER).description("직무 ID"),
+                                        fieldWithPath("data.jobCategory.name").type(JsonFieldType.STRING).description("직무 이름")
                                 ))
                                 .build()
                 )));

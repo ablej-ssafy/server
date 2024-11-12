@@ -3,7 +3,6 @@ package me.noteme.headhunting.domain.recruitment.repository;
 import lombok.RequiredArgsConstructor;
 import me.noteme.headhunting.common.cache.CacheKey;
 import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 

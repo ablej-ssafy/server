@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +54,15 @@ public class Member extends BaseEntity {
     @Builder.Default
     private ProviderType providerType = ProviderType.LOCAL;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<InterestJob> interestJobs = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_category_id")
+    private JobCategory jobCategory;
 
     public void verify() {
         emailVerified = true;
     }
 
-    public void addInterestJob(InterestJob interestJob) {
-        interestJobs.add(interestJob);
+    public void chagneJobCategory(JobCategory jobCategory) {
+        this.jobCategory = jobCategory;
     }
 }

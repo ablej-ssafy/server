@@ -34,8 +34,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("""
             SELECT m FROM Member m
-            LEFT JOIN FETCH m.interestJobs ij
-            LEFT JOIN FETCH ij.jobCategory
+            LEFT JOIN FETCH m.jobCategory
             WHERE m.id = :memberId
     """)
     Optional<Member> findFetchById(@Param("memberId") long memberId);

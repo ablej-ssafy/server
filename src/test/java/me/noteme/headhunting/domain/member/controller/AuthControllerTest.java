@@ -50,14 +50,13 @@ class AuthControllerTest extends RestDocsSupport {
     @DisplayName("회원가입_정상_테스트")
     void 회원가입_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        List<Long> jobs = List.of(1L, 2L, 3L);
-
+        long jobId = 1L;
         SignUpRequest request = new SignUpRequest();
         request.setEmail("testuser@gmail.com");
         request.setPassword("testpassword");
         request.setName("테스트 유저");
         request.setCareerYear(1);
-        request.setJobIds(jobs);
+        request.setJobId(jobId);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/sign-up")
@@ -77,12 +76,12 @@ class AuthControllerTest extends RestDocsSupport {
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
                                         fieldWithPath("careerYear").type(JsonFieldType.NUMBER).description("경력"),
-                                        fieldWithPath("jobIds").type(JsonFieldType.ARRAY).description("관심 직무 ID 목록")
+                                        fieldWithPath("jobId").type(JsonFieldType.NUMBER).description("관심 직무 ID")
                                 ).responseFields()
                                 .build()
                 )));
 
-        verify(authService).signUp(request.getEmail(), request.getPassword(), request.getName(), 1, jobs);
+        verify(authService).signUp(request.getEmail(), request.getPassword(), request.getName(), 1, jobId);
     }
 
     @Test
@@ -94,7 +93,7 @@ class AuthControllerTest extends RestDocsSupport {
         request.setPassword("q4!!");
         request.setName("테스트 유저");
         request.setCareerYear(20);
-        request.setJobIds(new ArrayList<>());
+        request.setJobId(1L);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/sign-up")
@@ -114,7 +113,7 @@ class AuthControllerTest extends RestDocsSupport {
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호"),
                                         fieldWithPath("name").type(JsonFieldType.STRING).description("회원 이름"),
                                         fieldWithPath("careerYear").type(JsonFieldType.NUMBER).description("경력"),
-                                        fieldWithPath("jobIds").type(JsonFieldType.ARRAY).description("관심 직무 ID 목록")
+                                        fieldWithPath("jobId").type(JsonFieldType.NUMBER).description("관심 직무 ID")
                                 ).responseFields(errors(
                                         fieldWithPath("errors[].field").type(JsonFieldType.STRING).description("에러 필드"),
                                         fieldWithPath("errors[].code").type(JsonFieldType.STRING).description("애러 코드"),
