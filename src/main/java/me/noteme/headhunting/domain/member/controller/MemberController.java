@@ -30,7 +30,7 @@ public class MemberController {
         return SuccessResponse.of(memberService.scrapList(memberId));
     }
 
-    @PatchMapping("/jobCategory")
+    @PatchMapping("/category")
     public SuccessResponse<Void> updateJobCategory(@LoginUser Long memberId, @Validated @RequestBody JobCategoryRequest jobCategoryId) {
         memberService.updateJobCategory(memberId, jobCategoryId.getId());
 

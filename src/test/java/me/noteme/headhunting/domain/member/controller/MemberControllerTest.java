@@ -135,7 +135,7 @@ public class MemberControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                patch("/api/v1/member/jobCategory")
+                patch("/api/v1/member/category")
                         .contentType("application/json")
                         .content(toJson(jobCategoryRequest))
         );
