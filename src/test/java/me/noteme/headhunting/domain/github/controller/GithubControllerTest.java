@@ -116,7 +116,7 @@ public class GithubControllerTest extends RestDocsSupport {
                                 .summary("Github 분석 결과 확인 API")
                                 .description("Github 프로젝트 분석 결과 확인 API 입니다.")
                                 .pathParameters(
-                                        parameterWithName("requestId").type(SimpleType.NUMBER).description("깃 분석 요청 ID")
+                                        parameterWithName("requestId").type(SimpleType.STRING).description("깃 분석 요청 ID")
                                 ).responseFields(response(
                                         fieldWithPath("data.request_id").type(JsonFieldType.STRING).description("깃 분석 요청 ID"),
                                         fieldWithPath("data.state").type(JsonFieldType.STRING).description("요청 처리 상태"),
