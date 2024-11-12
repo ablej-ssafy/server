@@ -3,6 +3,7 @@ package me.noteme.headhunting.domain.github.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
+import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.GithubController;
 import me.noteme.headhunting.domain.member.feign.request.RepoInfoRequest;
@@ -41,14 +42,17 @@ public class GithubControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("깃허브_분석_API_테스트")
+    @CustomMockUser
     void 깃허브_분석_API_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
         RepoInfoRequest request = RepoInfoRequest.of(
                 null,
                 "owner",
                 "repo-name",
                 "master",
-                "ghp_ddd"
+                "ghp_ddd",
+                null
         );
 
         RepoAnalysisResponse mockResponse = new RepoAnalysisResponse();
@@ -56,7 +60,7 @@ public class GithubControllerTest extends RestDocsSupport {
         mockResponse.setState("initialized");
         mockResponse.setStep("pending");
         mockResponse.setResult(null);
-        when(githubService.repoAnalysis(request.getOwner(), request.getRepo(), request.getBranch(), request.getToken()))
+        when(githubService.repoAnalysis(memberId, request.getOwner(), request.getRepo(), request.getBranch(), request.getToken()))
                 .thenReturn(mockResponse);
 
         // * WHEN: 이걸 실행하면
@@ -87,7 +91,7 @@ public class GithubControllerTest extends RestDocsSupport {
                 )));
 
         verify(githubService)
-                .repoAnalysis(request.getOwner(), request.getRepo(), request.getBranch(), request.getToken());
+                .repoAnalysis(memberId, request.getOwner(), request.getRepo(), request.getBranch(), request.getToken());
     }
 
     @Test
