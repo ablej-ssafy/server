@@ -7,6 +7,7 @@ app:
   client-base-url: http://localhost:3000
   server-base-url: http://localhost:8080
   ai-base-url: http://localhost:5000
+  ai-gpu-url: http://localhost:9755/api
 
 spring:
   datasource:
