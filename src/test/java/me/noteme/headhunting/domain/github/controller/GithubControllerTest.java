@@ -6,6 +6,7 @@ import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
 import me.noteme.headhunting.domain.member.controller.GithubController;
+import me.noteme.headhunting.domain.member.feign.GithubAuthRequestClient;
 import me.noteme.headhunting.domain.member.feign.request.RepoInfoRequest;
 import me.noteme.headhunting.domain.member.feign.response.RepoAnalysisResponse;
 import me.noteme.headhunting.domain.member.service.GithubService;
@@ -16,8 +17,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
@@ -36,9 +42,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JWTFilter.class),
         }
 )
+@TestPropertySource(locations = {"classpath:application.yml", "classpath:application-secret.yml"})
 public class GithubControllerTest extends RestDocsSupport {
     @MockBean
     private GithubService githubService;
+
+    @MockBean
+    private ClientRegistrationRepository clientRegistrationRepository;
+
+    @MockBean
+    private GithubAuthRequestClient gitHubAuthRequestClient;
 
     @Test
     @DisplayName("깃허브_분석_API_테스트")
