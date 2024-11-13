@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -37,9 +36,8 @@ public class MemberCacheRepository {
     }
 
     public boolean findAuthenticationKey(String refreshToken) {
-        String key = CacheKey.blackListKey(refreshToken);
-        String s = valueOps.get(key);
-        log.debug("{}",s);
-        return Objects.nonNull(s);
+        return Objects.nonNull(
+                valueOps.get(CacheKey.blackListKey(refreshToken))
+        );
     }
 }

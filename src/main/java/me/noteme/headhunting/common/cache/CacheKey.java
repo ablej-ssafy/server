@@ -13,7 +13,11 @@ public class CacheKey {
         return "searchKeywords";
     }
 
-    public static String searchUserKey(Long userId) {
-        return "searchKeywords:user:" + userId;
+    public static String searchUserKey(Long memberId) {
+        return "searchKeywords:member:" + memberId;
+    }
+
+    public static String resumeKey(Long memberId) {
+        return "resume:member:" + memberId;
     }
 }

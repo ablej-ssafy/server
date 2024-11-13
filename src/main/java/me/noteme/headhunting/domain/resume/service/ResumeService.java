@@ -59,6 +59,7 @@ public class ResumeService {
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
+    private final ResumeCacheRepository resumeCacheRepository;
 
     private final OpenAiService openAiService;
     private final Gson gson = new GsonBuilder()
@@ -136,12 +137,18 @@ public class ResumeService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public OpenAiResponse autoResume(MultipartFile file) {
+    public void autoResume(Long memberId, MultipartFile file) {
         String pdfText = pdfToTextConverter.convertPdfToText(file);
-        String json = openAiService.autoResume(pdfText);
-        log.debug("{}",json);
+        String resumeAutoData = openAiService.autoResume(pdfText);
+
+        resumeCacheRepository.save(memberId, resumeAutoData);
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public OpenAiResponse getAutoResume(Long memberId) {
+        String data = resumeCacheRepository.getData(memberId);
         return gson.fromJson(
-                json, OpenAiResponse.class
+                data, OpenAiResponse.class
         );
     }
 
