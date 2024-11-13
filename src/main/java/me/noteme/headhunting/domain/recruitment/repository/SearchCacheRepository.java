@@ -34,6 +34,10 @@ public class SearchCacheRepository {
             }
             listOperations.leftPush(CacheKey.searchUserKey(userId), keyword);
         }
+
+        if (!hasKeyword(keyword)) {
+            return;
+        }
         zSetOperations.incrementScore(CacheKey.searchKey(), keyword, 1);
 
     }
@@ -70,5 +74,11 @@ public class SearchCacheRepository {
                 .stream()
                 .map(ExtractedResult::getString)
                 .collect(Collectors.toList());
+    }
+
+    private boolean hasKeyword(String keyword) {
+        return Objects.requireNonNull(setOperations.members(
+                CacheKey.autoCompleteKey()
+        )).contains(keyword);
     }
 }
