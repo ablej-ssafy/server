@@ -56,7 +56,7 @@ public class GithubController {
 
         log.debug("gitAccessToken - {}", gitAccessToken);
 
-        CookieUtils.addCookie(response, "accessToken", gitAccessToken.getAccessToken(), 3 * 24 * 60 * 60 * 1000, false);
+        CookieUtils.addCookie(response, "accessToken", gitAccessToken.getAccessToken(), CookieUtils.THREE_DAYS, false);
 
         response.sendRedirect(redirectUrl);
     }
