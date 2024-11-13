@@ -66,6 +66,7 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'me.xdrop:fuzzywuzzy:1.1.6'
 
     // * For Security
     implementation 'org.springframework.boot:spring-boot-starter-security'

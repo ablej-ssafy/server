@@ -20,4 +20,8 @@ public class CacheKey {
     public static String resumeKey(Long memberId) {
         return "resume:member:" + memberId;
     }
+
+    public static String autoCompleteKey() {
+        return "search:keywords";
+    }
 }

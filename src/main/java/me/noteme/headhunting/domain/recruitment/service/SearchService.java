@@ -1,5 +1,6 @@
 package me.noteme.headhunting.domain.recruitment.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.domain.member.repository.ScrapRepository;
@@ -27,6 +28,13 @@ public class SearchService {
     private final RecruitmentRepository recruitmentRepository;
     private final ScrapRepository scrapRepository;
     private final SearchCacheRepository searchCacheRepository;
+
+    @PostConstruct
+    @Transactional
+    public void init() {
+        searchCacheRepository.initSuggestions(recruitmentRepository.findRecruitmentNames());
+        searchCacheRepository.initSuggestions(companyRepository.findCompanyNames());
+    }
 
     public Page<CompanyResponse> searchCompanies(Long memberId, String type, String query, Pageable pageable) {
         if (type.equals("name")) {
@@ -75,6 +83,10 @@ public class SearchService {
             keywordResponses.add(KeywordResponse.of(rank++, keyword));
         }
         return keywordResponses;
+    }
+
+    public List<String> getSuggestions(String keyword) {
+        return searchCacheRepository.getSuggestions(keyword);
     }
 
     @Transactional
