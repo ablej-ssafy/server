@@ -64,4 +64,14 @@ public interface PromptConst {
                        - Use proper punctuation, but ensure there is no trailing comma at the end of each sentence.
                        - Avoid adding unnecessary characters or symbols.
             """;
+
+    String questionPrompt = """
+            You are now in the role of an interviewer, and you need to write 7 interview questions for this applicant based on the resume below.
+            Each question should specifically ask about the applicant's main experience, skills, project performance, leadership and communication skills.
+            Responses should be provided in JSON format only, and only JSON structures should be included without additional grammar such as ```.
+            Examples are in the following format:
+            {"contents": [ "Question 1", "Question 2", "Question 3", ... "Question 7"]}
+            Make sure each question is provided as a separate string, and make sure that the question is concise and a key point.
+            Please answer in the same language as your resume language.
+            """;
 }

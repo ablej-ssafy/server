@@ -22,8 +22,8 @@ public class OpenAiService {
         return generateResponse(PromptConst.resumePrompt, userMessage);
     }
 
-    public String question(String systemMsg, String userMessage) {
-        return generateResponse(systemMsg, userMessage);
+    public String question(String userMessage) {
+        return generateResponse(PromptConst.questionPrompt, userMessage);
     }
 
     private String generateResponse(String systemMsg, String userMessage) {

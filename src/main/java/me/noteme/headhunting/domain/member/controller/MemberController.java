@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    private final OpenAiService openAiService;
 
     @GetMapping("/me")
     public SuccessResponse<LoginMemberResponse> currentMemberInfo(@LoginUser Long memberId) {
@@ -40,15 +39,17 @@ public class MemberController {
         return SuccessResponse.empty();
     }
 
-    @GetMapping("/test")
-    public SuccessResponse<List<String>> test(@LoginUser Long memberId, @RequestBody QuestionRequest questionRequest) {
-        List<String> question = memberService.getQuestion(memberId, questionRequest.getSystemMessage(), questionRequest.getResumeText());
-        return SuccessResponse.of(question);
+    @PostMapping("/test")
+    public SuccessResponse<Void> test(@LoginUser Long memberId) {
+        memberService.getQuestion(memberId);
+
+        return SuccessResponse.empty();
     }
 
-    @Data
-    static class QuestionRequest{
-        String resumeText;
-        String systemMessage;
+    @GetMapping("/test")
+    public SuccessResponse<Void> send(@LoginUser Long memberId) {
+        memberService.sendQuestion(memberId);
+
+        return SuccessResponse.empty();
     }
 }
