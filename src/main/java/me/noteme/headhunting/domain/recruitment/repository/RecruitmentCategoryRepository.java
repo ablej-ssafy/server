@@ -1,5 +1,6 @@
 package me.noteme.headhunting.domain.recruitment.repository;
 
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.entity.RecruitmentCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ public interface RecruitmentCategoryRepository extends JpaRepository<Recruitment
     @Query("""
         SELECT DISTINCT r.recruitment.id
         FROM RecruitmentCategory r
-        WHERE r.category.id IN :categoryIds
+        WHERE r.category IN :jobCategory
     """)
-    Page<Long> findRecruitmentIdsByCategoryIds(@Param("categoryIds") List<Long> jobCategoryIds, Pageable pageable);
+    Page<Long> findRecruitmentIdsByCategoryIds(@Param("jobCategory") JobCategory jobCategory, Pageable pageable);
 }

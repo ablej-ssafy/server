@@ -1,8 +1,6 @@
 package me.noteme.headhunting.domain.recruitment.repository;
 
 import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -59,6 +59,7 @@ public class ResumeService {
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
+    private final ResumeCacheRepository resumeCacheRepository;
 
     private final OpenAiService openAiService;
     private final Gson gson = new GsonBuilder()
@@ -79,11 +80,10 @@ public class ResumeService {
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
         Member member = getMember(memberId);
-        List<Long> jobCategoryIds = getJobCategoryIds(member);
 
         List<Long> recruitmentIds = recruitmentCategoryRepository.
                 findRecruitmentIdsByCategoryIds(
-                        jobCategoryIds,
+                        member.getJobCategory(),
                         Pageable.ofSize(3))
                 .getContent();
 
@@ -137,12 +137,18 @@ public class ResumeService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public OpenAiResponse autoResume(MultipartFile file) {
+    public void autoResume(Long memberId, MultipartFile file) {
         String pdfText = pdfToTextConverter.convertPdfToText(file);
-        String json = openAiService.autoResume(pdfText);
-        log.debug("{}",json);
+        String resumeAutoData = openAiService.autoResume(pdfText);
+
+        resumeCacheRepository.save(memberId, resumeAutoData);
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public OpenAiResponse getAutoResume(Long memberId) {
+        String data = resumeCacheRepository.getData(memberId);
         return gson.fromJson(
-                json, OpenAiResponse.class
+                data, OpenAiResponse.class
         );
     }
 
@@ -223,12 +229,6 @@ public class ResumeService {
     private Resume getResumeByMemberId(Long memberId) {
         return resumeRepository.findByMemberId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "해당 Member가 지니고 있는 Resume가 없습니다."));
-    }
-
-    private List<Long> getJobCategoryIds(Member member) {
-        return member.getInterestJobs().stream()
-                .map(interestJob -> interestJob.getJobCategory().getId())
-                .toList();
     }
 
     private Member getMember(Long memberId) {

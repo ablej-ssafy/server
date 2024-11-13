@@ -4,10 +4,12 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
+import me.noteme.headhunting.domain.member.controller.request.JobCategoryRequest;
 import me.noteme.headhunting.domain.member.dto.LoginMemberResponse;
 import me.noteme.headhunting.domain.member.service.MemberService;
 import me.noteme.headhunting.domain.recruitment.dto.CategoryResponse;
 import me.noteme.headhunting.domain.recruitment.dto.RecruitmentSummaryResponse;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import me.noteme.headhunting.domain.recruitment.entity.MockRecruitment;
 import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import org.apache.catalina.security.SecurityConfig;
@@ -25,8 +27,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,12 +52,8 @@ public class MemberControllerTest extends RestDocsSupport {
         // * GIVEN: 이런게 주어졌을 때
         long memberId = 1L;
 
-        List<CategoryResponse> categoryResponses = List.of(
-                CategoryResponse.of(1L, "이름1"),
-                CategoryResponse.of(2L, "이름2"),
-                CategoryResponse.of(3L, "이름2")
-        );
-        LoginMemberResponse response = LoginMemberResponse.of(1L, "로그인 중인 사용자의 이름", "로그인 중인 사용자의 이메일", 0, categoryResponses);
+        CategoryResponse categoryResponse = CategoryResponse.of(1L, "name");
+        LoginMemberResponse response = LoginMemberResponse.of(1L, "로그인 중인 사용자의 이름", "로그인 중인 사용자의 이메일", 0, categoryResponse);
 
         when(memberService.info(memberId)).thenReturn(response);
 
@@ -67,7 +67,7 @@ public class MemberControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("멤버")
+                                .tag("사용자")
                                 .summary("로그인 멤버 조회 API")
                                 .description("로그인 중인 멤버의 정보를 조회합니다.")
                                 .responseFields(response(
@@ -75,9 +75,8 @@ public class MemberControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.name").type(JsonFieldType.STRING).description("사용자 이름"),
                                         fieldWithPath("data.email").type(JsonFieldType.STRING).description("사용자 이메일"),
                                         fieldWithPath("data.career").type(JsonFieldType.NUMBER).description("사용자 커리어"),
-                                        fieldWithPath("data.categories").type(JsonFieldType.ARRAY).description("사용자 선호 직무 목록"),
-                                        fieldWithPath("data.categories[].id").type(JsonFieldType.NUMBER).description("직무 ID"),
-                                        fieldWithPath("data.categories[].name").type(JsonFieldType.STRING).description("직무 이름")
+                                        fieldWithPath("data.jobCategory.id").type(JsonFieldType.NUMBER).description("직무 ID"),
+                                        fieldWithPath("data.jobCategory.name").type(JsonFieldType.STRING).description("직무 이름")
                                 ))
                                 .build()
                 )));
@@ -107,7 +106,7 @@ public class MemberControllerTest extends RestDocsSupport {
         actions.andExpect(status().isOk())
                 .andDo(this.restDocs.document(resource(
                         ResourceSnippetParameters.builder()
-                                .tag("멤버")
+                                .tag("사용자")
                                 .summary("로그인 멤버 스크랩 목록 조회 API")
                                 .description("로그인 중인 멤버가 스크랩한 채용 공고 목록을 조회합니다.")
                                 .responseFields(response(
@@ -123,5 +122,37 @@ public class MemberControllerTest extends RestDocsSupport {
                                 ))
                                 .build()
                 )));
+    }
+
+    @Test
+    @DisplayName("사용자_관심_직무_변경")
+    @CustomMockUser
+    void 사용자_관심_직무_변경() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long memberId = 1L;
+        JobCategoryRequest jobCategoryRequest = new JobCategoryRequest();
+        jobCategoryRequest.setId(1L);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                patch("/api/v1/member/category")
+                        .contentType("application/json")
+                        .content(toJson(jobCategoryRequest))
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("사용자")
+                                .summary("사용자 관심 직무 업데이트 API")
+                                .description("사용자 선호 직무를 업데이트합니다..")
+                                .requestFields(
+                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("직무 번호")
+                                ).responseFields(empty())
+                                .build()
+                )));
+        verify(memberService).updateJobCategory(memberId, jobCategoryRequest.getId());
     }
 }
