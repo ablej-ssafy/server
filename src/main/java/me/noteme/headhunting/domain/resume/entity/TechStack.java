@@ -31,4 +31,9 @@ public class TechStack {
     @OneToMany(mappedBy = "techStack", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<StackSkill> stackSkills = new HashSet<>();
+
+    public void update(String githubUrl, String notionUrl) {
+        this.githubUrl = githubUrl;
+        this.notionUrl = notionUrl;
+    }
 }
