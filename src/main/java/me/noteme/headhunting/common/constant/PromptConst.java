@@ -1,7 +1,7 @@
 package me.noteme.headhunting.common.constant;
 
 public interface PromptConst {
-    String prompt = """
+    String resumePrompt = """
                     Convert the following resume text into structured JSON in this format:
                     {
                         aiBasic: {

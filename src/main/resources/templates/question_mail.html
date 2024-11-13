@@ -1,0 +1,27 @@
+<div style="width: 580px; margin: 40px auto; box-sizing: border-box; text-align: center; border-top: 3.5px solid #333;">
+    <h1 style="font-size: 26px; color: #333; margin: 40px 0;">오늘의 질문</h1>
+
+    <p style="font-size: 16.5px; color: #333; line-height: 1.6; margin: 0 0 30px;">
+        안녕하세요. <span th:text="${nickname}"></span>님,<br />
+        이력서를 기반으로 한 예상 면접 질문을 드립니다.
+    </p>
+
+    <div style="background-color: #f7f7f7; padding: 20px; margin: 20px 0; color: #333; font-size: 16.5px; line-height: 1.6;">
+        <p style="margin: 0; font-weight: bold;">면접 예상 질문</p>
+        <p style="margin: 10px 0 0; padding: 20px; background-color: white;" th:text="${question}">
+            여기에 예상 면접 질문이 표시됩니다.
+        </p>
+    </div>
+
+    <div style="border-bottom: 1px solid #333; padding: 16px 0 36px;">
+        <div style="font-size: 14.5px; color: #777;">
+            해당 질문에 대해 자유롭게 답변해보세요.
+        </div>
+    </div>
+
+    <div style="color: #777; font-size: 14.5px; padding: 28px 0; text-align: center;">
+        <a th:href="@{${mainURI}}" target="_blank" style="display: inline-block; color: #909090; text-decoration: none;">
+            <span style="color: black; font-weight: 700;">AI Headhunting</span>&nbsp;&nbsp;|&nbsp;&nbsp;맞춤 채용공고 보러가기
+        </a>
+    </div>
+</div>

@@ -37,6 +37,15 @@ public class EmailService {
         sendEmail(to, CONFIRM_TITLE, CONFIRM_VIEW_NAME, context);
     }
 
+    public void sendQuestionEmail(String to, String nickName, String question) {
+        Context context = new Context();
+        context.setVariable("nickname", nickName);
+        context.setVariable("question", question);
+        context.setVariable("mainURI", frontedUrl);
+
+        sendEmail(to, "test", "question_mail", context);
+    }
+
     private void sendEmail(String to, String subject, String viewName, Context context) {
         MimeMessage message = mailSender.createMimeMessage();
 

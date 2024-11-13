@@ -1,9 +1,11 @@
 package me.noteme.headhunting.domain.member.controller;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.common.service.OpenAiService;
 import me.noteme.headhunting.domain.member.controller.request.JobCategoryRequest;
 import me.noteme.headhunting.domain.member.dto.LoginMemberResponse;
 import me.noteme.headhunting.domain.member.service.MemberService;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final OpenAiService openAiService;
 
     @GetMapping("/me")
     public SuccessResponse<LoginMemberResponse> currentMemberInfo(@LoginUser Long memberId) {
@@ -35,5 +38,17 @@ public class MemberController {
         memberService.updateJobCategory(memberId, jobCategoryId.getId());
 
         return SuccessResponse.empty();
+    }
+
+    @GetMapping("/test")
+    public SuccessResponse<List<String>> test(@LoginUser Long memberId, @RequestBody QuestionRequest questionRequest) {
+        List<String> question = memberService.getQuestion(memberId, questionRequest.getSystemMessage(), questionRequest.getResumeText());
+        return SuccessResponse.of(question);
+    }
+
+    @Data
+    static class QuestionRequest{
+        String resumeText;
+        String systemMessage;
     }
 }

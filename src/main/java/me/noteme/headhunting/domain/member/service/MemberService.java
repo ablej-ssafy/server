@@ -1,9 +1,14 @@
 package me.noteme.headhunting.domain.member.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.common.service.EmailService;
+import me.noteme.headhunting.common.service.OpenAiService;
 import me.noteme.headhunting.domain.member.dto.LoginMemberResponse;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
@@ -25,6 +30,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ScrapRepository scrapRepository;
     private final JobCategoryRepository jobCategoryRepository;
+    private final OpenAiService openAiService;
+
+    private final EmailService emailService;
+
+    private final Gson gson;
 
     public LoginMemberResponse info(long memberId) {
         Member member = getMember(memberId);
@@ -60,5 +70,19 @@ public class MemberService {
     private Member getMember(Long memberId) {
         return memberRepository.findFetchById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    public List<String> getQuestion(Long memberId, String systemMessage, String resumeText) {
+        String question = openAiService.question(systemMessage, resumeText);
+
+        JsonArray contentsArray = gson.fromJson(question, JsonObject.class)
+                .getAsJsonArray("contents");
+
+        List<String> list = gson.fromJson(contentsArray, List.class);
+        Member member = getMember(memberId);
+        String email = member.getUsername();
+        emailService.sendQuestionEmail(email, member.getNickname(), list.getFirst());
+
+        return list;
     }
 }

@@ -64,7 +64,7 @@ public class AuthService {
         memberRepository.saveAndFlush(member);
 
         // Resume 저장 로직
-        publisher.publishEvent(ResumeInitEvent.of(member.getId()));
+//        publisher.publishEvent(ResumeInitEvent.of(member.getId()));
 
         // 이메일 전송 로직
         publisher.publishEvent(ConfirmEmailEvent.of(email, name));
