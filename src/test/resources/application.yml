@@ -21,6 +21,21 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: client
+            client-secret: client-server
+            redirect-uri: ${app.server-base-url}/api/v1/github/callback
+            authorization-grant-type: authorization_code
+            scope: read:user, repo
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
 notification:
   mattermost:
     enabled: false  # mmSender를 사용할 지 여부, false면 알림이 오지 않는다
