@@ -103,21 +103,19 @@ public class ResumeController {
         return SuccessResponse.of(storageService.getFileUrl(memberId, profile.getOriginalFilename()));
     }
 
-    @GetMapping("/{resumeId}/order")
+    @GetMapping("/order")
     public SuccessResponse<ResumeOrderResponse> getResumeOrder(
-            @LoginUser Long memberId,
-            @PathVariable Long resumeId
+            @LoginUser Long memberId
     ) {
-        return SuccessResponse.of(resumeService.getResumeOrder(memberId, resumeId));
+        return SuccessResponse.of(resumeService.getResumeOrder(memberId));
     }
 
-    @PatchMapping("/{resumeId}/order")
+    @PatchMapping("/order")
     public SuccessResponse<Void> updateResumeOrder(
             @LoginUser Long memberId,
-            @PathVariable Long resumeId,
             @RequestBody ResumeOrderRequest request
     ) {
-        resumeService.updateResumeOrder(memberId, resumeId, request.getKey(), request.getOrder());
+        resumeService.updateResumeOrder(memberId, request.getKey(), request.getOrder());
         return SuccessResponse.empty();
     }
 

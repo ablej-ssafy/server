@@ -248,8 +248,9 @@ public class ResumeService {
         return ResumeResponse.of(basic, educations, companies, activities, projects, qualifications, languages, tech);
     }
 
-    public ResumeOrderResponse getResumeOrder(Long memberId, Long resumeId) {
-        ResumeOrder resumeOrder = getResumeOrder(resumeId);
+    public ResumeOrderResponse getResumeOrder(Long memberId) {
+        ResumeOrder resumeOrder = resumeOrderRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
@@ -258,20 +259,15 @@ public class ResumeService {
     }
 
     @Transactional
-    public void updateResumeOrder(Long memberId, Long resumeId, String keyword, double value) {
-        ResumeOrder resumeOrder = getResumeOrder(resumeId);
+    public void updateResumeOrder(Long memberId, String keyword, double value) {
+        ResumeOrder resumeOrder = resumeOrderRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
 
         if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         resumeOrder.update(keyword, value);
-    }
-
-    private ResumeOrder getResumeOrder(Long resumeId) {
-        return resumeOrderRepository.findById(resumeId).orElseThrow(
-                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
-        );
     }
 
     private OpenAiResponse getOpenAiResponse(Long memberId) {

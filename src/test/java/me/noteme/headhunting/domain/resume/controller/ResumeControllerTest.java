@@ -481,14 +481,13 @@ class ResumeControllerTest extends RestDocsSupport {
     void 이력서_순서_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
-        Long resumeId = 1L;
 
         ResumeOrderResponse response = ResumeOrderResponse.of(0, 1, 2,3 ,4, 5, 6, 7);
-        when(resumeService.getResumeOrder(memberId, resumeId)).thenReturn(response);
+        when(resumeService.getResumeOrder(memberId)).thenReturn(response);
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                get("/api/v1/resume/{resumeId}/order", resumeId)
+                get("/api/v1/resume/order")
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -498,9 +497,6 @@ class ResumeControllerTest extends RestDocsSupport {
                                 .tag("이력서")
                                 .summary("이력서 순서 조회 API")
                                 .description("이력서의 순서를 조회합니다.")
-                                .pathParameters(
-                                        parameterWithName("resumeId").description("이력서 ID")
-                                )
                                 .responseFields(response(
                                         fieldWithPath("data.basic").type(JsonFieldType.NUMBER).description("기본 정보 순서"),
                                         fieldWithPath("data.education").type(JsonFieldType.NUMBER).description("학력 순서"),
@@ -520,7 +516,6 @@ class ResumeControllerTest extends RestDocsSupport {
     void 이력서_순서_업데이트_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
         Long memberId = 1L;
-        Long resumeId = 1L;
 
         ResumeOrderRequest request = new ResumeOrderRequest();
         request.setKey("basic");
@@ -528,7 +523,7 @@ class ResumeControllerTest extends RestDocsSupport {
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                patch("/api/v1/resume/{resumeId}/order", resumeId)
+                patch("/api/v1/resume/order")
                 .contentType("application/json")
                 .content(toJson(request))
         );
@@ -540,15 +535,12 @@ class ResumeControllerTest extends RestDocsSupport {
                                 .tag("이력서")
                                 .summary("이력서 순서 업데이트 API")
                                 .description("이력서의 순서를 업데이트합니다.")
-                                .pathParameters(
-                                        parameterWithName("resumeId").description("이력서 ID")
-                                )
                                 .requestFields(
                                         fieldWithPath("key").type(JsonFieldType.STRING).description("순서를 업데이트할 항목"),
                                         fieldWithPath("order").type(JsonFieldType.NUMBER).description("순서 값")
                                 ).responseFields(empty())
                                 .build()
                 )));
-        verify(resumeService).updateResumeOrder(memberId, resumeId, request.getKey(), request.getOrder());
+        verify(resumeService).updateResumeOrder(memberId, request.getKey(), request.getOrder());
     }
 }

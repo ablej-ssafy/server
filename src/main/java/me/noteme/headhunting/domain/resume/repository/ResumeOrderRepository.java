@@ -16,4 +16,13 @@ public interface ResumeOrderRepository extends JpaRepository<ResumeOrder, Long> 
             WHERE ro.resume.id = :resumeId
     """)
     Optional<ResumeOrder> findByResumeId(@Param("resumeId") Long resumeId);
+
+    @Query("""
+            SELECT ro
+            FROM ResumeOrder ro
+            JOIN FETCH ro.resume
+            JOIN FETCH ro.resume.member
+            WHERE ro.resume.member.id = :memberId
+    """)
+    Optional<ResumeOrder> findByMemberId(@Param("memberId") Long memberId);
 }
