@@ -82,4 +82,7 @@ public class SearchCacheRepository {
         )).contains(keyword);
     }
 
+    public void removeAllKeyword(Long userId) {
+        setOperations.remove(CacheKey.searchUserKey(userId));
+    }
 }
