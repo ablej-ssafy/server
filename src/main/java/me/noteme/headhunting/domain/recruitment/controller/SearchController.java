@@ -13,6 +13,8 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/search")
@@ -24,6 +26,12 @@ public class SearchController {
         return SuccessResponse.of(
                 searchService.rankKeywords(userId)
         );
+    }
+
+    @GetMapping("/suggestions")
+    public SuccessResponse<List<String>> getSuggestions(@RequestParam(name = "q") String keyword) {
+        List<String> suggestions = searchService.getSuggestions(keyword);
+        return SuccessResponse.of(suggestions);
     }
 
     @DeleteMapping

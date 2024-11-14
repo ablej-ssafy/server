@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>, RecruitmentQueryRepository {
     @Query("""
@@ -30,4 +31,7 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>,
         WHERE r.id IN :recruitmentIds
     """)
     List<Recruitment> findRecruitmentsById(@Param("recruitmentIds") List<Long> recruitmentIds);
+
+    @Query("SELECT r.name FROM Recruitment r")
+    List<String> findRecruitmentNames();
 }

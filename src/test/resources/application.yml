@@ -21,9 +21,24 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: client
+            client-secret: client-server
+            redirect-uri: ${app.server-base-url}/api/v1/github/callback
+            authorization-grant-type: authorization_code
+            scope: read:user, repo
+        provider:
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
 notification:
   mattermost:
-    enabled: false  # mmSender를 사용할 지 여부, false면 알림이 오지 않는다
+    enabled: true  # mmSender를 사용할 지 여부, false면 알림이 오지 않는다
     webhook-url: ""  # 위의 Webhook URL을 기입
     channel:   # 기본 설정한 채널이 아닌 다른 채널로 보내고 싶을 때 기입한다
     pretext: ""  # attachments의 상단에 나오게 되는 일반 텍스트 문자

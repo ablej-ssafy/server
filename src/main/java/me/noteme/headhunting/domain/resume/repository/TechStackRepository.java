@@ -9,12 +9,11 @@ import java.util.Optional;
 
 public interface TechStackRepository extends JpaRepository<TechStack, Long> {
     @Query("""
-        SELECT ts
-        FROM TechStack ts
-        JOIN FETCH ts.stackSkills
-        JOIN Resume r
-        ON  ts.resume.id = r.id
-        WHERE r.member.id = :memberId
-    """)
+                SELECT ts
+                FROM TechStack ts
+                LEFT JOIN FETCH ts.stackSkills
+                JOIN Resume r ON r.id = ts.resume.id
+                WHERE r.member.id = :memberId
+            """)
     Optional<TechStack> findByMemberId(@Param("memberId") Long memberId);
 }

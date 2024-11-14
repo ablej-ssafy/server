@@ -59,6 +59,7 @@ public class ResumeService {
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
+    private final ResumeCacheRepository resumeCacheRepository;
 
     private final OpenAiService openAiService;
     private final Gson gson = new GsonBuilder()
@@ -136,19 +137,25 @@ public class ResumeService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public OpenAiResponse autoResume(MultipartFile file) {
+    public void autoResume(Long memberId, MultipartFile file) {
         String pdfText = pdfToTextConverter.convertPdfToText(file);
-        String json = openAiService.autoResume(pdfText);
-        log.debug("{}",json);
-        return gson.fromJson(
-                json, OpenAiResponse.class
-        );
+        String resumeAutoData = openAiService.resume(pdfText);
+
+        resumeCacheRepository.save(memberId, resumeAutoData);
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public OpenAiResponse getAutoResume(Long memberId) {
+        return getOpenAiResponse(memberId);
+    }
+
+    public void changeAutoResume(Long memberId) {
+        OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
     }
 
     @Transactional
     public void resumeInit(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        Member member = getMember(memberId);
 
         Resume resume = Resume.builder()
                 .member(member)
@@ -195,10 +202,7 @@ public class ResumeService {
     }
 
     public ResumeOrderResponse getResumeOrder(Long memberId, Long resumeId) {
-        ResumeOrder resumeOrder = resumeOrderRepository.findById(resumeId).orElseThrow(
-                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
-        );
-
+        ResumeOrder resumeOrder = getResumeOrder(resumeId);
         if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
@@ -208,15 +212,26 @@ public class ResumeService {
 
     @Transactional
     public void updateResumeOrder(Long memberId, Long resumeId, String keyword, double value) {
-        ResumeOrder resumeOrder = resumeOrderRepository.findById(resumeId).orElseThrow(
-                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
-        );
+        ResumeOrder resumeOrder = getResumeOrder(resumeId);
 
         if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         resumeOrder.update(keyword, value);
+    }
+
+    private ResumeOrder getResumeOrder(Long resumeId) {
+        return resumeOrderRepository.findById(resumeId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+    }
+
+    private OpenAiResponse getOpenAiResponse(Long memberId) {
+        return gson.fromJson(
+                resumeCacheRepository.getData(memberId),
+                OpenAiResponse.class
+        );
     }
 
     private Resume getResumeByMemberId(Long memberId) {

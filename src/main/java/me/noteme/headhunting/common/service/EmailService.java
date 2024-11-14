@@ -29,15 +29,27 @@ public class EmailService {
     private final String CONFIRM_TITLE = "[AHEY] 회원가입 이메일 인증 안내";
     private final String CONFIRM_VIEW_NAME = "confirm_member_account_mail";
 
+    private final String QUESTION_TITLE = "[AHEY] 오늘의 면접 질문";
+    private final String QUESTION_VIEW_NAME = "question_mail";
+
     private final String ANALYZE_VIEW_NAME = "github_analysis_summation_mail";
 
     @Async("emailSendExecutor")
     public void sendConfirmationEmail(String to, String nickName, String key) {
         Context context = new Context();
         context.setVariable("nickname", nickName);
-        context.setVariable("confirmURI", createURI("/confirm/email", key));
+        context.setVariable("confirmURI", createURI("/verify", key));
 
         sendEmail(to, CONFIRM_TITLE, CONFIRM_VIEW_NAME, context);
+    }
+
+    public void sendQuestionEmail(String to, String nickName, String question) {
+        Context context = new Context();
+        context.setVariable("nickname", nickName);
+        context.setVariable("question", question);
+        context.setVariable("mainURI", frontedUrl);
+
+        sendEmail(to, QUESTION_TITLE, QUESTION_VIEW_NAME, context);
     }
 
     @Async("emailSendExecutor")
@@ -72,6 +84,9 @@ public class EmailService {
     }
 
     private String createURI(String type, String key) {
-        return UriComponentsBuilder.fromUriString(frontedUrl + type + "/" + key).toUriString();
+//        return UriComponentsBuilder.fromUriString(frontedUrl + type)
+        return UriComponentsBuilder.fromUriString("http://localhost:3000" + type)
+                .queryParam("key", key)
+                .toUriString();
     }
 }
