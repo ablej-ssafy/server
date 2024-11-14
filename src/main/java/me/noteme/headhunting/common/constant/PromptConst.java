@@ -46,11 +46,6 @@ public interface PromptConst {
                                 grade: String,
                                 certificationType: QUALIFICATION | LANGUAGE
                             }
-                        ],
-                        aiReferenceUrls: [
-                            {
-                                url: String
-                            }
                         ]
                     }
                     Instructions:

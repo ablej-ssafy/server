@@ -14,12 +14,10 @@ import java.util.List;
 @ToString
 @Data
 public class OpenAiResponse {
-
     private AiBasic aiBasic;
     private List<AiEducational> aiEducationals;
     private List<AiExperience> aiExperiences;
     private List<AiCertification> aiCertifications;
-    private List<AiReferenceUrl> aiReferenceUrls;
 
     @Data
     @AllArgsConstructor
@@ -68,11 +66,5 @@ public class OpenAiResponse {
         private LocalDate acquisitionAt;
         private String grade;
         private CertificationType certificationType;
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class AiReferenceUrl {
-        private String url;
     }
 }

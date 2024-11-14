@@ -56,15 +56,18 @@ public class ResumeService {
     private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
     private final ResumeOrderRepository resumeOrderRepository;
+    private final CertificationRepository certificationRepository;
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
     private final ResumeCacheRepository resumeCacheRepository;
+    private final ExperienceRepository experienceRepository;
 
     private final OpenAiService openAiService;
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .create();
+    private final EducationRepository educationRepository;
 
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
@@ -149,8 +152,31 @@ public class ResumeService {
         return getOpenAiResponse(memberId);
     }
 
+    @Transactional
     public void changeAutoResume(Long memberId) {
         OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
+        memberResumeClear(memberId);
+
+        // TODO: 파싱 INSERT
+        OpenAiResponse.AiBasic aiBasic = openAiResponse.getAiBasic();
+
+        // TODO: RESUME_BASIC INSERT
+        // TODO: EDUCATION INSERT
+        // TODO: CERTIFICATION INSERT
+        // TODO: EXPERIENCE INSERT
+
+        // TODO: MONGO 만들기
+    }
+
+    private void memberResumeClear(Long memberId) {
+        // TODO: Resume_Basic Clear
+        resumeBasicRepository.deleteAllByMemberId(memberId);
+        // TODO: Education Clear
+        educationRepository.deleteAllByMemberId(memberId);
+        // TODO: Certification Clear
+        certificationRepository.deleteAllByMemberId(memberId);
+        // TODO: Experience Clear
+        experienceRepository.deleteAllByMemberId(memberId);
     }
 
     @Transactional
