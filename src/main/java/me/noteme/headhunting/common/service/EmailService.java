@@ -38,7 +38,7 @@ public class EmailService {
     public void sendConfirmationEmail(String to, String nickName, String key) {
         Context context = new Context();
         context.setVariable("nickname", nickName);
-        context.setVariable("confirmURI", createURI("/confirm/email", key));
+        context.setVariable("confirmURI", createURI("/verify", key));
 
         sendEmail(to, CONFIRM_TITLE, CONFIRM_VIEW_NAME, context);
     }
@@ -79,6 +79,8 @@ public class EmailService {
     }
 
     private String createURI(String type, String key) {
-        return UriComponentsBuilder.fromUriString(frontedUrl + type + "/" + key).toUriString();
+        return UriComponentsBuilder.fromUriString(frontedUrl + type)
+                .queryParam("key", key)
+                .toUriString();
     }
 }

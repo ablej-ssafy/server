@@ -134,4 +134,11 @@ public class ResumeController {
                 resumeService.getAutoResume(memberId)
         );
     }
+
+    @PostMapping("/auto/change")
+    public SuccessResponse<Void> changeAutoResume(@LoginUser Long memberId){
+        resumeService.changeAutoResume(memberId);
+
+        return SuccessResponse.empty();
+    }
 }

@@ -146,17 +146,16 @@ public class ResumeService {
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public OpenAiResponse getAutoResume(Long memberId) {
-        String data = resumeCacheRepository.getData(memberId);
+        return getOpenAiResponse(memberId);
+    }
 
-        return gson.fromJson(
-                data, OpenAiResponse.class
-        );
+    public void changeAutoResume(Long memberId) {
+        OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
     }
 
     @Transactional
     public void resumeInit(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        Member member = getMember(memberId);
 
         Resume resume = Resume.builder()
                 .member(member)
@@ -225,6 +224,13 @@ public class ResumeService {
         }
 
         resumeOrder.update(keyword, value);
+    }
+
+    private OpenAiResponse getOpenAiResponse(Long memberId) {
+        return gson.fromJson(
+                resumeCacheRepository.getData(memberId),
+                OpenAiResponse.class
+        );
     }
 
     private Resume getResumeByMemberId(Long memberId) {
