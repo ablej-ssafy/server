@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "githubAuthRequestClient", url = "https://github.com", configuration = FeignConfig.class)
+@FeignClient(name = "githubAuthRequestClient", url = "https://github.com")
 public interface GithubAuthRequestClient {
     @PostMapping(value = "/login/oauth/access_token")
     GitAccessResponse getAccessToken(@RequestHeader("Accept") String contentType, @RequestBody GitAccessRequest request);

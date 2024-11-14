@@ -83,8 +83,6 @@ sentry:
 logging:
   level:
     me.noteme: DEBUG
-    org.springframework.web.client: DEBUG
-    org.springframework.cloud.openfeign: DEBUG
 
   servlet:
     multipart:
