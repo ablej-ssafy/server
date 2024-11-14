@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
+import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -62,7 +65,7 @@ public class Member extends BaseEntity {
         emailVerified = true;
     }
 
-    public void chagneJobCategory(JobCategory jobCategory) {
+    public void changeJobCategory(JobCategory jobCategory) {
         this.jobCategory = jobCategory;
     }
 }

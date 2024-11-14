@@ -37,7 +37,7 @@ public class RecommendService {
     private final MemberRepository memberRepository;
     private final StorageService storageService;
 
-    private final int SIZE = 30;
+    private final int SIZE = 24;
 
     public List<RecommendResponse> analyzeResume(Long memberId, Long resumePdfId) {
         List<AiRecommendResponse> recommendResponses = getAiRecommend(memberId, resumePdfId);
