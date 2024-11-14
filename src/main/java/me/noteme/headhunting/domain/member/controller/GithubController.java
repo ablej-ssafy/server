@@ -59,7 +59,7 @@ public class GithubController {
 
     @PostMapping("/analysis")
     public SuccessResponse<RepoAnalysisResponse> gitAnalysis(
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @Validated @RequestBody RepoInfoRequest request
     ) {
         return SuccessResponse.of(

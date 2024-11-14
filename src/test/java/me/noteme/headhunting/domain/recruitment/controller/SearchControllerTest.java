@@ -267,6 +267,30 @@ class SearchControllerTest extends RestDocsSupport {
     }
 
     @Test
+    @DisplayName("최근_검색어_전체_삭제_테스트")
+    @CustomMockUser
+    void 최근_검색어_전체_삭제_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        Long userId = 1L;
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                delete("/api/v1/search/all")
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isNoContent())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("검색")
+                                .summary("최근 검색어 전체 삭제 API")
+                                .description("최근 검색어를 전체 삭제합니다.")
+                                .build()
+                )));
+        verify(searchService).removeAllKeyword(userId);
+    }
+
+    @Test
     @DisplayName("자동완성_검색_조회_테스트")
     void 자동완성_검색_조회_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때

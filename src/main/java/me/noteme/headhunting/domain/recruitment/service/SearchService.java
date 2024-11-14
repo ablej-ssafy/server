@@ -64,7 +64,7 @@ public class SearchService {
     }
 
     private List<KeywordResponse> getRecentKeywords(Long memberId) {
-        List<String> keywords = searchCacheRepository.getKeywords(memberId);
+        Set<String> keywords = searchCacheRepository.getKeywords(memberId);
 
         List<KeywordResponse> recentKeywords = new ArrayList<>();
         int recent = 1;
@@ -92,5 +92,10 @@ public class SearchService {
     @Transactional
     public void removeKeyword(Long userId, String keyword) {
         searchCacheRepository.removeKeyword(userId, keyword);
+    }
+
+    @Transactional
+    public void removeAllKeyword(Long userId) {
+        searchCacheRepository.removeAllKeyword(userId);
     }
 }

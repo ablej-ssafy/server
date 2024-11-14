@@ -39,5 +39,4 @@ public interface MongoResumeRepository extends MongoRepository<MongoResume, Stri
     @Query("{'memberId': ?0}")
     @Update("{'$set': {'languages': ?1}}")
     void updateLanguages(Long memberId, List<MongoCertification> languages);
-
 }

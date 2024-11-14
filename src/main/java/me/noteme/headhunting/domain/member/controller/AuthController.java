@@ -62,7 +62,7 @@ public class AuthController {
     public SuccessResponse<Void> signOut(
             HttpServletRequest request,
             HttpServletResponse response,
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @Validated @RequestBody RefreshRequest refreshRequest
     ) {
         String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
@@ -77,7 +77,7 @@ public class AuthController {
     public SuccessResponse<JwtToken> refresh(
             HttpServletRequest request,
             HttpServletResponse response,
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @Validated @RequestBody RefreshRequest refreshRequest
     ) {
         String refreshToken = parseRefreshToken(request, refreshRequest.getRefreshToken());
@@ -95,7 +95,7 @@ public class AuthController {
     }
 
     @PostMapping("/resend")
-    public SuccessResponse<Void> resendEmail(@LoginUser Long memberId) {
+    public SuccessResponse<Void> resendEmail(@LoginUser(required = true) Long memberId) {
         authService.resendEmail(memberId);
 
         return SuccessResponse.empty();

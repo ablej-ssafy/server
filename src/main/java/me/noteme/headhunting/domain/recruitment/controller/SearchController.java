@@ -37,10 +37,18 @@ public class SearchController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSearchKeyword(
-            @LoginUser Long userId,
-            @RequestParam String keyword
+            @LoginUser(required = true) Long userId,
+            @RequestParam(value = "keyword") String keyword
     ) {
         searchService.removeKeyword(userId, keyword);
+    }
+
+    @DeleteMapping("/all")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllSearchKeyword(
+            @LoginUser(required = true) Long userId
+    ) {
+        searchService.removeAllKeyword(userId);
     }
 
     @GetMapping("/company")

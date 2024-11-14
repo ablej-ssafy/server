@@ -25,7 +25,7 @@ import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
-import me.noteme.headhunting.domain.resume.entity.mongo.MongoResumeBasic;
+import me.noteme.headhunting.domain.resume.entity.mongo.*;
 import me.noteme.headhunting.domain.resume.repository.*;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
@@ -155,42 +155,48 @@ public class ResumeService {
         OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
         Resume resume = resumeRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
         memberResumeClear(memberId);
 
-        // 파싱 INSERT
-        // TODO: RESUME_BASIC INSERT
         ResumeBasic resumeBasic = ResumeBasic.from(openAiResponse.getAiBasic(), resume);
         resumeBasicRepository.save(resumeBasic);
 
-        // TODO: EDUCATION INSERT
         List<Education> educations = openAiResponse.getAiEducationals().stream()
                 .map(education -> Education.from(education, resume))
                 .toList();
         educationRepository.saveAll(educations);
 
-        // TODO: CERTIFICATION INSERT
         List<Certification> certifications = openAiResponse.getAiCertifications().stream()
                 .map(certification -> Certification.from(certification, resume))
                 .toList();
         certificationRepository.saveAll(certifications);
 
-        // TODO: EXPERIENCE INSERT
         List<Experience> experiences = openAiResponse.getAiExperiences().stream()
                 .map(experience -> Experience.from(experience, resume))
                 .toList();
         experienceRepository.saveAll(experiences);
 
-        // TODO: MONGO 만들기
+        mongoResumeRepository.findByMemberId(memberId)
+                .ifPresent(mongoResumeRepository::delete);
+
+        MongoResume mongoResume = MongoResume.builder()
+                .memberId(memberId)
+                .basic(MongoResumeBasic.from(resumeBasic))
+                .educations(educations.stream().map(MongoEducation::from).toList())
+                .companies(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.COMPANY)).map(MongoExperience::from).toList())
+                .activities(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.ACTIVITY)).map(MongoExperience::from).toList())
+                .projects(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.PROJECT)).map(MongoExperience::from).toList())
+                .qualifications(certifications.stream().filter(c -> c.getCertificationType().equals(CertificationType.QUALIFICATION)).map(MongoCertification::from).toList())
+                .languages(certifications.stream().filter(c -> c.getCertificationType().equals(CertificationType.LANGUAGE)).map(MongoCertification::from).toList())
+                .build();
+
+        mongoResumeRepository.save(mongoResume);
     }
 
     private void memberResumeClear(Long memberId) {
-        // TODO: Resume_Basic Clear
         resumeBasicRepository.deleteAllByMemberId(memberId);
-        // TODO: Education Clear
         educationRepository.deleteAllByMemberId(memberId);
-        // TODO: Certification Clear
         certificationRepository.deleteAllByMemberId(memberId);
-        // TODO: Experience Clear
         experienceRepository.deleteAllByMemberId(memberId);
     }
 

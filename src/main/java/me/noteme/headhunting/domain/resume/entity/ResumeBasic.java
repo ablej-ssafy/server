@@ -59,6 +59,7 @@ public class ResumeBasic {
     /**
      * 한줄 소개
      */
+    @Column(columnDefinition = "TEXT")
     private String introduce;
 
     /**
