@@ -96,8 +96,8 @@ public class AuthController {
     }
 
     @PostMapping("/resend")
-    public SuccessResponse<Void> resendEmail(@Validated @RequestBody EmailRequest request) {
-        authService.resendEmail(request.getEmail());
+    public SuccessResponse<Void> resendEmail(@LoginUser Long memberId) {
+        authService.resendEmail(memberId);
 
         return SuccessResponse.empty();
     }

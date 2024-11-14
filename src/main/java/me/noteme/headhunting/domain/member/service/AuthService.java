@@ -88,10 +88,14 @@ public class AuthService {
         memberRepository.verify(email);
     }
 
-    public void resendEmail(String email) {
-        String nickname = memberRepository.findNicknameByUsername(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이미 처리된 사용자입니다."));
-        publisher.publishEvent(ConfirmEmailEvent.of(email, nickname));
+    public void resendEmail(long memberId) {
+        Member member = memberRepository.findFetchById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND, "존재 하지 않는 사용자입니다."));
+        if(member.isEmailVerified()){
+            throw new CustomException(ErrorCode.BAD_REQUEST, "이미 처리된 사용자입니다.");
+        }
+
+        publisher.publishEvent(ConfirmEmailEvent.of(member.getUsername(), member.getNickname()));
     }
 
     public JwtToken signIn(String email, String password) {
