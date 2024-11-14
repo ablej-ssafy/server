@@ -45,15 +45,18 @@ public class GithubController {
     }
 
     @GetMapping("/callback")
-    public void callback(@RequestParam("code") String code, @RequestParam("state") String redirectUrl,HttpServletResponse response) throws IOException {
+    public void callback(@RequestParam("code") String code, @RequestParam("state") String redirectUrl, HttpServletResponse response) throws IOException {
         log.debug("Github callback code={}, state={}", code, redirectUrl);
         String clientId = clientRegistrationRepository.findByRegistrationId("github").getClientId();
         String clientSecret = clientRegistrationRepository.findByRegistrationId("github").getClientSecret();
         String redirectUri = clientRegistrationRepository.findByRegistrationId("github").getRedirectUri();
 
-        GitAccessRequest gitRequest = GitAccessRequest.of(clientId, clientSecret, code, redirectUri);
-        GitAccessResponse gitAccessToken = gitHubAuthRequestClient.getAccessToken("application/json", gitRequest);
+        log.debug("Client ID: {}, Client Secret: {}, Redirect URI: {}", clientId, clientSecret, redirectUri);
 
+        GitAccessRequest gitRequest = GitAccessRequest.of(clientId, clientSecret, code, redirectUri);
+        log.debug("GitAccessRequest created: {}", gitRequest);
+
+        GitAccessResponse gitAccessToken = gitHubAuthRequestClient.getAccessToken("application/json", gitRequest);
         log.debug("gitAccessToken - {}", gitAccessToken);
 
         response.sendRedirect(redirectUrl + "?accessToken=" + gitAccessToken.getAccessToken());
