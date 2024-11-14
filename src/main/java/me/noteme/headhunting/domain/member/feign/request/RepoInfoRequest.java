@@ -21,6 +21,6 @@ public class RepoInfoRequest {
     @NotEmpty(message = "branch 값은 필수입니다.")
     private String branch;
     private String token;
-    private String email;
+    private String memberId;
 }
 

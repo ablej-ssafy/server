@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
+import me.noteme.headhunting.domain.member.dto.AnalysisSummary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -31,7 +32,6 @@ public class EmailService {
     private final String QUESTION_TITLE = "[AHEY] 오늘의 면접 질문";
     private final String QUESTION_VIEW_NAME = "question_mail";
 
-    private final String ANALYZE_TITLE = "[AHEY] 깃 프로젝트 분석 결과 안내";
     private final String ANALYZE_VIEW_NAME = "github_analysis_summation_mail";
 
     @Async("emailSendExecutor")
@@ -53,12 +53,17 @@ public class EmailService {
     }
 
     @Async("emailSendExecutor")
-    public void GithubRepositoryAnalysis(String to, String repositoryName, String analysisSummary) {
-        Context context = new Context();
-        context.setVariable("analysisSummary", analysisSummary);
-        context.setVariable("subject", "[AHEY] " + repositoryName + " 분석 결과");
+    public void GithubRepositoryAnalysis(String to, String nickname, String repositoryName, AnalysisSummary analysisSummary) {
+        String subject = "[AHEY] " + repositoryName + " 분석 결과";
 
-        sendEmail(to, ANALYZE_TITLE, ANALYZE_VIEW_NAME, context);
+        Context context = new Context();
+        context.setVariable("nickname", nickname);
+        context.setVariable("projectName", repositoryName);
+        context.setVariable("summation", analysisSummary.getSummation());
+        context.setVariable("techSkills", analysisSummary.getTechSkills());
+        context.setVariable("keyFeatures", analysisSummary.getKeyFeatures());
+
+        sendEmail(to, subject, ANALYZE_VIEW_NAME, context);
     }
 
     private void sendEmail(String to, String subject, String viewName, Context context) {

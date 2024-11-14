@@ -23,7 +23,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             WHERE m.username = :username
             AND m.emailVerified = FALSE
     """)
-    Optional<String> findNicknameByUsername(String username);
+    Optional<String> findNicknameByUsername(@Param("username") String username);
 
     @Modifying
     @Query("""
