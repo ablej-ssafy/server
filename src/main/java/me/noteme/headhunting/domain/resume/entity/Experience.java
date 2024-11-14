@@ -2,6 +2,7 @@ package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 
 import java.time.LocalDate;
 
@@ -51,6 +52,18 @@ public class Experience {
                 .description(description)
                 .referenceUrl(referenceUrl)
                 .resume(resume)
+                .build();
+    }
+
+    public static Experience from(OpenAiResponse.AiExperience experience) {
+        return Experience.builder()
+                .experienceType(experience.getExperienceType())
+                .title(experience.getTitle())
+                .affiliation(experience.getAffiliation())
+                .startAt(experience.getStartAt())
+                .endAt(experience.getEndAt())
+                .description(experience.getDescription())
+                .referenceUrl(experience.getReferenceUrl())
                 .build();
     }
 }

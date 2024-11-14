@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -157,13 +158,24 @@ public class ResumeService {
         OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
         memberResumeClear(memberId);
 
-        // TODO: 파싱 INSERT
-        OpenAiResponse.AiBasic aiBasic = openAiResponse.getAiBasic();
-
+        // 파싱 INSERT
         // TODO: RESUME_BASIC INSERT
+        ResumeBasic resumeBasic = ResumeBasic.from(openAiResponse.getAiBasic());
+
         // TODO: EDUCATION INSERT
+        List<Education> educations = openAiResponse.getAiEducationals().stream()
+                .map(Education::from)
+                .toList();
+
         // TODO: CERTIFICATION INSERT
+        List<Certification> certifications = openAiResponse.getAiCertifications().stream()
+                .map(Certification::from)
+                .toList();
+
         // TODO: EXPERIENCE INSERT
+        List<Experience> experiences = openAiResponse.getAiExperiences().stream()
+                .map(Experience::from)
+                .toList();
 
         // TODO: MONGO 만들기
     }
