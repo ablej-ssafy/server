@@ -76,7 +76,7 @@ public class GithubController {
 
     @PostMapping("/analysis/result")
     public SuccessResponse<Void> sendAnalysisResult(@Validated @RequestBody GitAnalysisResultRequest request) {
-        githubService.sendAnalysisResult(request.getEmail(), request.getRepositoryName(), request.getAnalysisSummary());
+        githubService.sendAnalysisResult(request.getMemberId(), request.getRepositoryName(), request.getAnalysisSummary());
         return SuccessResponse.empty();
     }
 }

@@ -6,6 +6,7 @@ import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.common.listener.event.GithubAnalysisEvent;
 import me.noteme.headhunting.common.utils.KeyUtils;
+import me.noteme.headhunting.domain.member.dto.AnalysisSummary;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.feign.GithubRequestClient;
 import me.noteme.headhunting.domain.member.feign.request.RepoInfoRequest;
@@ -23,13 +24,9 @@ public class GithubService {
     private final MemberRepository memberRepository;
 
     public RepoAnalysisResponse repoAnalysis(Long memberId, String owner, String repo, String branch, String token) {
-        String email = memberRepository.findFetchById(memberId)
-                .map(Member::getUsername)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-
         String requestId = KeyUtils.generateKey();
         return githubRequestClient.repoAnalysis(
-                RepoInfoRequest.of(requestId, owner, repo, branch, token, email)
+                RepoInfoRequest.of(requestId, owner, repo, branch, token, String.valueOf(memberId))
         );
     }
 
@@ -37,7 +34,9 @@ public class GithubService {
         return githubRequestClient.repoStatus(requestId);
     }
 
-    public void sendAnalysisResult(String email, String repositoryName, String analysisSummary) {
-        publisher.publishEvent(GithubAnalysisEvent.of(email, repositoryName, analysisSummary));
+    public void sendAnalysisResult(String memberId, String repositoryName, AnalysisSummary analysisSummary) {
+        Member member = memberRepository.findFetchById(Long.parseLong(memberId))
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+        publisher.publishEvent(GithubAnalysisEvent.of(member.getUsername(), member.getNickname(), repositoryName, analysisSummary));
     }
 }
