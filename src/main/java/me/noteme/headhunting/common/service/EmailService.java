@@ -79,7 +79,8 @@ public class EmailService {
     }
 
     private String createURI(String type, String key) {
-        return UriComponentsBuilder.fromUriString(frontedUrl + type)
+//        return UriComponentsBuilder.fromUriString(frontedUrl + type)
+        return UriComponentsBuilder.fromUriString("http://localhost:3000" + type)
                 .queryParam("key", key)
                 .toUriString();
     }
