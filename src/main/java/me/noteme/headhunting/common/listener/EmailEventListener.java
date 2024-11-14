@@ -29,6 +29,6 @@ public class EmailEventListener {
 
     @EventListener
     public void handleGithubRepositoryAnalysisCompleted(GithubAnalysisEvent event) {
-        emailService.GithubRepositoryAnalysis(event.getEmail(), event.getRepositoryName(), event.getAnalysisSummary());
+        emailService.GithubRepositoryAnalysis(event.getEmail(), event.getNickname(), event.getRepositoryName(), event.getAnalysisSummary());
     }
 }
