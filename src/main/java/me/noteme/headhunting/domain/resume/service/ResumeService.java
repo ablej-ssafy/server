@@ -139,7 +139,7 @@ public class ResumeService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void autoResume(Long memberId, MultipartFile file) {
         String pdfText = pdfToTextConverter.convertPdfToText(file);
-        String resumeAutoData = openAiService.autoResume(pdfText);
+        String resumeAutoData = openAiService.resume(pdfText);
 
         resumeCacheRepository.save(memberId, resumeAutoData);
     }
@@ -147,6 +147,7 @@ public class ResumeService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public OpenAiResponse getAutoResume(Long memberId) {
         String data = resumeCacheRepository.getData(memberId);
+
         return gson.fromJson(
                 data, OpenAiResponse.class
         );

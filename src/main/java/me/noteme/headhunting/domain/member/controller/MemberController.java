@@ -1,9 +1,11 @@
 package me.noteme.headhunting.domain.member.controller;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
+import me.noteme.headhunting.common.service.OpenAiService;
 import me.noteme.headhunting.domain.member.controller.request.JobCategoryRequest;
 import me.noteme.headhunting.domain.member.dto.LoginMemberResponse;
 import me.noteme.headhunting.domain.member.service.MemberService;
@@ -33,6 +35,20 @@ public class MemberController {
     @PatchMapping("/category")
     public SuccessResponse<Void> updateJobCategory(@LoginUser Long memberId, @Validated @RequestBody JobCategoryRequest jobCategoryId) {
         memberService.updateJobCategory(memberId, jobCategoryId.getId());
+
+        return SuccessResponse.empty();
+    }
+
+    @PostMapping("/test")
+    public SuccessResponse<Void> test(@LoginUser Long memberId) {
+        memberService.getQuestion(memberId);
+
+        return SuccessResponse.empty();
+    }
+
+    @GetMapping("/test")
+    public SuccessResponse<Void> send(@LoginUser Long memberId) {
+        memberService.sendQuestion(memberId);
 
         return SuccessResponse.empty();
     }

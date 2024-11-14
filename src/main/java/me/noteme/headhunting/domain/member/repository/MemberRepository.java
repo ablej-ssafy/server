@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -33,9 +34,26 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     void verify(@Param("username") String email);
 
     @Query("""
-            SELECT m FROM Member m
+            SELECT m
+            FROM Member m
             LEFT JOIN FETCH m.jobCategory
             WHERE m.id = :memberId
     """)
     Optional<Member> findFetchById(@Param("memberId") long memberId);
+
+    @Query("""
+            SELECT m
+            FROM Member m
+            LEFT JOIN ResumePdf rp ON m.id = rp.member.id
+            WHERE rp IS NOT NULL
+    """)
+    List<Member> findAllByResumePdfAndMember();
+
+    @Query("""
+            SELECT m
+            FROM Member m
+            LEFT JOIN Question q ON m.id = q.member.id
+            WHERE q IS NOT NULL
+    """)
+    List<Member> findAllByQuestionAndMember();
 }
