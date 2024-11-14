@@ -5,7 +5,6 @@ import com.epages.restdocs.apispec.SimpleType;
 import me.noteme.headhunting.common.filter.JWTFilter;
 import me.noteme.headhunting.core.annotation.CustomMockUser;
 import me.noteme.headhunting.core.support.RestDocsSupport;
-import me.noteme.headhunting.domain.member.controller.request.EmailRequest;
 import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignInRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignUpRequest;
@@ -22,9 +21,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.*;
 import static org.mockito.Mockito.verify;
@@ -264,17 +260,14 @@ class AuthControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("이메일_재전송_요청_정상_테스트")
+    @CustomMockUser
     void 이메일_재전송_요청_정상_테스트() throws Exception {
         // * GIVEN: 이런게 주어졌을 때
-        String email = "email@gmail.com";
-
-        EmailRequest request = new EmailRequest();
-        request.setEmail(email);
+        Long memberId = 1L;
 
         // * WHEN: 이걸 실행하면
-        ResultActions actions = this.mockMvc.perform(post("/api/v1/auth/resend")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request))
+        ResultActions actions = this.mockMvc.perform(
+                post("/api/v1/auth/resend")
         );
 
 
@@ -284,10 +277,7 @@ class AuthControllerTest extends RestDocsSupport {
                         ResourceSnippetParameters.builder()
                                 .tag("인증")
                                 .summary("이메일 재전송 API")
-                                .description("이메일 재전송을 합니다.")
-                                .requestFields(
-                                        fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일")
-                                ).responseFields()
+                                .description("현재 이메일 승인이 되지 않은 사용자에게 이메일을 재전송 합니다.")
                                 .build()
                 )));
 
