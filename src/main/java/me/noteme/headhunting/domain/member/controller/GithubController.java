@@ -56,9 +56,7 @@ public class GithubController {
 
         log.debug("gitAccessToken - {}", gitAccessToken);
 
-        CookieUtils.addCookie(response, "accessToken", gitAccessToken.getAccessToken(), CookieUtils.THREE_DAYS, false);
-
-        response.sendRedirect(redirectUrl);
+        response.sendRedirect(redirectUrl + "?accessToken=" + gitAccessToken.getAccessToken());
     }
 
     @PostMapping("/analysis")

@@ -11,8 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class CookieUtils {
-    public static final int THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
-
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
