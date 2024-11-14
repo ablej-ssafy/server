@@ -54,8 +54,6 @@ public class GithubController {
 
         GitAccessResponse gitAccessToken = gitHubAuthRequestClient.getAccessToken("application/json", gitRequest);
 
-        CookieUtils.addCookie(response, "accessToken", gitAccessToken.getAccessToken(), CookieUtils.THREE_DAYS, false);
-
         response.sendRedirect(redirectUrl + "?accessToken=" + gitAccessToken.getAccessToken());
     }
 
