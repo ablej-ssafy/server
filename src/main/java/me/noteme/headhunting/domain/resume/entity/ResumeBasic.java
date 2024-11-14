@@ -2,15 +2,16 @@ package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "resume_basic")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class ResumeBasic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +59,7 @@ public class ResumeBasic {
     /**
      * 한줄 소개
      */
+    @Column(columnDefinition = "TEXT")
     private String introduce;
 
     /**
@@ -79,6 +81,19 @@ public class ResumeBasic {
                 .resume(resume)
                 .job(job)
                 .profileImage(profileImage)
+                .build();
+    }
+
+    public static ResumeBasic from(OpenAiResponse.AiBasic aiBasic, Resume resume) {
+        return ResumeBasic.builder()
+                .resume(resume)
+                .title(aiBasic.getTitle())
+                .name(aiBasic.getName())
+                .email(aiBasic.getEmail())
+                .birth(aiBasic.getBirth())
+                .phone(aiBasic.getPhone())
+                .introduce(aiBasic.getIntroduce())
+                .portfolioUrl(aiBasic.getPortfolioUrl())
                 .build();
     }
 }

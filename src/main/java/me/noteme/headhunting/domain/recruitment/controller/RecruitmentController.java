@@ -57,7 +57,7 @@ public class RecruitmentController {
 
     @GetMapping("/{recruitmentId}/scrap")
     public SuccessResponse<Boolean> isScrapped(
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @PathVariable("recruitmentId") Long recruitmentId
     ) {
         return SuccessResponse.of(recruitmentService.isScrapped(memberId, recruitmentId));
@@ -65,7 +65,7 @@ public class RecruitmentController {
 
     @PostMapping("/{recruitmentId}/scrap")
     public SuccessResponse<Void> scrapRecruitment(
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @PathVariable("recruitmentId") Long recruitmentId
     ) {
         recruitmentService.scrapRecruitment(memberId, recruitmentId);
@@ -75,7 +75,7 @@ public class RecruitmentController {
     @DeleteMapping("/{recruitmentId}/scrap")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelScrapRecruitment(
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @PathVariable("recruitmentId") Long recruitmentId
     ) {
         recruitmentService.unScrapRecruitment(memberId, recruitmentId);
@@ -83,7 +83,7 @@ public class RecruitmentController {
 
     @GetMapping("/scraps")
     public SuccessResponse<List<Long>> getScrappedRecruitments(
-            @LoginUser Long memberId,
+            @LoginUser(required = true) Long memberId,
             @RequestParam("recruitmentIds") List<Long> recruitmentIds
     ) {
         return SuccessResponse.of(recruitmentService.isScrapped(memberId, recruitmentIds));

@@ -25,7 +25,7 @@ import me.noteme.headhunting.domain.resume.entity.*;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
-import me.noteme.headhunting.domain.resume.entity.mongo.MongoResumeBasic;
+import me.noteme.headhunting.domain.resume.entity.mongo.*;
 import me.noteme.headhunting.domain.resume.repository.*;
 import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
 import org.springframework.context.ApplicationEventPublisher;
@@ -36,9 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 @Slf4j
@@ -56,15 +54,18 @@ public class ResumeService {
     private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
     private final ResumeOrderRepository resumeOrderRepository;
+    private final CertificationRepository certificationRepository;
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
     private final EntityManager em;
     private final ResumeCacheRepository resumeCacheRepository;
+    private final ExperienceRepository experienceRepository;
 
     private final OpenAiService openAiService;
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .create();
+    private final EducationRepository educationRepository;
 
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
@@ -149,8 +150,54 @@ public class ResumeService {
         return getOpenAiResponse(memberId);
     }
 
+    @Transactional
     public void changeAutoResume(Long memberId) {
         OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
+        Resume resume = resumeRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        memberResumeClear(memberId);
+
+        ResumeBasic resumeBasic = ResumeBasic.from(openAiResponse.getAiBasic(), resume);
+        resumeBasicRepository.save(resumeBasic);
+
+        List<Education> educations = openAiResponse.getAiEducationals().stream()
+                .map(education -> Education.from(education, resume))
+                .toList();
+        educationRepository.saveAll(educations);
+
+        List<Certification> certifications = openAiResponse.getAiCertifications().stream()
+                .map(certification -> Certification.from(certification, resume))
+                .toList();
+        certificationRepository.saveAll(certifications);
+
+        List<Experience> experiences = openAiResponse.getAiExperiences().stream()
+                .map(experience -> Experience.from(experience, resume))
+                .toList();
+        experienceRepository.saveAll(experiences);
+
+        mongoResumeRepository.findByMemberId(memberId)
+                .ifPresent(mongoResumeRepository::delete);
+
+        MongoResume mongoResume = MongoResume.builder()
+                .memberId(memberId)
+                .basic(MongoResumeBasic.from(resumeBasic))
+                .educations(educations.stream().map(MongoEducation::from).toList())
+                .companies(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.COMPANY)).map(MongoExperience::from).toList())
+                .activities(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.ACTIVITY)).map(MongoExperience::from).toList())
+                .projects(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.PROJECT)).map(MongoExperience::from).toList())
+                .qualifications(certifications.stream().filter(c -> c.getCertificationType().equals(CertificationType.QUALIFICATION)).map(MongoCertification::from).toList())
+                .languages(certifications.stream().filter(c -> c.getCertificationType().equals(CertificationType.LANGUAGE)).map(MongoCertification::from).toList())
+                .build();
+
+        mongoResumeRepository.save(mongoResume);
+    }
+
+    private void memberResumeClear(Long memberId) {
+        resumeBasicRepository.deleteAllByMemberId(memberId);
+        educationRepository.deleteAllByMemberId(memberId);
+        certificationRepository.deleteAllByMemberId(memberId);
+        experienceRepository.deleteAllByMemberId(memberId);
     }
 
     @Transactional

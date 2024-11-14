@@ -10,7 +10,6 @@ import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.repository.ScrapRepository;
 import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
-import me.noteme.headhunting.domain.recruitment.entity.Recruitment;
 import me.noteme.headhunting.domain.recruitment.feign.AIRequestClient;
 import me.noteme.headhunting.domain.recruitment.feign.request.CompanyInfoRequest;
 import me.noteme.headhunting.domain.recruitment.feign.request.JobRecommendRequest;

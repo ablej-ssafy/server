@@ -2,6 +2,7 @@ package me.noteme.headhunting.domain.resume.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 
 import java.time.LocalDate;
 
@@ -56,4 +57,16 @@ public class Certification {
         certification.resume = resume;
         return certification;
     }
- }
+
+    public static Certification from(OpenAiResponse.AiCertification certification, Resume resume) {
+        return Certification.builder()
+                .resume(resume)
+                .name(certification.getName())
+                .organization(certification.getOrganization())
+                .credential(certification.getCredential())
+                .acquisitionAt(certification.getAcquisitionAt())
+                .grade(certification.getGrade())
+                .certificationType(certification.getCertificationType())
+                .build();
+    }
+}
