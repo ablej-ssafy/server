@@ -83,8 +83,9 @@ public class ResumeBasic {
                 .build();
     }
 
-    public static ResumeBasic from(OpenAiResponse.AiBasic aiBasic) {
+    public static ResumeBasic from(OpenAiResponse.AiBasic aiBasic, Resume resume) {
         return ResumeBasic.builder()
+                .resume(resume)
                 .title(aiBasic.getTitle())
                 .name(aiBasic.getName())
                 .email(aiBasic.getEmail())

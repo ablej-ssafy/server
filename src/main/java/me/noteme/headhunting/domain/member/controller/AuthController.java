@@ -9,7 +9,6 @@ import me.noteme.headhunting.common.annotation.LoginUser;
 import me.noteme.headhunting.common.response.SuccessResponse;
 import me.noteme.headhunting.common.utils.CookieUtils;
 import me.noteme.headhunting.domain.member.controller.request.RefreshRequest;
-import me.noteme.headhunting.domain.member.controller.request.EmailRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignInRequest;
 import me.noteme.headhunting.domain.member.controller.request.SignUpRequest;
 import me.noteme.headhunting.domain.member.dto.JwtToken;

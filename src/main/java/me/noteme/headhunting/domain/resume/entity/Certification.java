@@ -58,8 +58,9 @@ public class Certification {
         return certification;
     }
 
-    public static Certification from(OpenAiResponse.AiCertification certification) {
+    public static Certification from(OpenAiResponse.AiCertification certification, Resume resume) {
         return Certification.builder()
+                .resume(resume)
                 .name(certification.getName())
                 .organization(certification.getOrganization())
                 .credential(certification.getCredential())

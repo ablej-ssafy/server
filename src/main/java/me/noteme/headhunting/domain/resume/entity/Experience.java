@@ -55,8 +55,9 @@ public class Experience {
                 .build();
     }
 
-    public static Experience from(OpenAiResponse.AiExperience experience) {
+    public static Experience from(OpenAiResponse.AiExperience experience, Resume resume) {
         return Experience.builder()
+                .resume(resume)
                 .experienceType(experience.getExperienceType())
                 .title(experience.getTitle())
                 .affiliation(experience.getAffiliation())

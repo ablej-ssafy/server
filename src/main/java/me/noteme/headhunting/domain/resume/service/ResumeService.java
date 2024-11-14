@@ -36,10 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 @Slf4j
@@ -156,26 +153,32 @@ public class ResumeService {
     @Transactional
     public void changeAutoResume(Long memberId) {
         OpenAiResponse openAiResponse = getOpenAiResponse(memberId);
+        Resume resume = resumeRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
         memberResumeClear(memberId);
 
         // 파싱 INSERT
         // TODO: RESUME_BASIC INSERT
-        ResumeBasic resumeBasic = ResumeBasic.from(openAiResponse.getAiBasic());
+        ResumeBasic resumeBasic = ResumeBasic.from(openAiResponse.getAiBasic(), resume);
+        resumeBasicRepository.save(resumeBasic);
 
         // TODO: EDUCATION INSERT
         List<Education> educations = openAiResponse.getAiEducationals().stream()
-                .map(Education::from)
+                .map(education -> Education.from(education, resume))
                 .toList();
+        educationRepository.saveAll(educations);
 
         // TODO: CERTIFICATION INSERT
         List<Certification> certifications = openAiResponse.getAiCertifications().stream()
-                .map(Certification::from)
+                .map(certification -> Certification.from(certification, resume))
                 .toList();
+        certificationRepository.saveAll(certifications);
 
         // TODO: EXPERIENCE INSERT
         List<Experience> experiences = openAiResponse.getAiExperiences().stream()
-                .map(Experience::from)
+                .map(experience -> Experience.from(experience, resume))
                 .toList();
+        experienceRepository.saveAll(experiences);
 
         // TODO: MONGO 만들기
     }

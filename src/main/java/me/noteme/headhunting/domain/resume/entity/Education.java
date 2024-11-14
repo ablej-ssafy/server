@@ -72,12 +72,13 @@ public class Education {
         return education;
     }
 
-    public static Education from(OpenAiResponse.AiEducational educational) {
+    public static Education from(OpenAiResponse.AiEducational educational, Resume resume) {
         return Education.builder()
+                .resume(resume)
                 .name(educational.getName())
                 .major(educational.getMajor())
                 .category(educational.getCategory())
-                .grade(educational.getGrade().toString())
+                .grade(educational.getGrade() == null ? "0" : educational.getGrade().toString())
                 .gradeType(educational.getGradeType())
                 .description(educational.getDescription())
                 .startAt(educational.getStartAt())
