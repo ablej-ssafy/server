@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -62,6 +63,7 @@ public class RecruitmentService {
 
     @Transactional
     public void scrapRecruitment(Long memberId, Long recruitmentId) {
+        log.debug("scrapRecruitment memberId: {}, recruitmentId: {}", memberId, recruitmentId);
         if (scrapRepository.isScrapped(memberId, recruitmentId)) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
@@ -74,6 +76,7 @@ public class RecruitmentService {
 
     @Transactional
     public void unScrapRecruitment(Long memberId, Long recruitmentId) {
+        log.debug("unScrapRecruitment memberId: {}, recruitmentId: {}", memberId, recruitmentId);
         Scrap scrap = scrapRepository.findScrap(memberId, recruitmentId).orElseThrow(
                 () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
         );
@@ -83,10 +86,17 @@ public class RecruitmentService {
 
     public Page<RecruitmentSummaryResponse> getRecruitments(Long memberId, Pageable pageable) {
         Page<Recruitment> recruitments = recruitmentRepository.findRecruitments(pageable);
-//        Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
 
+        // * 비로그인 시 스크랩 여부 false
+        if (Objects.isNull(memberId)) {
+            return recruitments.map(
+                    recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, false)
+            );
+        }
+
+        Set<Long> scrapped = scrapRepository.isScrapped(memberId, recruitments.stream().map(Recruitment::getId).toList());
         return recruitments.map(
-                recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, false)
+                recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, scrapped.contains(recruitment.getId()))
         );
     }
 

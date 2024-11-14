@@ -46,6 +46,18 @@ public class EmailService {
         sendEmail(to, "test", "question_mail", context);
     }
 
+    @Async("emailSendExecutor")
+    public void GithubRepositoryAnalysis(String to, String repositoryName, String analysisSummary) {
+        String subject = "[AHEY] " + repositoryName + " 분석 결과";
+        String viewName = "github_analysis_summation_mail";
+
+        Context context = new Context();
+        context.setVariable("analysisSummary", analysisSummary);
+        context.setVariable("subject", subject);
+
+        sendEmail(to, subject, viewName, context);
+    }
+
     private void sendEmail(String to, String subject, String viewName, Context context) {
         MimeMessage message = mailSender.createMimeMessage();
 

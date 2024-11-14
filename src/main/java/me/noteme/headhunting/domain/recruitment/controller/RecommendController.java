@@ -7,8 +7,10 @@ import me.noteme.headhunting.domain.recruitment.controller.request.CompanyAnalyz
 import me.noteme.headhunting.domain.recruitment.controller.request.ResumeKeywordsRequest;
 import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.recruitment.service.RecommendService;
+import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

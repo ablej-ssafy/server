@@ -11,7 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +27,12 @@ public class SearchController {
         return SuccessResponse.of(
                 searchService.rankKeywords(userId)
         );
+    }
+
+    @GetMapping("/suggestions")
+    public SuccessResponse<List<String>> getSuggestions(@RequestParam(name = "q") String keyword) {
+        List<String> suggestions = searchService.getSuggestions(keyword);
+        return SuccessResponse.of(suggestions);
     }
 
     @DeleteMapping

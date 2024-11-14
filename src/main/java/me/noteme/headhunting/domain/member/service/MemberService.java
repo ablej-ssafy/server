@@ -64,7 +64,7 @@ public class MemberService {
 
     public List<RecruitmentSummaryResponse> scrapList(Long memberId) {
         return scrapRepository.findAllByMemberId(memberId).stream()
-                .map(RecruitmentSummaryResponse::fromEntity)
+                .map(recruitment -> RecruitmentSummaryResponse.fromEntity(recruitment, true))
                 .toList();
     }
 

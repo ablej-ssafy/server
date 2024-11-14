@@ -1,6 +1,7 @@
 package me.noteme.headhunting.domain.resume.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.exception.CustomException;
 import me.noteme.headhunting.common.exception.ErrorCode;
 import me.noteme.headhunting.domain.resume.dto.TechResponse;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -26,12 +30,16 @@ public class TechService {
     public void saveTechStack(Long memberId, String githubUrl, String notionUrl, List<Long> techSkills, Long techStackId) {
         Resume resume = getResumeByMemberId(memberId);
 
-        TechStack techStack = TechStack.builder()
-                .id(techStackId)
-                .githubUrl(githubUrl)
-                .notionUrl(notionUrl)
-                .resume(resume)
-                .build();
+        TechStack techStack = techStackRepository.findByMemberId(memberId)
+                .orElseGet(() -> TechStack.builder()
+                        .id(techStackId)
+                        .githubUrl(githubUrl)
+                        .notionUrl(notionUrl)
+                        .resume(resume)
+                        .build());
+        techStack.update(githubUrl, notionUrl);
+
+        techStack.getStackSkills().clear();
 
         List<TechSkill> techSkillList = techSkillRepository.findAllById(techSkills);
 

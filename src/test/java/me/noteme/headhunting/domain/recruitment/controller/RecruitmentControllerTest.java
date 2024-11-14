@@ -336,7 +336,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
                 get("/api/v1/recruitments/scraps")
-                        .queryParam("recruitmentIds", "1", "2", "3")
+                        .queryParam("recruitmentIds", "1, 2, 3")
         );
 
         // * THEN: 이런 결과가 나와야 한다
@@ -347,7 +347,7 @@ class RecruitmentControllerTest extends RestDocsSupport {
                                 .summary("채용 공고 여러개 스크랩 여부 조회 API")
                                 .description("로그인한 사용자가 여러개의 채용 공고를 스크랩했는지 여부를 조회합니다.")
                                 .queryParameters(
-                                        parameterWithName("recruitmentIds").type(SimpleType.NUMBER).description("조회할 채용 공고 ID 목록")
+                                        parameterWithName("recruitmentIds").description("조회할 채용 공고 ID 목록")
                                 ).responseFields(response(
                                         fieldWithPath("data").type(JsonFieldType.ARRAY).description("스크랩 여부 목록")
                                 ))

@@ -265,4 +265,35 @@ class SearchControllerTest extends RestDocsSupport {
 
         verify(searchService).removeKeyword(userId, keyword);
     }
+
+    @Test
+    @DisplayName("자동완성_검색_조회_테스트")
+    void 자동완성_검색_조회_테스트() throws Exception {
+        // * GIVEN: 이런게 주어졌을 때
+        String keyword = "에이";
+        List<String> response = List.of("위에이알", "이포에이", "에이제이인터내셔널", "팀피에이치세븐", "[뷰티] 콘텐츠 크리에이터", "에이비일팔공(AB180)", "에이딕트 마케터 (1년이상)", "제로원에이아이", "에이토즈", "이에이트");
+        when(searchService.getSuggestions(keyword)).thenReturn(response);
+
+        // * WHEN: 이걸 실행하면
+        ResultActions actions = this.mockMvc.perform(
+                get("/api/v1/search/suggestions")
+                        .queryParam("q", keyword)
+        );
+
+        // * THEN: 이런 결과가 나와야 한다
+        actions.andExpect(status().isOk())
+                .andDo(this.restDocs.document(resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("검색")
+                                .summary("자동완성 검색어 조회 API")
+                                .description("검색어를 기반으로 자동완성 검색어를 조회합니다.")
+                                .queryParameters(
+                                        parameterWithName("q").type(SimpleType.STRING).description("검색어")
+                                ).responseFields(response(
+                                        fieldWithPath("data[]").type(JsonFieldType.ARRAY).description("자동완성 검색어")
+                                ))
+                                .build()
+                )));
+
+    }
 }
