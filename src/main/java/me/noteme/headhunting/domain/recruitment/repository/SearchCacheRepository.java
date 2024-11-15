@@ -83,6 +83,6 @@ public class SearchCacheRepository {
     }
 
     public void removeAllKeyword(Long userId) {
-        setOperations.remove(CacheKey.searchUserKey(userId));
+        setOperations.getOperations().delete(CacheKey.searchUserKey(userId));
     }
 }
