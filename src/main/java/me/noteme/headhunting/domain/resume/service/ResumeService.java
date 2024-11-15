@@ -143,6 +143,7 @@ public class ResumeService {
         String pdfText = PDFToTextUtil.convertPdfToText(file);
         String resumeAutoData = openAiService.resume(pdfText);
 
+        log.debug("{}", resumeAutoData);
         resumeCacheRepository.save(memberId, resumeAutoData);
     }
 
