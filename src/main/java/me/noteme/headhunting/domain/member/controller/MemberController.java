@@ -39,14 +39,14 @@ public class MemberController {
         return SuccessResponse.empty();
     }
 
-    @PostMapping("/test")
-    public SuccessResponse<Void> test(@LoginUser Long memberId) {
+    @PostMapping("/question")
+    public SuccessResponse<Void> createQuestion(@LoginUser Long memberId) {
         memberService.getQuestion(memberId);
 
         return SuccessResponse.empty();
     }
 
-    @GetMapping("/test")
+    @GetMapping("/question")
     public SuccessResponse<Void> send(@LoginUser Long memberId) {
         memberService.sendQuestion(memberId);
 
