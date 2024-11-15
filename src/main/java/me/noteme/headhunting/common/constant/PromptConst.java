@@ -58,6 +58,8 @@ public interface PromptConst {
                     5. In the description field:
                        - Use proper punctuation, but ensure there is no trailing comma at the end of each sentence.
                        - Avoid adding unnecessary characters or symbols.
+                    6. Please put the rewrite in order to fit each context.
+                    7. Please write it in detail so that you don't miss out on the content
             """;
 
     String questionPrompt = """
