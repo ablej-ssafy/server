@@ -11,8 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Component
-public class PDFToTextConverter {
-    public String convertPdfToText(MultipartFile file) {
+public abstract class PDFToTextUtil {
+    public static String convertPdfToText(MultipartFile file) {
         try (PDDocument document = Loader.loadPDF(file.getInputStream().readAllBytes())) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             pdfStripper.setAddMoreFormatting(true); // 텍스트 형식 보존

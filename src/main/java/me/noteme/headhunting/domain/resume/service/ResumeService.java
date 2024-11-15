@@ -27,7 +27,7 @@ import me.noteme.headhunting.domain.resume.dto.ResumePdfResponse;
 import me.noteme.headhunting.domain.resume.entity.ResumePdf;
 import me.noteme.headhunting.domain.resume.entity.mongo.*;
 import me.noteme.headhunting.domain.resume.repository.*;
-import me.noteme.headhunting.domain.resume.utils.PDFToTextConverter;
+import me.noteme.headhunting.domain.resume.utils.PDFToTextUtil;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Slf4j
@@ -45,27 +46,27 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ResumeService {
     private final RecruitmentCategoryRepository recruitmentCategoryRepository;
-    private final ScrapRepository scrapRepository;
     private final ResumeBasicRepository resumeBasicRepository;
+    private final CertificationRepository certificationRepository;
+    private final EducationRepository educationRepository;
+    private final ExperienceRepository experienceRepository;
+
     private final RecruitmentRepository recruitmentRepository;
+    private final ScrapRepository scrapRepository;
     private final MemberRepository memberRepository;
     private final ResumePdfRepository resumePdfRepository;
-    private final PDFToTextConverter pdfToTextConverter;
     private final ApplicationEventPublisher publisher;
     private final ResumeRepository resumeRepository;
     private final ResumeOrderRepository resumeOrderRepository;
-    private final CertificationRepository certificationRepository;
     private final StorageService storageService;
     private final MongoResumeRepository mongoResumeRepository;
-    private final EntityManager em;
     private final ResumeCacheRepository resumeCacheRepository;
-    private final ExperienceRepository experienceRepository;
+    private final EntityManager em;
 
     private final OpenAiService openAiService;
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .create();
-    private final EducationRepository educationRepository;
 
     public String download(Long memberId, Long resumePdfId) {
         ResumePdf resumePdf = resumePdfRepository.findById(resumePdfId)
@@ -76,7 +77,7 @@ public class ResumeService {
 
     @Transactional
     public List<RecommendResponse> upload(Long memberId, MultipartFile resumePdf) {
-        String resumeText = pdfToTextConverter.convertPdfToText(resumePdf);
+        String resumeText = PDFToTextUtil.convertPdfToText(resumePdf);
 
         publisher.publishEvent(FileUploadEvent.of(memberId, resumePdf, resumeText));
 
@@ -139,7 +140,7 @@ public class ResumeService {
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void autoResume(Long memberId, MultipartFile file) {
-        String pdfText = pdfToTextConverter.convertPdfToText(file);
+        String pdfText = PDFToTextUtil.convertPdfToText(file);
         String resumeAutoData = openAiService.resume(pdfText);
 
         resumeCacheRepository.save(memberId, resumeAutoData);
@@ -158,40 +159,48 @@ public class ResumeService {
 
         memberResumeClear(memberId);
 
+        // ResumeBasic
         ResumeBasic resumeBasic = ResumeBasic.from(openAiResponse.getAiBasic(), resume);
         resumeBasicRepository.save(resumeBasic);
 
-        List<Education> educations = openAiResponse.getAiEducationals().stream()
-                .map(education -> Education.from(education, resume))
-                .toList();
+        // Education
+        List<Education> educations = converterResumeEntities(openAiResponse.getAiEducationals(), resume, Education::from);
         educationRepository.saveAll(educations);
 
-        List<Certification> certifications = openAiResponse.getAiCertifications().stream()
-                .map(certification -> Certification.from(certification, resume))
-                .toList();
+        // Certification
+        List<Certification> certifications = converterResumeEntities(openAiResponse.getAiCertifications(), resume, Certification::from);
         certificationRepository.saveAll(certifications);
 
-        List<Experience> experiences = openAiResponse.getAiExperiences().stream()
-                .map(experience -> Experience.from(experience, resume))
-                .toList();
+        // Experience
+        List<Experience> experiences = converterResumeEntities(openAiResponse.getAiExperiences(), resume, Experience::from);
         experienceRepository.saveAll(experiences);
 
         mongoResumeRepository.findByMemberId(memberId)
                 .ifPresent(mongoResumeRepository::delete);
 
-        MongoResume mongoResume = MongoResume.builder()
+        MongoResume mongoResume = createMongoResume(memberId, resumeBasic, educations, experiences, certifications);
+        mongoResumeRepository.save(mongoResume);
+    }
+
+    private MongoResume createMongoResume(Long memberId, ResumeBasic resumeBasic, List<Education> educations, List<Experience> experiences, List<Certification> certifications) {
+        return MongoResume.builder()
                 .memberId(memberId)
                 .basic(MongoResumeBasic.from(resumeBasic))
                 .educations(educations.stream().map(MongoEducation::from).toList())
-                .companies(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.COMPANY)).map(MongoExperience::from).toList())
-                .activities(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.ACTIVITY)).map(MongoExperience::from).toList())
-                .projects(experiences.stream().filter(e -> e.getExperienceType().equals(ExperienceType.PROJECT)).map(MongoExperience::from).toList())
-                .qualifications(certifications.stream().filter(c -> c.getCertificationType().equals(CertificationType.QUALIFICATION)).map(MongoCertification::from).toList())
-                .languages(certifications.stream().filter(c -> c.getCertificationType().equals(CertificationType.LANGUAGE)).map(MongoCertification::from).toList())
+                .companies(filterByEnum(experiences, ExperienceType.COMPANY, Experience::getExperienceType, MongoExperience::from))
+                .activities(filterByEnum(experiences, ExperienceType.ACTIVITY, Experience::getExperienceType, MongoExperience::from))
+                .projects(filterByEnum(experiences, ExperienceType.PROJECT, Experience::getExperienceType, MongoExperience::from))
+                .qualifications(filterByEnum(certifications, CertificationType.QUALIFICATION, Certification::getCertificationType, MongoCertification::from))
+                .languages(filterByEnum(certifications, CertificationType.LANGUAGE, Certification::getCertificationType, MongoCertification::from))
                 .build();
-
-        mongoResumeRepository.save(mongoResume);
     }
+
+    private <T, R> List<R> converterResumeEntities(List<T> list, Resume resume, BiFunction<T, Resume, R> converter) {
+        return list.stream()
+                .map(item -> converter.apply(item, resume))
+                .toList();
+    }
+
 
     private void memberResumeClear(Long memberId) {
         resumeBasicRepository.deleteAllByMemberId(memberId);
@@ -224,28 +233,28 @@ public class ResumeService {
         ResumeBasicResponse basic = resumeBasicRepository.findByMemberId(memberId)
                 .map(ResumeBasicResponse::fromEntity)
                 .orElse(null);
-        List<Education> edu = resumeRepository.findAllEducationByMemberId(memberId);
 
-        List<EducationForm> educations = edu.stream()
+        List<EducationForm> educations = resumeRepository.findAllEducationByMemberId(memberId).stream()
                 .map(EducationForm::fromEntity)
                 .toList();
 
         List<Experience> experiences = resumeRepository.findAllExperienceByMemberId(memberId);
-
-        List<ExperienceForm> companies = filterByEnum(experiences, ExperienceType.COMPANY, Experience::getExperienceType, ExperienceForm::fromEntity);
-        List<ExperienceForm> activities = filterByEnum(experiences, ExperienceType.ACTIVITY, Experience::getExperienceType, ExperienceForm::fromEntity);
-        List<ExperienceForm> projects = filterByEnum(experiences, ExperienceType.PROJECT, Experience::getExperienceType, ExperienceForm::fromEntity);
-
         List<Certification> certifications = resumeRepository.findAllCertificationsByMemberId(memberId);
-
-        List<CertificationForm> languages = filterByEnum(certifications, CertificationType.LANGUAGE, Certification::getCertificationType, CertificationForm::fromEntity);
-        List<CertificationForm> qualifications = filterByEnum(certifications, CertificationType.QUALIFICATION, Certification::getCertificationType, CertificationForm::fromEntity);
 
         TechResponse tech = resumeRepository.findTechByMemberId(memberId)
                 .map(TechResponse::fromEntity)
                 .orElse(null);
 
-        return ResumeResponse.of(basic, educations, companies, activities, projects, qualifications, languages, tech);
+        return ResumeResponse.builder()
+                .basic(basic)
+                .educations(educations)
+                .companies(filterByEnum(experiences, ExperienceType.COMPANY, Experience::getExperienceType, ExperienceForm::fromEntity))
+                .activities(filterByEnum(experiences, ExperienceType.ACTIVITY, Experience::getExperienceType, ExperienceForm::fromEntity))
+                .projects(filterByEnum(experiences, ExperienceType.PROJECT, Experience::getExperienceType, ExperienceForm::fromEntity))
+                .languages(filterByEnum(certifications, CertificationType.LANGUAGE, Certification::getCertificationType, CertificationForm::fromEntity))
+                .qualifications(filterByEnum(certifications, CertificationType.QUALIFICATION, Certification::getCertificationType, CertificationForm::fromEntity))
+                .tech(tech)
+                .build();
     }
 
     public ResumeOrderResponse getResumeOrder(Long memberId) {
