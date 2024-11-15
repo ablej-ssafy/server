@@ -32,8 +32,8 @@
         <h3 style="margin: 40px 0 16px;">사용 기술</h3>
         <ul>
             <li th:each="tech : ${techSkills}">
-                <strong th:text="${tech.skill}">기술 이름</strong>
-                : <span th:text="${tech.description}">기술 설명
+                <strong th:text="${tech.skill}">기술 이름</strong>:
+                 <span th:text="${tech.description}">기술 설명
                 </span>
             </li>
         </ul>
@@ -41,7 +41,7 @@
         <ul>
             <li th:each="item : ${keyFeatures}">
                 <strong th:text="${item.feature}">기능 이름</strong>:
-                : <span th:text="${item.description}">기능 설명</span>
+                 <span th:text="${item.description}">기능 설명</span>
             </li>
         </ul>
     </div>
