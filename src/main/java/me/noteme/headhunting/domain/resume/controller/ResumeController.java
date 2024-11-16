@@ -139,11 +139,4 @@ public class ResumeController {
 
         return SuccessResponse.empty();
     }
-
-    @GetMapping("/create")
-    public SuccessResponse<Void> createDefault() {
-        resumeService.createDefaultResume();
-
-        return SuccessResponse.empty();
-    }
 }
