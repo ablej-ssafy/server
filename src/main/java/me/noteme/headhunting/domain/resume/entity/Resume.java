@@ -26,17 +26,18 @@ public class Resume extends BaseEntity {
     private Member member;
 
     @Column(name = "hash_key", unique = true)
-    @Setter
     private String hashKey;
 
     @Column(name = "is_private")
     @ColumnDefault("false")
+    @Builder.Default
     private boolean isPrivate = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "template_type")
     @ColumnDefault("'BASIC_LIGHT'")
-    private ResumeTemplateType templateType;
+    @Builder.Default
+    private ResumeTemplateType templateType = ResumeTemplateType.BASIC_LIGHT;
 
     @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private ResumeBasic resumeBasic;
@@ -67,4 +68,12 @@ public class Resume extends BaseEntity {
      */
     @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private TechStack techStack;
+
+    public void changeTemplate(ResumeTemplateType templateType) {
+        this.templateType = templateType;
+    }
+
+    public void updateVisible(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
 }

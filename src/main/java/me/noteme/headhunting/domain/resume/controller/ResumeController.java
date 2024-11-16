@@ -7,6 +7,7 @@ import me.noteme.headhunting.common.service.StorageService;
 import me.noteme.headhunting.domain.recruitment.dto.RecommendResponse;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeBasicRequest;
 import me.noteme.headhunting.domain.resume.controller.request.ResumeOrderRequest;
+import me.noteme.headhunting.domain.resume.controller.request.TemplateRequest;
 import me.noteme.headhunting.domain.resume.dto.OpenAiResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeBasicResponse;
 import me.noteme.headhunting.domain.resume.dto.ResumeOrderResponse;
@@ -57,6 +58,31 @@ public class ResumeController {
     @GetMapping("/basic")
     public SuccessResponse<ResumeBasicResponse> getBasic(@LoginUser Long memberId) {
         return SuccessResponse.of(resumeService.getBasicInfo(memberId));
+    }
+
+    @PatchMapping("/template")
+    public SuccessResponse<Void> changeTemplate(
+            @LoginUser(required = true) Long memberId,
+            @RequestBody TemplateRequest request
+    ) {
+        resumeService.changeTemplate(memberId, request.getTemplateType());
+        return SuccessResponse.empty();
+    }
+
+    @PostMapping("/visible")
+    public SuccessResponse<Void> changeVisible(
+            @LoginUser(required = true) Long memberId
+    ) {
+        resumeService.updateVisible(memberId, true);
+        return SuccessResponse.empty();
+    }
+
+    @DeleteMapping("/visible")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changeInvisible(
+            @LoginUser(required = true) Long memberId
+    ) {
+        resumeService.updateVisible(memberId, false);
     }
 
     // TODO: 테스트 용도

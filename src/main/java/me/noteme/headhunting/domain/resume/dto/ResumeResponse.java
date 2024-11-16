@@ -6,6 +6,8 @@ import lombok.Data;
 import me.noteme.headhunting.domain.resume.controller.request.CertificationForm;
 import me.noteme.headhunting.domain.resume.controller.request.EducationForm;
 import me.noteme.headhunting.domain.resume.controller.request.ExperienceForm;
+import me.noteme.headhunting.domain.resume.entity.Resume;
+import me.noteme.headhunting.domain.resume.entity.ResumeTemplateType;
 
 import java.util.List;
 
@@ -13,12 +15,15 @@ import java.util.List;
 @Builder
 @AllArgsConstructor(staticName = "of")
 public class ResumeResponse {
-    private ResumeBasicResponse basic;
-    private List<EducationForm> educations;
-    private List<ExperienceForm> companies;
-    private List<ExperienceForm> activities;
-    private List<ExperienceForm> projects;
-    private List<CertificationForm> qualifications;
-    private List<CertificationForm> languages;
-    private TechResponse tech;
+    private String hashKey;
+    private boolean isPrivate;
+    private ResumeTemplateType templateType;
+
+    public static ResumeResponse fromEntity(Resume resume) {
+        return ResumeResponse.of(
+                resume.getHashKey(),
+                resume.isPrivate(),
+                resume.getTemplateType()
+        );
+    }
 }

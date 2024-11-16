@@ -230,34 +230,6 @@ public class ResumeService {
                 .setInfoIfEmpty(member);
     }
 
-    public ResumeResponse getResume(Long memberId) {
-        ResumeBasicResponse basic = resumeBasicRepository.findByMemberId(memberId)
-                .map(ResumeBasicResponse::fromEntity)
-                .orElse(null);
-
-        List<EducationForm> educations = resumeRepository.findAllEducationByMemberId(memberId).stream()
-                .map(EducationForm::fromEntity)
-                .toList();
-
-        List<Experience> experiences = resumeRepository.findAllExperienceByMemberId(memberId);
-        List<Certification> certifications = resumeRepository.findAllCertificationsByMemberId(memberId);
-
-        TechResponse tech = resumeRepository.findTechByMemberId(memberId)
-                .map(TechResponse::fromEntity)
-                .orElse(null);
-
-        return ResumeResponse.builder()
-                .basic(basic)
-                .educations(educations)
-                .companies(filterByEnum(experiences, ExperienceType.COMPANY, Experience::getExperienceType, ExperienceForm::fromEntity))
-                .activities(filterByEnum(experiences, ExperienceType.ACTIVITY, Experience::getExperienceType, ExperienceForm::fromEntity))
-                .projects(filterByEnum(experiences, ExperienceType.PROJECT, Experience::getExperienceType, ExperienceForm::fromEntity))
-                .languages(filterByEnum(certifications, CertificationType.LANGUAGE, Certification::getCertificationType, CertificationForm::fromEntity))
-                .qualifications(filterByEnum(certifications, CertificationType.QUALIFICATION, Certification::getCertificationType, CertificationForm::fromEntity))
-                .tech(tech)
-                .build();
-    }
-
     public ResumeOrderResponse getResumeOrder(Long memberId) {
         ResumeOrder resumeOrder = resumeOrderRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
@@ -307,5 +279,30 @@ public class ResumeService {
                 .filter(e -> enumExtractor.apply(e).equals(enumValue))
                 .map(mapper)
                 .toList();
+    }
+
+    @Transactional
+    public void changeTemplate(Long memberId, ResumeTemplateType templateType) {
+        Resume resume = resumeRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        resume.changeTemplate(templateType);
+        mongoResumeRepository.updateTemplate(memberId, templateType);
+    }
+
+    @Transactional
+    public void updateVisible(Long memberId, boolean visible) {
+        Resume resume = resumeRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        resume.updateVisible(visible);
+        mongoResumeRepository.updateVisible(memberId, visible);
+    }
+
+    public ResumeResponse getResume(Long memberId) {
+        Resume resume = resumeRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        return ResumeResponse.fromEntity(resume);
     }
 }

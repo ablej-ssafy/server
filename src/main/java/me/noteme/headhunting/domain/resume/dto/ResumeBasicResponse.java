@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.entity.ResumeBasic;
+import me.noteme.headhunting.domain.resume.entity.ResumeTemplateType;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;

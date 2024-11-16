@@ -23,13 +23,10 @@ public class MongoResume {
     private Long memberId;
 
     @Indexed(unique = true)
-    @Setter
     private String hashKey;
 
-    @Setter
     private boolean isPrivate;
 
-    @Setter
     private ResumeTemplateType templateType;
 
     @Field("basic")

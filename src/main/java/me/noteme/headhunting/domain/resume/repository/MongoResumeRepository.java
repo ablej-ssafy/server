@@ -1,5 +1,6 @@
 package me.noteme.headhunting.domain.resume.repository;
 
+import me.noteme.headhunting.domain.resume.entity.ResumeTemplateType;
 import me.noteme.headhunting.domain.resume.entity.mongo.*;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -39,4 +40,12 @@ public interface MongoResumeRepository extends MongoRepository<MongoResume, Stri
     @Query("{'memberId': ?0}")
     @Update("{'$set': {'languages': ?1}}")
     void updateLanguages(Long memberId, List<MongoCertification> languages);
+
+    @Query("{'memberId': ?0}")
+    @Update("{'$set': {'templateType': ?1}}")
+    void updateTemplate(Long memberId, ResumeTemplateType templateType);
+
+    @Query("{'memberId': ?0}")
+    @Update("{'$set': {'isPrivate': ?1}}")
+    void updateVisible(Long memberId, boolean visible);
 }
