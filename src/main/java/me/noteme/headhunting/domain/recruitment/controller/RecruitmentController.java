@@ -57,7 +57,7 @@ public class RecruitmentController {
 
     @GetMapping("/{recruitmentId}/scrap")
     public SuccessResponse<Boolean> isScrapped(
-            @LoginUser(required = true) Long memberId,
+            @LoginUser Long memberId,
             @PathVariable("recruitmentId") Long recruitmentId
     ) {
         return SuccessResponse.of(recruitmentService.isScrapped(memberId, recruitmentId));
@@ -83,7 +83,7 @@ public class RecruitmentController {
 
     @GetMapping("/scraps")
     public SuccessResponse<List<Long>> getScrappedRecruitments(
-            @LoginUser(required = true) Long memberId,
+            @LoginUser Long memberId,
             @RequestParam("recruitmentIds") List<Long> recruitmentIds
     ) {
         return SuccessResponse.of(recruitmentService.isScrapped(memberId, recruitmentIds));
