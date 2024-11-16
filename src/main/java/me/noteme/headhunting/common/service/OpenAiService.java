@@ -19,6 +19,8 @@ public class OpenAiService {
     private final OpenAiChatModel openAiChatModel;
 
     public String resume(String userMessage) {
+//        System.out.println(userMessage);
+//        return null;
         return generateResponse(PromptConst.resumePrompt, userMessage);
     }
 

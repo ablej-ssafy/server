@@ -40,6 +40,7 @@ public class Education {
     @Builder.Default
     private GradeType gradeType = GradeType.FOUR_POINT_FIVE;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "start_at")

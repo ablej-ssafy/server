@@ -37,6 +37,7 @@ public class Experience {
     @Column(name = "end_at")
     private LocalDate endAt;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String referenceUrl;

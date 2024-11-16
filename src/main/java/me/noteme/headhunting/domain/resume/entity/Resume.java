@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import me.noteme.headhunting.common.entity.BaseEntity;
 import me.noteme.headhunting.domain.member.entity.Member;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,18 @@ public class Resume extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    ///////////////////////////
+    @Column(name = "hash_key", unique = true)
+    @Setter
+    private String hashKey;
+
+    @Column(name = "is_private")
+    @ColumnDefault("false")
+    private boolean isPrivate = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "template_type")
+    @ColumnDefault("'BASIC_LIGHT'")
+    private ResumeTemplateType templateType;
 
     @OneToOne(mappedBy = "resume", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private ResumeBasic resumeBasic;

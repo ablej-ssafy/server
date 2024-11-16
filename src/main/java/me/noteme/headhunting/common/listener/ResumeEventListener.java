@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.listener.event.ResumeInitEvent;
 import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.resume.entity.ResumeOrder;
+import me.noteme.headhunting.domain.resume.entity.ResumeTemplateType;
 import me.noteme.headhunting.domain.resume.entity.mongo.MongoResume;
 import me.noteme.headhunting.domain.resume.entity.Resume;
 import me.noteme.headhunting.domain.resume.repository.MongoResumeRepository;
@@ -14,6 +15,8 @@ import me.noteme.headhunting.domain.resume.repository.ResumeRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -26,8 +29,10 @@ public class ResumeEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void initResumeRecord(ResumeInitEvent event) {
+        String hash = UUID.randomUUID().toString().replace("-", "");
         Resume resume = Resume.builder()
                 .member(em.getReference(Member.class, event.getId()))
+                .hashKey(hash)
                 .build();
 
         Resume saveResume = resumeRepository.save(resume);
@@ -39,6 +44,8 @@ public class ResumeEventListener {
         mongoResumeRepository.save(
                 MongoResume.builder()
                         .memberId(event.getId())
+                        .hashKey(hash)
+                        .templateType(ResumeTemplateType.BASIC_LIGHT)
                         .build()
         );
     }

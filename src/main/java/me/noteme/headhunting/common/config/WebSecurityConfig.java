@@ -31,6 +31,7 @@ public class WebSecurityConfig {
             "/api/v1/recruitments/**",
             "/api/v1/recruitments",
             "/api/v1/companies/**",
+            "/api/v1/resume/create",
             "/api/v1/search/**",
             "/api/v1/github/**"
     };

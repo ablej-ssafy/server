@@ -2,6 +2,7 @@ package me.noteme.headhunting.domain.resume.entity.mongo;
 
 import jakarta.persistence.Id;
 import lombok.*;
+import me.noteme.headhunting.domain.resume.entity.ResumeTemplateType;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -20,6 +21,16 @@ public class MongoResume {
 
     @Indexed(unique = true)
     private Long memberId;
+
+    @Indexed(unique = true)
+    @Setter
+    private String hashKey;
+
+    @Setter
+    private boolean isPrivate;
+
+    @Setter
+    private ResumeTemplateType templateType;
 
     @Field("basic")
     private MongoResumeBasic basic;

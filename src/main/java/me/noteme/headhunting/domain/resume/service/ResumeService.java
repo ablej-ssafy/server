@@ -308,4 +308,25 @@ public class ResumeService {
                 .map(mapper)
                 .toList();
     }
+
+    @Transactional
+    public void createDefaultResume() {
+        List<Member> members = memberRepository.findAll();
+        List<Long> memberIds = members.stream().map(Member::getId).toList();
+
+        memberIds.forEach(memberId -> {
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            resumeRepository.findByMemberId(memberId).ifPresent(resume -> {
+                resume.setHashKey(uuid);
+                resumeRepository.save(resume);
+            });
+
+            mongoResumeRepository.findByMemberId(memberId).ifPresent(mongoResume -> {
+                mongoResume.setHashKey(uuid);
+                mongoResume.setTemplateType(ResumeTemplateType.BASIC_LIGHT);
+                mongoResume.setPrivate(false);
+                mongoResumeRepository.save(mongoResume);
+            });
+        });
+    }
 }
