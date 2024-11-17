@@ -73,7 +73,7 @@ public class ResumeController {
     public SuccessResponse<Void> changeVisible(
             @LoginUser(required = true) Long memberId
     ) {
-        resumeService.updateVisible(memberId, true);
+        resumeService.updateVisible(memberId, false);
         return SuccessResponse.empty();
     }
 
@@ -82,7 +82,7 @@ public class ResumeController {
     public void changeInvisible(
             @LoginUser(required = true) Long memberId
     ) {
-        resumeService.updateVisible(memberId, false);
+        resumeService.updateVisible(memberId, true);
     }
 
     // TODO: 테스트 용도
