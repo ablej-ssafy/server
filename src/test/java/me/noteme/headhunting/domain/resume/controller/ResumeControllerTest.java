@@ -492,7 +492,7 @@ class ResumeControllerTest extends RestDocsSupport {
                                 .responseFields(empty())
                                 .build()
                 )));
-        verify(resumeService).updateVisible(memberId, true);
+        verify(resumeService).updateVisible(memberId, false);
     }
 
     @Test
@@ -517,6 +517,6 @@ class ResumeControllerTest extends RestDocsSupport {
                                 .responseFields()
                                 .build()
                 )));
-        verify(resumeService).updateVisible(memberId, false);
+        verify(resumeService).updateVisible(memberId, true);
     }
 }
