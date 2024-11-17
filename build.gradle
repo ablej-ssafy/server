@@ -39,7 +39,7 @@ ext {
 
 openapi3 {
     servers = [
-            { url = "https://noteme.kro.kr" }
+            { url = "https://www.noteme.kro.kr" }
     ]
     title = '에이블제이 AI 헤드헌팅 API 문서'
     description = '에이블제이 AI 헤드헌팅 플랫폼 API 문서입니다.'

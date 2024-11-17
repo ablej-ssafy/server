@@ -67,7 +67,7 @@ public class WebSecurityConfig {
         return request -> {
             var cors = new CorsConfiguration();
             cors.setAllowCredentials(true);
-            cors.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080", "https://noteme.kro.kr"));
+            cors.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080", "https://noteme.kro.kr", "https://www.noteme.kro.kr"));
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
