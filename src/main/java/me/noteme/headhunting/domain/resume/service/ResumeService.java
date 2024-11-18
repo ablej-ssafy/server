@@ -179,13 +179,14 @@ public class ResumeService {
         mongoResumeRepository.findByMemberId(memberId)
                 .ifPresent(mongoResumeRepository::delete);
 
-        MongoResume mongoResume = createMongoResume(memberId, resumeBasic, educations, experiences, certifications);
+        MongoResume mongoResume = createMongoResume(memberId, resume.getHashKey(), resumeBasic, educations, experiences, certifications);
         mongoResumeRepository.save(mongoResume);
     }
 
-    private MongoResume createMongoResume(Long memberId, ResumeBasic resumeBasic, List<Education> educations, List<Experience> experiences, List<Certification> certifications) {
+    private MongoResume createMongoResume(Long memberId, String hashKey, ResumeBasic resumeBasic, List<Education> educations, List<Experience> experiences, List<Certification> certifications) {
         return MongoResume.builder()
                 .memberId(memberId)
+                .hashKey(hashKey)
                 .basic(MongoResumeBasic.from(resumeBasic))
                 .educations(educations.stream().map(MongoEducation::from).toList())
                 .companies(filterByEnum(experiences, ExperienceType.COMPANY, Experience::getExperienceType, MongoExperience::from))
