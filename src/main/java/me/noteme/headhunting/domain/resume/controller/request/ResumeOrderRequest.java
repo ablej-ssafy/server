@@ -4,6 +4,11 @@ import lombok.Data;
 
 @Data
 public class ResumeOrderRequest {
-    private String key;
-    private double order;
+    private int education;
+    private int company;
+    private int project;
+    private int activity;
+    private int qualification;
+    private int language;
+    private int tech;
 }

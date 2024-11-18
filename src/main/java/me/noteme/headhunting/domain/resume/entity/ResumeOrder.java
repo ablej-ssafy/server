@@ -23,56 +23,52 @@ public class ResumeOrder {
     private Resume resume;
 
     @Column(name = "basic_order")
-    @ColumnDefault("0.0")
+    @ColumnDefault("0")
     @Builder.Default
-    private double basicOrder = 0.0;
+    private int basicOrder = 0;
 
     @Column(name = "education_order")
-    @ColumnDefault("1.0")
+    @ColumnDefault("1")
     @Builder.Default
-    private double educationOrder = 1.0;
+    private int educationOrder = 1;
 
     @Column(name = "company_order")
-    @ColumnDefault("2.0")
+    @ColumnDefault("2")
     @Builder.Default
-    private double companyOrder = 2.0;
+    private int companyOrder = 2;
 
     @Column(name = "project_order")
-    @ColumnDefault("3.0")
+    @ColumnDefault("3")
     @Builder.Default
-    private double projectOrder = 3.0;
+    private int projectOrder = 3;
 
     @Column(name = "activity_order")
-    @ColumnDefault("4.0")
+    @ColumnDefault("4")
     @Builder.Default
-    private double activityOrder = 4.0;
+    private int activityOrder = 4;
 
     @Column(name = "qualification_order")
-    @ColumnDefault("5.0")
+    @ColumnDefault("5")
     @Builder.Default
-    private double qualificationOrder = 5.0;
+    private int qualificationOrder = 5;
 
     @Column(name = "language_order")
-    @ColumnDefault("6.0")
+    @ColumnDefault("6")
     @Builder.Default
-    private double languageOrder = 6.0;
+    private int languageOrder = 6;
 
     @Column(name = "tech_order")
-    @ColumnDefault("7.0")
+    @ColumnDefault("7")
     @Builder.Default
-    private double techOrder = 7.0;
+    private int techOrder = 7;
 
-    public void update(String keyword, double value) {
-        switch (keyword) {
-            case "basic" -> this.basicOrder = value;
-            case "education" -> this.educationOrder = value;
-            case "company" -> this.companyOrder = value;
-            case "project" -> this.projectOrder = value;
-            case "activity" -> this.activityOrder = value;
-            case "qualification" -> this.qualificationOrder = value;
-            case "language" -> this.languageOrder = value;
-            case "tech" -> this.techOrder = value;
-            default -> throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
+    public void update(int education, int company, int project, int activity, int qualification, int language, int tech) {
+        this.educationOrder = education;
+        this.companyOrder = company;
+        this.projectOrder = project;
+        this.activityOrder = activity;
+        this.qualificationOrder = qualification;
+        this.languageOrder = language;
+        this.techOrder = tech;
     }
 }

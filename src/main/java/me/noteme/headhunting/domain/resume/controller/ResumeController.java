@@ -136,12 +136,21 @@ public class ResumeController {
         return SuccessResponse.of(resumeService.getResumeOrder(memberId));
     }
 
-    @PatchMapping("/order")
+    @PutMapping("/order")
     public SuccessResponse<Void> updateResumeOrder(
             @LoginUser Long memberId,
             @RequestBody ResumeOrderRequest request
     ) {
-        resumeService.updateResumeOrder(memberId, request.getKey(), request.getOrder());
+        resumeService.updateResumeOrder(
+                memberId,
+                request.getEducation(),
+                request.getCompany(),
+                request.getProject(),
+                request.getActivity(),
+                request.getQualification(),
+                request.getLanguage(),
+                request.getTech()
+        );
         return SuccessResponse.empty();
     }
 

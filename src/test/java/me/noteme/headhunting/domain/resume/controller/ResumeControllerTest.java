@@ -413,12 +413,18 @@ class ResumeControllerTest extends RestDocsSupport {
         Long memberId = 1L;
 
         ResumeOrderRequest request = new ResumeOrderRequest();
-        request.setKey("basic");
-        request.setOrder(1.5);
+        request.setEducation(1);
+        request.setCompany(2);
+        request.setProject(3);
+        request.setActivity(4);
+        request.setQualification(5);
+        request.setLanguage(6);
+        request.setTech(7);
+
 
         // * WHEN: 이걸 실행하면
         ResultActions actions = this.mockMvc.perform(
-                patch("/api/v1/resume/order")
+                put("/api/v1/resume/order")
                 .contentType("application/json")
                 .content(toJson(request))
         );
@@ -431,12 +437,17 @@ class ResumeControllerTest extends RestDocsSupport {
                                 .summary("이력서 순서 업데이트 API")
                                 .description("이력서의 순서를 업데이트합니다.")
                                 .requestFields(
-                                        fieldWithPath("key").type(JsonFieldType.STRING).description("순서를 업데이트할 항목"),
-                                        fieldWithPath("order").type(JsonFieldType.NUMBER).description("순서 값")
+                                        fieldWithPath("education").type(JsonFieldType.NUMBER).description("학력 순서"),
+                                        fieldWithPath("company").type(JsonFieldType.NUMBER).description("경력 순서"),
+                                        fieldWithPath("project").type(JsonFieldType.NUMBER).description("프로젝트 순서"),
+                                        fieldWithPath("activity").type(JsonFieldType.NUMBER).description("활동 순서"),
+                                        fieldWithPath("qualification").type(JsonFieldType.NUMBER).description("자격증 순서"),
+                                        fieldWithPath("language").type(JsonFieldType.NUMBER).description("어학 순서"),
+                                        fieldWithPath("tech").type(JsonFieldType.NUMBER).description("기술 스택 순서")
                                 ).responseFields(empty())
                                 .build()
                 )));
-        verify(resumeService).updateResumeOrder(memberId, request.getKey(), request.getOrder());
+        verify(resumeService).updateResumeOrder(memberId, 1, 2, 3, 4, 5, 6, 7);
     }
 
     @Test

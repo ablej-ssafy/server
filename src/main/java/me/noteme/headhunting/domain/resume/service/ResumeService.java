@@ -241,18 +241,6 @@ public class ResumeService {
         return ResumeOrderResponse.fromEntity(resumeOrder);
     }
 
-    @Transactional
-    public void updateResumeOrder(Long memberId, String keyword, double value) {
-        ResumeOrder resumeOrder = resumeOrderRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
-
-        if (!resumeOrder.getResume().getMember().getId().equals(memberId)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
-        }
-
-        resumeOrder.update(keyword, value);
-    }
-
     private OpenAiResponse getOpenAiResponse(Long memberId) {
         return gson.fromJson(
                 resumeCacheRepository.getData(memberId),
@@ -305,5 +293,14 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
 
         return ResumeResponse.fromEntity(resume);
+    }
+
+    @Transactional
+    public void updateResumeOrder(Long memberId, int education, int company, int project, int activity, int qualification, int language, int tech) {
+        ResumeOrder resumeOrder = resumeOrderRepository.findByMemberId(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        resumeOrder.update(education, company, project, activity, qualification, language, tech);
     }
 }
