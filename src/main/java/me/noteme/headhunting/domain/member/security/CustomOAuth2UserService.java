@@ -1,5 +1,6 @@
 package me.noteme.headhunting.domain.member.security;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noteme.headhunting.common.listener.event.ConfirmEmailEvent;
@@ -9,6 +10,7 @@ import me.noteme.headhunting.domain.member.entity.Member;
 import me.noteme.headhunting.domain.member.entity.ProviderType;
 import me.noteme.headhunting.domain.member.repository.MemberRepository;
 import me.noteme.headhunting.domain.member.security.response.OAuth2Response;
+import me.noteme.headhunting.domain.recruitment.entity.JobCategory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -25,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final ApplicationEventPublisher publisher;
+    private final EntityManager em;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -43,11 +46,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByUsername(username).orElseGet(() -> {
             isNewUser.set(true);
             String encodedPassword = passwordEncoder.encode(response.getProviderId());
+            // TODO: 하드코딩 수정
             return memberRepository.saveAndFlush(
                     Member.builder()
                             .username(username)
                             .password(encodedPassword)
                             .providerType(providerType)
+                            .jobCategory(em.getReference(JobCategory.class, 32L))
                             .profileImage(response.getProfileImage())
                             .nickname(response.getName())
                             .emailVerified(true)
